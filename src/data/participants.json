@@ -1,0 +1,142 @@
+[
+  {
+    "id": "u1",
+    "firstName": "Alice",
+    "lastName": "Lee",
+    "schoolLevel": "2A",
+    "program": "Data Science",
+    "responses": {
+      "hobbies": "I love hiking and nature.",
+      "vibe": "I'm an introvert who enjoys deep conversations.",
+      "books": "I like sci-fi books.",
+      "lookingFor": "Looking to meet creative people.",
+      "hangout": "Prefer quiet cafés over loud bars."
+    }
+  },
+  {
+    "id": "u2",
+    "firstName": "Bob",
+    "lastName": "Chen",
+    "schoolLevel": "1B",
+    "program": "Computer Science",
+    "responses": {
+      "hobbies": "Big fan of the outdoors and camping.",
+      "vibe": "I'm friendly and like one-on-one convos.",
+      "books": "Fantasy novels are my jam.",
+      "lookingFor": "Creative writing is my hobby.",
+      "hangout": "I love peaceful places like gardens."
+    }
+  },
+  {
+    "id": "u3",
+    "firstName": "Tom",
+    "lastName": "Mouse",
+    "schoolLevel": "3A",
+    "program": "Software Engineering",
+    "responses": {
+      "hobbies": "Sketching comics and watching old cartoons.",
+      "vibe": "Energetic prankster with a soft side.",
+      "books": "Graphic novels and humorous fiction.",
+      "lookingFor": "Someone who loves a good chase — metaphorically!",
+      "hangout": "Anywhere with fun vibes and fast food."
+    }
+  },
+  {
+    "id": "u4",
+    "firstName": "Jerry",
+    "lastName": "Cat",
+    "schoolLevel": "3A",
+    "program": "Computer Engineering",
+    "responses": {
+      "hobbies": "Drawing funny characters and classic animation.",
+      "vibe": "Playful and clever, but secretly thoughtful.",
+      "books": "Light-hearted comics and satire.",
+      "lookingFor": "Someone who can match my energy and wit.",
+      "hangout": "Places with snacks and silly energy."
+    }
+  },
+  {
+    "id": "u5",
+    "firstName": "Sophia",
+    "lastName": "Nguyen",
+    "schoolLevel": "4B",
+    "program": "Psychology",
+    "responses": {
+      "hobbies": "Painting and mindfulness journaling.",
+      "vibe": "Calm, introspective, emotionally open.",
+      "books": "Self-help, psychology, and memoirs.",
+      "lookingFor": "A grounded person who values emotional intelligence.",
+      "hangout": "Peaceful environments like parks or art galleries."
+    }
+  },
+  {
+    "id": "u6",
+    "firstName": "Leo",
+    "lastName": "Martinez",
+    "schoolLevel": "WT2",
+    "program": "Mechanical Engineering",
+    "responses": {
+      "hobbies": "Tinkering with robots and fixing things.",
+      "vibe": "Hands-on and solution-oriented.",
+      "books": "Tech manuals and sci-fi thrillers.",
+      "lookingFor": "Someone curious and down-to-earth.",
+      "hangout": "Workshops, maker spaces, or escape rooms."
+    }
+  },
+  {
+    "id": "u7",
+    "firstName": "Emma",
+    "lastName": "Patel",
+    "schoolLevel": "2B",
+    "program": "Mathematics",
+    "responses": {
+      "hobbies": "Sudoku, logic puzzles, and running.",
+      "vibe": "Focused, analytical, but silly with close friends.",
+      "books": "Mystery novels and classic literature.",
+      "lookingFor": "Someone who enjoys problem-solving and adventures.",
+      "hangout": "Libraries, cafes, or running trails."
+    }
+  },
+  {
+    "id": "u8",
+    "firstName": "Noah",
+    "lastName": "Kim",
+    "schoolLevel": "1A",
+    "program": "Computer Science",
+    "responses": {
+      "hobbies": "Gaming, memes, and Discord debates.",
+      "vibe": "Chill, a bit chaotic, very online.",
+      "books": "Game lore and tech blogs.",
+      "lookingFor": "Someone I can joke around with and talk tech.",
+      "hangout": "Dorms, LAN parties, or online."
+    }
+  },
+  {
+    "id": "u9",
+    "firstName": "Isabella",
+    "lastName": "Wong",
+    "schoolLevel": "WT1",
+    "program": "Biomedical Engineering",
+    "responses": {
+      "hobbies": "Volunteering and making Spotify playlists.",
+      "vibe": "Empathetic, social, always smiling.",
+      "books": "Romance novels and memoirs.",
+      "lookingFor": "A kind person who cares deeply.",
+      "hangout": "Bubble tea shops or study lounges."
+    }
+  },
+  {
+    "id": "u10",
+    "firstName": "Ethan",
+    "lastName": "Zhou",
+    "schoolLevel": "4A",
+    "program": "Electrical Engineering",
+    "responses": {
+      "hobbies": "Chess, piano, and watching documentaries.",
+      "vibe": "Quiet observer with intense focus.",
+      "books": "History books and technical papers.",
+      "lookingFor": "Someone who likes meaningful discussions.",
+      "hangout": "Libraries or cozy study corners."
+    }
+  }
+]

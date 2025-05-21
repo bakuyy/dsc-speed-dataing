@@ -3,14 +3,15 @@ import React from 'react'
 type StepCardProps = {
   step: string
   title: string
+  description: string
 }
 
-export default function StepCard({ step, title }: StepCardProps) {
+export default function StepCard({ step, title, description }: StepCardProps) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <div className="text-sm font-bold text-gray-500">{step}</div>
-      <h3 className="mt-2 font-semibold text-gray-800">{title}</h3>
-      <p className="mt-1 text-xs text-gray-500">Subtext to explain in further detail</p>
+    <div className="bg-gray-300 p-6 h-120 rounded-lg shadow relative flex flex-col items-center justify-center">
+      <div className="absolute top-6 left-6 text-sm font-bold text-gray-500">{step}</div>
+      <h3 className="mt-2 font-semibold text-lg text-gray-800 text-center">{title}</h3>
+      <p className="absolute bottom-5 left-6 text-xs text-gray-500">{description}</p>
     </div>
   )
 }

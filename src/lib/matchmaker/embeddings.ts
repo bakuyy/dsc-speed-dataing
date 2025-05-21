@@ -10,7 +10,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-interface Participant {
+interface Participant { // temporary hardcoding before questionnaire
   id: string;
   firstName: string;
   lastName: string;

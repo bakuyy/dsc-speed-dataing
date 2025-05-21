@@ -1,4 +1,4 @@
-import Auth from '@/app/auth/auth'
+import Auth from '@/app/auth/Auth'
 
 export default function Home() {
   return (

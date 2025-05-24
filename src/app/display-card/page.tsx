@@ -1,11 +1,19 @@
-import React from 'react'
+'use client';
 
-const page = () => {
+import MatchDisplay from '../components/MatchDisplay';
+
+const DisplayCard = () => {
   return (
-    <div>
-        display page
-    </div>
-  )
-}
+    <MatchDisplay 
+      emoji="🥕"
+      name="Sophie Y"
+      matchData={{
+        name: "Sophie Y",
+        location: "Waterloo, ON",
+        interests: "Sleeping, Hiking"
+      }}
+    />
+  );
+};
 
-export default page
+export default DisplayCard;

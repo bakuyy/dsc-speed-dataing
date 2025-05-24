@@ -1,8 +1,8 @@
 'use client';
 
-import MatchDisplay from '../components/MatchDisplay';
+import MatchDisplay from '@/app/components/MatchDisplay';
 
-const DisplayCard = () => {
+const DisplayPage = () => {
   return (
     <MatchDisplay 
       emoji="🥕"
@@ -16,4 +16,4 @@ const DisplayCard = () => {
   );
 };
 
-export default DisplayCard;
+export default DisplayPage;

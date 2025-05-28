@@ -9,11 +9,11 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-center">
       <Image
       src={Header} alt="Header" 
-      className="w-full h-1/5 absolute top-0 opacity-70"/>
+      className="w-full h-1/5 absolute top-0 opacity-90"/>
       <AuthForm/>
       <Image
       src={Footer} alt="Footer" 
-      className="w-full h-1/5 absolute bottom-0 opacity-70"/>
+      className="w-full h-1/5 absolute bottom-0 opacity-90"/>
     </main>
   );
 }

@@ -45,15 +45,15 @@ export default function AuthForm() {
     <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 ">
       <Image src={Logo} alt="Logo" className="w-3/4 h-auto"/>
       <div>
-      <div className="text-2xl font-plus-jakarta-sans max-w-sm text-center">Log in</div>
-      <p className="text-sm font-plus-jakarta-sans max-w-xs text-center italic">DSC Account + Event Password</p>
+      <div className="text-3xl font-plus-jakarta-sans max-w-sm text-center">Log in</div>
+      <p className="text-md font-plus-jakarta-sans max-w-xs text-center italic">DSC Account + Event Password</p>
       
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-xs">
         <input
           type="email"
           required
-          placeholder="Email"
+          placeholder="email"
           className="border p-2 rounded-full pl-6 font-plus-jakarta-sans"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -61,7 +61,7 @@ export default function AuthForm() {
         <input
           type="password"
           required
-          placeholder="Password"
+          placeholder="password"
           className="border p-2 rounded-full pl-6"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -69,8 +69,8 @@ export default function AuthForm() {
         <input
           type="password"
           required
-          placeholder="Secret key"
-          className="border border-2 border-[#374995] p-2 rounded-full pl-6 bg-gradient-to-r from-[#a3c0e8] to-[#5989fc] text-[#374995]
+          placeholder="event key"
+          className="border border-2 border-[#374995] p-2 rounded-full pl-6 bg-gradient-to-r from-[#a3c0e8] to-[#5989fc] text-gray-900
           focus:outline-none focus:ring-2 focus:ring-[#374995] focus:ring-opacity-50 
           focus:border-[#374995] focus:shadow-[0_0_15px_rgba(55,73,149,0.3)]
           transition-all duration-300 ease-in-out
@@ -78,12 +78,13 @@ export default function AuthForm() {
           value={secretKey}
           onChange={(e) => setSecretKey(e.target.value)}
         />
+        <div className="text-xs font-plus-jakarta-sans max-w-xs text-center italic">ask organizers for event key</div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          className="rounded p-1 text-blackflex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
+          className="rounded p-1 text-[#374995] transition-all duration-300 ease-in-out flex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
         >
-          Continue 
+          continue 
           <FaArrowRightLong/>
         </button>
 

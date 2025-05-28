@@ -1,7 +1,6 @@
 "use client";
 
 import "./globals.css";
-import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import { AuthHydrator } from "@/components/AuthHydrator";
 import type { Metadata } from "next";
@@ -26,10 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Provider store={store}>
+        <Providers>
           <AuthHydrator />
-          <Providers>{children}</Providers>
-        </Provider>
+          {children}
+        </Providers>
       </body>
     </html>
   );

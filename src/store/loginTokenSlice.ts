@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 interface LoginState {
@@ -14,20 +14,20 @@ const initialState: LoginState = {
 };
 
 const loginTokenSlice = createSlice({
-  name: "loginToken",
+  name: 'loginToken',
   initialState,
   reducers: {
     login: (state, action: PayloadAction<LoginState>) => {
       state.name = action.payload.name;
       state.token = action.payload.token;
       state.role = action.payload.role;
-      Cookies.set('token', action.payload.token, { expires: 1 }); 
+      Cookies.set('token', action.payload.token, { expires: 1 });
     },
     logout: (state) => {
       state.name = "";
       state.token = "";
       state.role = "";
-      Cookies.remove('token');
+      Cookies.remove('token', { path: '/' });
     },
   },
 });

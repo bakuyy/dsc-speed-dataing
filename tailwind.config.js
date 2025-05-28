@@ -18,6 +18,7 @@ module.exports = {
       },
       fontFamily: {
         'plus-jakarta-sans': ['var(--font-plus-jakarta-sans)'],
+        'varela-round': ['var(--font-varela-round)'],
       },
     },
   },

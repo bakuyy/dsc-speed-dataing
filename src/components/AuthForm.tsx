@@ -5,7 +5,9 @@ import { AppDispatch } from "@/store/store";
 import { login } from "@/store/loginTokenSlice";
 import { sendSignInInfo } from "@/utils/apiCalls";
 import { useRouter } from "next/navigation";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRightLong } from "react-icons/fa6";
+import Logo from "../../public/images/logo.png"
+import Image from "next/image";
 
 export default function AuthForm() {
   const [email, setEmail] = useState("");
@@ -40,14 +42,19 @@ export default function AuthForm() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6">
-      <h1 className="text-3xl font-bold">Sign in</h1>
+    <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 ">
+      <Image src={Logo} alt="Logo" className="w-3/4 h-auto"/>
+      <div>
+      <div className="text-2xl font-plus-jakarta-sans max-w-sm text-center">Log in</div>
+      <p className="text-sm font-plus-jakarta-sans max-w-xs text-center italic">DSC Account + Event Password</p>
+      
+      </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-xs">
         <input
           type="email"
           required
           placeholder="Email"
-          className="border p-2 rounded"
+          className="border p-2 rounded-full pl-6 font-plus-jakarta-sans"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -55,7 +62,7 @@ export default function AuthForm() {
           type="password"
           required
           placeholder="Password"
-          className="border p-2 rounded"
+          className="border p-2 rounded-full pl-6"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -63,18 +70,23 @@ export default function AuthForm() {
           type="password"
           required
           placeholder="Secret key"
-          className="border p-2 rounded"
+          className="border border-2 border-[#374995] p-2 rounded-full pl-6 bg-gradient-to-r from-[#a3c0e8] to-[#5989fc] text-[#374995]
+          focus:outline-none focus:ring-2 focus:ring-[#374995] focus:ring-opacity-50 
+          focus:border-[#374995] focus:shadow-[0_0_15px_rgba(55,73,149,0.3)]
+          transition-all duration-300 ease-in-out
+          hover:shadow-[0_0_10px_rgba(163,192,232,0.3)]"
           value={secretKey}
           onChange={(e) => setSecretKey(e.target.value)}
         />
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          className="bg-black text-white rounded p-2 hover:bg-gray-800 flex items-center gap-2 justify-center"
+          className="rounded p-1 text-blackflex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
         >
-          <FaArrowRight/>
-          
+          Continue 
+          <FaArrowRightLong/>
         </button>
+
       </form>
     </main>
   );

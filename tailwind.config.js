@@ -15,7 +15,10 @@ module.exports = {
       },
       animation: {
         'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
-      }
+      },
+      fontFamily: {
+        'plus-jakarta-sans': ['var(--font-plus-jakarta-sans)'],
+      },
     },
   },
   plugins: [],

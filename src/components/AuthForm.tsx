@@ -70,7 +70,7 @@ export default function AuthForm() {
           type="password"
           required
           placeholder="event key"
-          className="border border-2 border-[#374995] p-2 rounded-full pl-6 bg-gradient-to-r from-[#a3c0e8] to-[#5989fc] text-gray-900
+          className="border border-2 border-[#374995] p-2 rounded-full pl-6 bg-gradient-to-r from-[#374995] to-[#5989fc] text-white
           focus:outline-none focus:ring-2 focus:ring-[#374995] focus:ring-opacity-50 
           focus:border-[#374995] focus:shadow-[0_0_15px_rgba(55,73,149,0.3)]
           transition-all duration-300 ease-in-out

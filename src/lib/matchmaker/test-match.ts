@@ -7,9 +7,21 @@ interface Participant {
   id: string;
   firstName: string;
   lastName: string;
-  schoolLevel: string;
+  email: string;
+  pronouns: string;
   program: string;
-  responses: Record<string, string>;
+  schoolLevel: string;
+  responses: {
+    career: string;
+    friendTraits: string;
+    selfDescription: string;
+    goalForEvent: string;
+    interests: string;
+    musicTaste: string;
+    inClass: string;
+    evilHobby: string;
+    mostLikelyTo: string;
+  };
 }
 
 async function test() {
@@ -24,7 +36,7 @@ async function test() {
   };
 
   for (const { pair, score } of matches) {
-    console.log(`🔗 ${nameFromId(pair[0])} ↔ ${nameFromId(pair[1])} (score: ${score.toFixed(4)})`);
+    console.log(`Match: ${nameFromId(pair[0])} with ${nameFromId(pair[1])} (score: ${score.toFixed(4)})`);
   }
 }
 

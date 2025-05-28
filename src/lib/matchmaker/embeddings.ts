@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import { classBehaviorMap, evilHobbyMap } from "./mappings.js";
 
 dotenv.config();
 
@@ -11,28 +12,27 @@ const openai = new OpenAI({
 });
 
 interface Participant {
-  id: string;
-  firstName: string;
-  lastName: string;
+  name: {
+    first: string;
+    last: string;
+  };
   email: string;
   pronouns: string;
   program: string;
-  schoolLevel: string; // "1A" to "4B"
+  year: string;
 
-  responses: {
-    // Open-ended
-    career: string;
-    friendTraits: string;
-    selfDescription: string;
-    goalForEvent: string;
-    interests: string;
-    musicTaste: string;
-
-    // Multiple-choice (a, b, c, d, e)
-    inClass: string;
-    evilHobby: string;
-    mostLikelyTo: string;
+  career: string;
+  friend_traits: string[];
+  self_description: string;
+  goal: string;
+  fun: string[];
+  music: {
+    genre: string;
+    artists: string[];
   };
+
+  class_behavior: string;
+  evil_hobby: string;
 }
 
 export async function generateEmbeddings(): Promise<
@@ -45,7 +45,17 @@ export async function generateEmbeddings(): Promise<
   const results = [];
 
   for (const person of participants) {
-    const input = Object.values(person.responses).join("\n");
+    const input = [
+      person.career,
+      person.friend_traits.join(", "),
+      person.self_description,
+      person.goal,
+      person.fun.join(", "),
+      person.music.genre,
+      person.music.artists.join(", "),
+      classBehaviorMap[person.class_behavior],
+      evilHobbyMap[person.evil_hobby]
+    ].join("\n");
 
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",

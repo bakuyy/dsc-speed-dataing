@@ -40,7 +40,7 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center gap-6">
         <a href="/home" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</a>
-        <a href="/" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
+        <a href="/information" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
         <button onClick={handleSignOut} className="rounded-xl cursor-pointer font-semibold p-2 hover:bg-[#e1eaf8] transition font-jakarta">Log Out</button>
       </div>
       

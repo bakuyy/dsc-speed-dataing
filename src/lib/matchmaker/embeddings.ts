@@ -10,13 +10,29 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-interface Participant { // temporary hardcoding before questionnaire
+interface Participant {
   id: string;
   firstName: string;
   lastName: string;
-  schoolLevel: string;
+  email: string;
+  pronouns: string;
   program: string;
-  responses: Record<string, string>;
+  schoolLevel: string; // "1A" to "4B"
+
+  responses: {
+    // Open-ended
+    career: string;
+    friendTraits: string;
+    selfDescription: string;
+    goalForEvent: string;
+    interests: string;
+    musicTaste: string;
+
+    // Multiple-choice (a, b, c, d, e)
+    inClass: string;
+    evilHobby: string;
+    mostLikelyTo: string;
+  };
 }
 
 export async function generateEmbeddings(): Promise<

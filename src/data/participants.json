@@ -1,142 +1,602 @@
 [
   {
-    "id": "u1",
-    "firstName": "Alice",
-    "lastName": "Lee",
-    "schoolLevel": "2A",
+    "name": {
+      "first": "Amir",
+      "last": "Khan"
+    },
+    "email": "amir.khan@uwaterloo.ca",
+    "pronouns": "he/him",
+    "program": "Statistics",
+    "year": "1B",
+    "career": "data scientist",
+    "friend_traits": [
+      "funny",
+      "outgoing"
+    ],
+    "self_description": "fierce and focused",
+    "goal": "To meet someone who challenges how I think.",
+    "fun": [
+      "cooking",
+      "gaming"
+    ],
+    "music": {
+      "genre": "jazz",
+      "artists": [
+        "BTS",
+        "Joji"
+      ]
+    },
+    "class_behavior": "a",
+    "evil_hobby": "d"
+  },
+  {
+    "name": {
+      "first": "Yuna",
+      "last": "Chen"
+    },
+    "email": "yuna.chen@uwaterloo.ca",
+    "pronouns": "he/him",
+    "program": "Statistics",
+    "year": "2A",
+    "career": "AI ethicist",
+    "friend_traits": [
+      "deep thinker",
+      "chill"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To find a study buddy who makes CS a little less painful.",
+    "fun": [
+      "photography",
+      "watching anime"
+    ],
+    "music": {
+      "genre": "indie",
+      "artists": [
+        "Arctic Monkeys",
+        "Miles Davis"
+      ]
+    },
+    "class_behavior": "b",
+    "evil_hobby": "e"
+  },
+  {
+    "name": {
+      "first": "Harpreet",
+      "last": "Singh"
+    },
+    "email": "harpreet.singh@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Statistics",
+    "year": "4B",
+    "career": "software developer",
+    "friend_traits": [
+      "empathetic",
+      "creative"
+    ],
+    "self_description": "fierce and focused",
+    "goal": "To vibe with someone who loves anime as much as I do.",
+    "fun": [
+      "playing guitar",
+      "gaming"
+    ],
+    "music": {
+      "genre": "classical",
+      "artists": [
+        "Mozart",
+        "Joji"
+      ]
+    },
+    "class_behavior": "a",
+    "evil_hobby": "e"
+  },
+  {
+    "name": {
+      "first": "Diego",
+      "last": "Martinez"
+    },
+    "email": "diego.martinez@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Statistics",
+    "year": "3B",
+    "career": "machine learning engineer",
+    "friend_traits": [
+      "deep thinker",
+      "funny"
+    ],
+    "self_description": "fierce and focused",
+    "goal": "To connect with someone outside my friend group.",
+    "fun": [
+      "hiking",
+      "cooking"
+    ],
+    "music": {
+      "genre": "jazz",
+      "artists": [
+        "Phoebe Bridgers",
+        "Mozart"
+      ]
+    },
+    "class_behavior": "e",
+    "evil_hobby": "b"
+  },
+  {
+    "name": {
+      "first": "Mei",
+      "last": "Zhang"
+    },
+    "email": "mei.zhang@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Statistics",
+    "year": "1B",
+    "career": "data scientist",
+    "friend_traits": [
+      "outgoing",
+      "motivated"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To meet another Waterloo student who actually likes statistics.",
+    "fun": [
+      "watching anime",
+      "gaming"
+    ],
+    "music": {
+      "genre": "lofi",
+      "artists": [
+        "Joji",
+        "Mozart"
+      ]
+    },
+    "class_behavior": "c",
+    "evil_hobby": "b"
+  },
+  {
+    "name": {
+      "first": "Omar",
+      "last": "Patel"
+    },
+    "email": "omar.patel@uwaterloo.ca",
+    "pronouns": "they/them",
+    "program": "Computer Science",
+    "year": "2B",
+    "career": "quant researcher",
+    "friend_traits": [
+      "outgoing",
+      "creative"
+    ],
+    "self_description": "the chaotic one",
+    "goal": "To talk to someone who's serious about tech but not serious all the time.",
+    "fun": [
+      "gaming",
+      "photography"
+    ],
+    "music": {
+      "genre": "classical",
+      "artists": [
+        "Arctic Monkeys",
+        "Miles Davis"
+      ]
+    },
+    "class_behavior": "a",
+    "evil_hobby": "b"
+  },
+  {
+    "name": {
+      "first": "Ava",
+      "last": "Nguyen"
+    },
+    "email": "ava.nguyen@uwaterloo.ca",
+    "pronouns": "she/her",
     "program": "Data Science",
-    "responses": {
-      "hobbies": "I love hiking and nature.",
-      "vibe": "I'm an introvert who enjoys deep conversations.",
-      "books": "I like sci-fi books.",
-      "lookingFor": "Looking to meet creative people.",
-      "hangout": "Prefer quiet cafés over loud bars."
-    }
+    "year": "4A",
+    "career": "data scientist",
+    "friend_traits": [
+      "funny",
+      "outgoing"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To find a friend who gets my weird humour.",
+    "fun": [
+      "playing guitar",
+      "photography"
+    ],
+    "music": {
+      "genre": "indie",
+      "artists": [
+        "Joji",
+        "Mozart"
+      ]
+    },
+    "class_behavior": "e",
+    "evil_hobby": "d"
   },
   {
-    "id": "u2",
-    "firstName": "Bob",
-    "lastName": "Chen",
-    "schoolLevel": "1B",
-    "program": "Computer Science",
-    "responses": {
-      "hobbies": "Big fan of the outdoors and camping.",
-      "vibe": "I'm friendly and like one-on-one convos.",
-      "books": "Fantasy novels are my jam.",
-      "lookingFor": "Creative writing is my hobby.",
-      "hangout": "I love peaceful places like gardens."
-    }
-  },
-  {
-    "id": "u3",
-    "firstName": "Tom",
-    "lastName": "Mouse",
-    "schoolLevel": "3A",
+    "name": {
+      "first": "Lucas",
+      "last": "Ahmed"
+    },
+    "email": "lucas.ahmed@uwaterloo.ca",
+    "pronouns": "they/them",
     "program": "Software Engineering",
-    "responses": {
-      "hobbies": "Sketching comics and watching old cartoons.",
-      "vibe": "Energetic prankster with a soft side.",
-      "books": "Graphic novels and humorous fiction.",
-      "lookingFor": "Someone who loves a good chase — metaphorically!",
-      "hangout": "Anywhere with fun vibes and fast food."
-    }
+    "year": "1A",
+    "career": "AI ethicist",
+    "friend_traits": [
+      "funny",
+      "chill"
+    ],
+    "self_description": "the chaotic one",
+    "goal": "To meet someone from a different program with similar values.",
+    "fun": [
+      "cooking",
+      "skating"
+    ],
+    "music": {
+      "genre": "classical",
+      "artists": [
+        "Mozart",
+        "Phoebe Bridgers"
+      ]
+    },
+    "class_behavior": "a",
+    "evil_hobby": "e"
   },
   {
-    "id": "u4",
-    "firstName": "Jerry",
-    "lastName": "Cat",
-    "schoolLevel": "3A",
-    "program": "Computer Engineering",
-    "responses": {
-      "hobbies": "Drawing funny characters and classic animation.",
-      "vibe": "Playful and clever, but secretly thoughtful.",
-      "books": "Light-hearted comics and satire.",
-      "lookingFor": "Someone who can match my energy and wit.",
-      "hangout": "Places with snacks and silly energy."
-    }
+    "name": {
+      "first": "Tariq",
+      "last": "Taylor"
+    },
+    "email": "tariq.taylor@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Software Engineering",
+    "year": "1A",
+    "career": "AI ethicist",
+    "friend_traits": [
+      "creative",
+      "chill"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To make a friend I might start a project with.",
+    "fun": [
+      "cooking",
+      "playing guitar"
+    ],
+    "music": {
+      "genre": "lofi",
+      "artists": [
+        "Arctic Monkeys",
+        "BTS"
+      ]
+    },
+    "class_behavior": "b",
+    "evil_hobby": "d"
   },
   {
-    "id": "u5",
-    "firstName": "Sophia",
-    "lastName": "Nguyen",
-    "schoolLevel": "4B",
-    "program": "Psychology",
-    "responses": {
-      "hobbies": "Painting and mindfulness journaling.",
-      "vibe": "Calm, introspective, emotionally open.",
-      "books": "Self-help, psychology, and memoirs.",
-      "lookingFor": "A grounded person who values emotional intelligence.",
-      "hangout": "Peaceful environments like parks or art galleries."
-    }
+    "name": {
+      "first": "Emily",
+      "last": "Lee"
+    },
+    "email": "emily.lee@uwaterloo.ca",
+    "pronouns": "he/him",
+    "program": "Software Engineering",
+    "year": "2A",
+    "career": "data scientist",
+    "friend_traits": [
+      "empathetic",
+      "chill"
+    ],
+    "self_description": "loyal and reflective",
+    "goal": "To stop talking to my cat and make a real friend.",
+    "fun": [
+      "playing guitar",
+      "photography"
+    ],
+    "music": {
+      "genre": "jazz",
+      "artists": [
+        "Miles Davis",
+        "Phoebe Bridgers"
+      ]
+    },
+    "class_behavior": "b",
+    "evil_hobby": "c"
   },
   {
-    "id": "u6",
-    "firstName": "Leo",
-    "lastName": "Martinez",
-    "schoolLevel": "WT2",
-    "program": "Mechanical Engineering",
-    "responses": {
-      "hobbies": "Tinkering with robots and fixing things.",
-      "vibe": "Hands-on and solution-oriented.",
-      "books": "Tech manuals and sci-fi thrillers.",
-      "lookingFor": "Someone curious and down-to-earth.",
-      "hangout": "Workshops, maker spaces, or escape rooms."
-    }
-  },
-  {
-    "id": "u7",
-    "firstName": "Emma",
-    "lastName": "Patel",
-    "schoolLevel": "2B",
-    "program": "Mathematics",
-    "responses": {
-      "hobbies": "Sudoku, logic puzzles, and running.",
-      "vibe": "Focused, analytical, but silly with close friends.",
-      "books": "Mystery novels and classic literature.",
-      "lookingFor": "Someone who enjoys problem-solving and adventures.",
-      "hangout": "Libraries, cafes, or running trails."
-    }
-  },
-  {
-    "id": "u8",
-    "firstName": "Noah",
-    "lastName": "Kim",
-    "schoolLevel": "1A",
+    "name": {
+      "first": "Riya",
+      "last": "Khan"
+    },
+    "email": "riya.khan@uwaterloo.ca",
+    "pronouns": "he/him",
     "program": "Computer Science",
-    "responses": {
-      "hobbies": "Gaming, memes, and Discord debates.",
-      "vibe": "Chill, a bit chaotic, very online.",
-      "books": "Game lore and tech blogs.",
-      "lookingFor": "Someone I can joke around with and talk tech.",
-      "hangout": "Dorms, LAN parties, or online."
-    }
+    "year": "4A",
+    "career": "software developer",
+    "friend_traits": [
+      "empathetic",
+      "chill"
+    ],
+    "self_description": "loyal and reflective",
+    "goal": "To have deep convos without making it awkward.",
+    "fun": [
+      "gaming",
+      "hiking"
+    ],
+    "music": {
+      "genre": "jazz",
+      "artists": [
+        "Arctic Monkeys",
+        "Kendrick Lamar"
+      ]
+    },
+    "class_behavior": "b",
+    "evil_hobby": "a"
   },
   {
-    "id": "u9",
-    "firstName": "Isabella",
-    "lastName": "Wong",
-    "schoolLevel": "WT1",
-    "program": "Biomedical Engineering",
-    "responses": {
-      "hobbies": "Volunteering and making Spotify playlists.",
-      "vibe": "Empathetic, social, always smiling.",
-      "books": "Romance novels and memoirs.",
-      "lookingFor": "A kind person who cares deeply.",
-      "hangout": "Bubble tea shops or study lounges."
-    }
+    "name": {
+      "first": "Noah",
+      "last": "Chen"
+    },
+    "email": "noah.chen@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Statistics",
+    "year": "2A",
+    "career": "machine learning engineer",
+    "friend_traits": [
+      "funny",
+      "empathetic"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To make a friend I can chill with after midterms.",
+    "fun": [
+      "photography",
+      "cooking"
+    ],
+    "music": {
+      "genre": "k-pop",
+      "artists": [
+        "Joji",
+        "Arctic Monkeys"
+      ]
+    },
+    "class_behavior": "c",
+    "evil_hobby": "c"
   },
   {
-    "id": "u10",
-    "firstName": "Ethan",
-    "lastName": "Zhou",
-    "schoolLevel": "4A",
-    "program": "Electrical Engineering",
-    "responses": {
-      "hobbies": "Chess, piano, and watching documentaries.",
-      "vibe": "Quiet observer with intense focus.",
-      "books": "History books and technical papers.",
-      "lookingFor": "Someone who likes meaningful discussions.",
-      "hangout": "Libraries or cozy study corners."
-    }
+    "name": {
+      "first": "Anjali",
+      "last": "Singh"
+    },
+    "email": "anjali.singh@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Mathematics",
+    "year": "2B",
+    "career": "machine learning engineer",
+    "friend_traits": [
+      "outgoing",
+      "chill"
+    ],
+    "self_description": "fierce and focused",
+    "goal": "To meet someone who will force me to touch grass.",
+    "fun": [
+      "skating",
+      "gaming"
+    ],
+    "music": {
+      "genre": "classical",
+      "artists": [
+        "Miles Davis",
+        "Joji"
+      ]
+    },
+    "class_behavior": "c",
+    "evil_hobby": "d"
+  },
+  {
+    "name": {
+      "first": "Hassan",
+      "last": "Martinez"
+    },
+    "email": "hassan.martinez@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Mathematics",
+    "year": "4B",
+    "career": "quant researcher",
+    "friend_traits": [
+      "chill",
+      "motivated"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To get out of my bubble and talk to someone new.",
+    "fun": [
+      "gaming",
+      "playing guitar"
+    ],
+    "music": {
+      "genre": "classical",
+      "artists": [
+        "Miles Davis",
+        "Kendrick Lamar"
+      ]
+    },
+    "class_behavior": "d",
+    "evil_hobby": "d"
+  },
+  {
+    "name": {
+      "first": "Grace",
+      "last": "Zhang"
+    },
+    "email": "grace.zhang@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Data Science",
+    "year": "2B",
+    "career": "software developer",
+    "friend_traits": [
+      "curious",
+      "outgoing"
+    ],
+    "self_description": "loyal and reflective",
+    "goal": "To be reminded that smart is not equal to serious.",
+    "fun": [
+      "hiking",
+      "skating"
+    ],
+    "music": {
+      "genre": "rock",
+      "artists": [
+        "Miles Davis",
+        "Mozart"
+      ]
+    },
+    "class_behavior": "a",
+    "evil_hobby": "d"
+  },
+  {
+    "name": {
+      "first": "Jayden",
+      "last": "Patel"
+    },
+    "email": "jayden.patel@uwaterloo.ca",
+    "pronouns": "they/them",
+    "program": "Computer Science",
+    "year": "4A",
+    "career": "AI ethicist",
+    "friend_traits": [
+      "creative",
+      "outgoing"
+    ],
+    "self_description": "a human golden retriever",
+    "goal": "To find someone else who cannott shut up about AI.",
+    "fun": [
+      "hiking",
+      "gaming"
+    ],
+    "music": {
+      "genre": "indie",
+      "artists": [
+        "Phoebe Bridgers",
+        "Joji"
+      ]
+    },
+    "class_behavior": "d",
+    "evil_hobby": "b"
+  },
+  {
+    "name": {
+      "first": "Fatima",
+      "last": "Nguyen"
+    },
+    "email": "fatima.nguyen@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Computer Science",
+    "year": "4B",
+    "career": "machine learning engineer",
+    "friend_traits": [
+      "chill",
+      "motivated"
+    ],
+    "self_description": "a human golden retriever",
+    "goal": "To get to know someone before we end up in the same co-op.",
+    "fun": [
+      "cooking",
+      "playing guitar"
+    ],
+    "music": {
+      "genre": "k-pop",
+      "artists": [
+        "Phoebe Bridgers",
+        "Mozart"
+      ]
+    },
+    "class_behavior": "c",
+    "evil_hobby": "e"
+  },
+  {
+    "name": {
+      "first": "Liam",
+      "last": "Ahmed"
+    },
+    "email": "liam.ahmed@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Data Science",
+    "year": "2A",
+    "career": "software developer",
+    "friend_traits": [
+      "creative",
+      "chill"
+    ],
+    "self_description": "the chaotic one",
+    "goal": "To bond over hating group projects.",
+    "fun": [
+      "gaming",
+      "hiking"
+    ],
+    "music": {
+      "genre": "rock",
+      "artists": [
+        "BTS",
+        "Joji"
+      ]
+    },
+    "class_behavior": "e",
+    "evil_hobby": "c"
+  },
+  {
+    "name": {
+      "first": "Sofia",
+      "last": "Taylor"
+    },
+    "email": "sofia.taylor@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Software Engineering",
+    "year": "2B",
+    "career": "quant researcher",
+    "friend_traits": [
+      "funny",
+      "motivated"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To laugh about bad profs and worse Piazza posts.",
+    "fun": [
+      "bouldering",
+      "skating"
+    ],
+    "music": {
+      "genre": "lofi",
+      "artists": [
+        "Mozart",
+        "Joji"
+      ]
+    },
+    "class_behavior": "c",
+    "evil_hobby": "b"
+  },
+  {
+    "name": {
+      "first": "Nathan",
+      "last": "Lee"
+    },
+    "email": "nathan.lee@uwaterloo.ca",
+    "pronouns": "she/her",
+    "program": "Computer Science",
+    "year": "3B",
+    "career": "AI ethicist",
+    "friend_traits": [
+      "motivated",
+      "chill"
+    ],
+    "self_description": "quiet but wise",
+    "goal": "To make a friend whos not afraid to be themselves.",
+    "fun": [
+      "skating",
+      "watching anime"
+    ],
+    "music": {
+      "genre": "classical",
+      "artists": [
+        "Miles Davis",
+        "Phoebe Bridgers"
+      ]
+    },
+    "class_behavior": "b",
+    "evil_hobby": "a"
   }
 ]

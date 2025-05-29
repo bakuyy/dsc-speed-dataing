@@ -47,16 +47,16 @@ export async function generateEmbeddings(): Promise<
   for (const person of participants) {
     const input = [
       person.career,
-      person.friend_traits.join(", "),
+      person.friend_traits?.join(", "),
       person.self_description,
       person.goal,
-      person.fun.join(", "),
-      person.music.genre,
-      person.music.artists.join(", "),
+      person.fun?.join(", "),
+      person.music?.genre,
+      person.music?.artists?.join(", "),
       classBehaviorMap[person.class_behavior],
       evilHobbyMap[person.evil_hobby]
     ].join("\n");
-
+    
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input

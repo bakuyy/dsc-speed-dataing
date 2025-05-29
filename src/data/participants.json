@@ -134,7 +134,7 @@
       "motivated"
     ],
     "self_description": "quiet but wise",
-    "goal": "To meet another Waterloo student who actually likes statistics.",
+    "goal": "To meet another Waterloo stats student who actually likes statistics.",
     "fun": [
       "watching anime",
       "gaming"
@@ -142,8 +142,8 @@
     "music": {
       "genre": "lofi",
       "artists": [
-        "Joji",
-        "Mozart"
+        "blackpink",
+        "ateez"
       ]
     },
     "class_behavior": "c",
@@ -493,21 +493,21 @@
       "chill",
       "motivated"
     ],
-    "self_description": "a human golden retriever",
-    "goal": "To get to know someone before we end up in the same co-op.",
+    "self_description": "Responsible and funny girl who likes to go shopping.",
+    "goal": "Looking to network to learn about others' co-op experiences.",
     "fun": [
-      "cooking",
-      "playing guitar"
+      "shopping",
+      "crocheting"
     ],
     "music": {
       "genre": "k-pop",
       "artists": [
-        "Phoebe Bridgers",
-        "Mozart"
+        "Aespa",
+        "Blackpink"
       ]
     },
     "class_behavior": "c",
-    "evil_hobby": "e"
+    "evil_hobby": "b"
   },
   {
     "name": {
@@ -524,7 +524,7 @@
       "chill"
     ],
     "self_description": "the chaotic one",
-    "goal": "To bond over hating group projects.",
+    "goal": "To bond over hating geese at Waterloo.",
     "fun": [
       "gaming",
       "hiking"
@@ -586,8 +586,8 @@
     "self_description": "quiet but wise",
     "goal": "To make a friend whos not afraid to be themselves.",
     "fun": [
-      "skating",
-      "watching anime"
+      "billiards",
+      "golf"
     ],
     "music": {
       "genre": "classical",
@@ -598,5 +598,41 @@
     },
     "class_behavior": "b",
     "evil_hobby": "a"
+  },
+  {
+    "name": { "first": "Tom", "last": "Cat" },
+    "email": "tom.cat@uwaterloo.ca",
+    "pronouns": "he/him",
+    "program": "Data Science",
+    "year": "2A",
+    "career": "software engineer",
+    "friend_traits": ["funny", "chill"],
+    "self_description": "I've been told I am a human golden retriever. ",
+    "goal": "Tryna make new buddies.",
+    "fun": ["video games", "watching anime"],
+    "music": {
+      "genre": "rap",
+      "artists": ["The Weeknd", "DaBaby"]
+    },
+    "class_behavior": "d",
+    "evil_hobby": "d"
+  },
+  {
+    "name": { "first": "Jerry", "last": "Mouse" },
+    "email": "jerry.mouse@uwaterloo.ca",
+    "pronouns": "he/him",
+    "program": "Computer Science",
+    "year": "2A",
+    "career": "swe",
+    "friend_traits": ["funny", "unserious"],
+    "self_description": "looking for someone who laughs at dumb jokes",
+    "goal": "Find a fifth person to enter Valorant ranked match with.",
+    "fun": ["gaming", "anime"],
+    "music": {
+      "genre": "rap",
+      "artists": ["Drake", "Future"]
+    },
+    "class_behavior": "d",
+    "evil_hobby": "d"
   }
 ]

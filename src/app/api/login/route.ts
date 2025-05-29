@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import axios from "axios";
 
 export async function POST(req: Request) {
+
   const { email, password, secretKey } = await req.json();
 
   const { data } = await axios.post(

@@ -34,7 +34,7 @@ const Navbar = () => {
 
       <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
         <span className="text-lg md:text-2xl font-bold tracking-wide text-[#374995] italic font-jakarta">
-          Speed-<span className='text-[#5989fc] font-jakarta'>Data</span>ing Social
+          Speed-<span className='text-[#5989fc] font-jakarta'>Friend</span>ing Social
         </span>
       </div>
 

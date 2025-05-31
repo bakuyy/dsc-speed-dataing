@@ -1,1 +1,0 @@
-export const password = '88888888'

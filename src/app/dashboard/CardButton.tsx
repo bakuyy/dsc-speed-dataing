@@ -2,6 +2,7 @@ import React from 'react'
 import { FaRegSmile } from 'react-icons/fa'
 import Image from 'next/image'
 import Heart from "../../../public/images/dashboard/heart.svg"
+import SessionTimer from './SessionTimer'
 
 type CardButtonProps = {
   onClick: () => void
@@ -38,9 +39,9 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
     match: 'View My\nMatches',
   }
 
-  const description: Record<typeof type, string> = {
+  const description: Record<typeof type, React.ReactNode> = {
     start: 'Please wait until the start of the session is announced by execs',
-    running: 'Session running: 00h00s00m', // ADD TIMER LOGIC
+    running: <span className='text-white'><SessionTimer /></span>,
     locked: 'Please wait until the start of the session is announced by execs',
     match: '2 Sessions Has Started', // ADD NUMBER OF SESSION LOGIC
   }

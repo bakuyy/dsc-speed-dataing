@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation'
 import CardButton from './CardButton'
 import StepCard from './StepCard'
+import SessionTimer from './SessionTimer'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -10,7 +11,7 @@ export default function Dashboard() {
   const userName = 'Monica'
 
   type ButtonType = 'start' | 'running' | 'locked'
-  const buttonType: ButtonType = 'start' // ADD LOGIC
+  const buttonType: ButtonType = 'running' // ADD LOGIC
   const buttonRoutes: Record<ButtonType, string> = {
     start: '/survey',
     running: '/running',
@@ -35,16 +36,16 @@ export default function Dashboard() {
         />
       </main>
 
-      <div className="mt-6 relative">
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="w-full py-5 bg-white text-black text-lg rounded-lg shadow hover:shadow-lg transition"
-        >
-          View my matches &lt;3
-        </button>
-        <span className="absolute right-4 top-1 text-xs text-gray-400">
-          Session is running: 00h 00m 00s
-        </span>
+      <div className="relative mt-6">
+        <div className="w-full rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#3F64D8] px-6 py-4 md:py-8 relative">
+          <span className="absolute top-[-1] md:top-3 right-4 text-black">
+            <SessionTimer />
+          </span>
+          
+          <p className="mt-2 text-center text-md sm:text-xl md:text-2xl font-medium text-black">
+            It’s <span className="font-bold">Time</span> To View Your <span className="font-bold">Matches</span>!
+          </p>
+        </div>
       </div>
 
       {/* INFO SECTION */}

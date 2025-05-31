@@ -1,9 +1,10 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import CardButton from './CardButton'
 import StepCard from './StepCard'
 import SessionTimer from './SessionTimer'
-import { useState } from 'react'
+import AboutPage from './About'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -14,14 +15,14 @@ export default function Dashboard() {
   type ButtonType = 'start' | 'running' | 'locked'
   const buttonType: ButtonType = 'running' // ADD LOGIC
   const buttonRoutes: Record<ButtonType, string> = {
-    start: '/survey',
-    running: '/running',
-    locked: '/locked',
+    start: '/survey', // FIX PATH HERE
+    running: '/survey',
+    locked: '/',
   }
   const [isTime, setIsTime] = useState(true)
 
   return (
-    <div className="w-screen h-screen p-6 lg:p-12 bg-white rounded-4xl">
+    <div className="w-screen p-6 lg:p-12 bg-white rounded-4xl">
       <header>
         <h1 className="text-xl lg:text-6xl mt-1 text-[#374995] lg:pb-3">Good evening, <span className="font-bold">{userName}</span>!</h1>
         <p className="text-xs lg:text-xl text-[#374995]">Welcome to our termly Speed Friending event!</p>
@@ -34,7 +35,7 @@ export default function Dashboard() {
         />
         <CardButton
           type="match"
-          onClick={() => router.push('/matches')}
+          onClick={() => router.push('/matches')} // FIX PATH HERE
         />
       </main>
 
@@ -51,14 +52,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* INFO SECTION */}
-      <section className="mt-20">
-        <h2 className="text-6xl text-center text-black mb-20">What is Speed Friending?</h2>
-        {/* graphic holder */}
-        <div className="mt-4 bg-gray-300 h-200 rounded-lg shadow flex items-center justify-center">
-          <span className="text-gray-400">[Graphic explaining what it is]</span>
-        </div>
-      </section>
+      <AboutPage />
 
       {/* INSTRUCTION SECTION */}
       <section className="mt-20">

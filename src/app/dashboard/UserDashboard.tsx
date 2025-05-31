@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import CardButton from './CardButton'
 import StepCard from './StepCard'
 import SessionTimer from './SessionTimer'
+import { useState } from 'react'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function Dashboard() {
     running: '/running',
     locked: '/locked',
   }
+  const [isTime, setIsTime] = useState(true)
 
   return (
     <div className="w-screen h-screen p-6 lg:p-12 bg-white rounded-4xl">
@@ -39,11 +41,12 @@ export default function Dashboard() {
       <div className="relative mt-6">
         <div className="w-full rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#3F64D8] px-6 py-4 md:py-8 relative">
           <span className="absolute top-[-1] md:top-3 right-4 text-black">
-            <SessionTimer />
+            <SessionTimer onTimeChange={(timeReady) => setIsTime(timeReady)} />
           </span>
           
           <p className="mt-2 text-center text-md sm:text-xl md:text-2xl font-medium text-black">
-            It’s <span className="font-bold">Time</span> To View Your <span className="font-bold">Matches</span>!
+            It’s <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
+            <span className="font-bold">Matches</span>!
           </p>
         </div>
       </div>

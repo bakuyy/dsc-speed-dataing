@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Logo from "../../../public/images/logo.png"
 import Image from "next/image"
+import About from './About'
+import InstructionPage from './Instruction'
 
 export default function DashPage() {
   return (
@@ -11,6 +13,8 @@ export default function DashPage() {
       <Navbar />
       <Image src={Logo} alt="Logo" className="w-3/5 lg:w-2/5 h-auto mx-auto py-8"/>
       <Dashboard />
+      <About />
+      <InstructionPage />
       <Footer />
     </div>
   )

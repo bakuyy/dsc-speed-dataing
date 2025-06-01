@@ -9,11 +9,11 @@ import whaleCup from '../../../public/images/dashboard/whaleCup.svg'
 import whaleLightBulb from '../../../public/images/dashboard/whaleLightBulb.svg'
 import fancytext from '../../../public/images/dashboard/fancytext.svg'
 
-export default function AboutPage() {
+export default function About() {
   const router = useRouter()
 
   return (
-    <section className="mt-15 md:mt-30 mb-20 md:mb-50 relative bg-blue flex flex-col items-center">
+    <section className="pt-15 md:pt-30 pb-20 md:pb-50 relative bg-white flex flex-col items-center">
       <div className="relative w-full max-w-6xl aspect-[382/182] rounded-[50px] mx-auto">
         {/* WhaleLightBulb behind content */}
         <Image

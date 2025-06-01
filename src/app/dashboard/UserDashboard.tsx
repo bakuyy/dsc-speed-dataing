@@ -2,9 +2,9 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import CardButton from './CardButton'
-import StepCard from './StepCard'
 import SessionTimer from './SessionTimer'
-import AboutPage from './About'
+
+
 
 export default function Dashboard() {
   const router = useRouter()
@@ -22,7 +22,7 @@ export default function Dashboard() {
   const [isTime, setIsTime] = useState(true)
 
   return (
-    <div className="w-screen p-6 lg:p-12 bg-white rounded-4xl">
+    <div className="w-screen p-6 lg:p-12 bg-white rounded-t-4xl">
       <header>
         <h1 className="text-xl lg:text-6xl mt-1 text-[#374995] lg:pb-3">Good evening, <span className="font-bold">{userName}</span>!</h1>
         <p className="text-xs lg:text-xl text-[#374995]">Welcome to our termly Speed Friending event!</p>
@@ -51,23 +51,6 @@ export default function Dashboard() {
           </p>
         </div>
       </div>
-
-      <AboutPage />
-
-      {/* INSTRUCTION SECTION */}
-      <section className="mt-20">
-        <h2 className="text-6xl text-center text-black mb-17">How it works?</h2>
-        <div className="mt-6 grid grid-cols-2 gap-4">
-          <StepCard step="1" title="Submit the survey" description="Subtext to explain in further detail Subtext to explain in further detail 
-                                                                    Subtext to explain in further detail Subtext to explain in further detail"/>
-          <StepCard step="2" title="Algorithm running" description="Subtext to explain in further detail Subtext to explain in further detail 
-                                                                    Subtext to explain in further detail Subtext to explain in further detail"/>
-          <StepCard step="3" title="Find your matches" description="Subtext to explain in further detail Subtext to explain in further detail 
-                                                                    Subtext to explain in further detail Subtext to explain in further detail"/>
-          <StepCard step="4" title="Engage in activity for 10 mins" description="Subtext to explain in further detail Subtext to explain in further detail 
-                                                                    Subtext to explain in further detail Subtext to explain in further detail"/>
-        </div>
-      </section>
     </div>
   )
 }

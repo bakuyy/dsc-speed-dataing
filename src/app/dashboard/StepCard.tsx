@@ -24,7 +24,7 @@ export default function StepCard({
     >
       <div className="text-md sm:text-xl md:text-3xl text-[#1F2A44] mb-2">{step}</div>
       {icon ? (
-        <div className="absolute top-[-20] right-[-30] w-25 h-25 md:w-20 md:h-20 pointer-events-none">
+        <div className="absolute top-[-20] lg:top-[-35] right-[-30] w-25 h-25 lg:w-35 lg:h-35 pointer-events-none">
           <Image src={icon} alt="" fill style={{ objectFit: 'contain' }} />
         </div>
       ) : null}

@@ -21,7 +21,10 @@ export default function InstructionPage() {
   }, [])
 
   return (
-    <section className="w-full bg-[#E6EFFD] flex flex-col items-center pb-30"> {/*FIXXX*/}
+  <section>
+    {/*mobile view*/}
+    {showBg ? (
+    <div className="w-full bg-[#E6EFFD] flex flex-col items-center pb-30 sm:pb-40 md:pb-45"> {/*FIXXX*/}
       <div className="relative w-[90%] max-w-6xl aspect-[2/3] rounded-[50px] mx-auto">
         <Image
           src={fancyText}
@@ -29,9 +32,6 @@ export default function InstructionPage() {
           className="h-15 sm:h-19 md:h-24 lg:h-30 w-auto mx-auto mt-2 md:mt-5 mb-4 md:mb-6"
           priority
         />
-
-        {/* Card with background and steps */}
-        
         <div
           className="relative w-full h-full rounded-[20px]"
           style={{
@@ -95,6 +95,63 @@ export default function InstructionPage() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
+    ) : ( 
+    <div className="w-full bg-[#E6EFFD] flex flex-col items-center"> {/*desktop view*/}
+      <Image
+        src={fancyText}
+        alt="How to participate?"
+        className="h-15 sm:h-19 md:h-24 lg:h-30 w-auto mx-auto mt-2 md:mt-5 mb-4 md:mb-6"
+        priority
+      />
+      <div className="relative z-30 w-full h-full flex items-center justify-center py-10">
+        <div className="grid grid-cols-2 gap-6 w-[90%] -mt-6 -mb-6">
+          <StepCard
+            step="Step 1:"
+            description={
+              <>
+              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
+                event or something psum that this is a good event or something psum that this is a good event or something
+              </>
+            }
+            opacity={0.8}
+            icon={whale2}
+          />
+          <StepCard
+            step="Step 2:"
+            description={
+              <>
+              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
+              event or something psum that this is a good event or something psum that this is a good event or something
+              </>
+            }
+            opacity={0.4}
+          />            
+          <StepCard
+            step="Step 3:"
+            description={
+              <>
+              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
+              event or something psum that this is a good event or something psum that this is a good event or something
+              </>
+            }
+            opacity={0.4}
+          />
+          <StepCard
+            step="Step 4:"
+            description={
+              <>
+              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
+              event or something psum that this is a good event or something psum that this is a good event or something
+              </>
+            }
+            opacity={0.8}
+            icon={whale1}
+          />
+        </div>
+      </div>
+    </div>
+    )}
+  </section>
   )
 }

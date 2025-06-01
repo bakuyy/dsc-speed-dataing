@@ -14,7 +14,7 @@ export default function About() {
 
   return (
     <section className="pt-15 md:pt-30 pb-20 md:pb-50 relative bg-white flex flex-col items-center">
-      <div className="relative w-[90%] max-w-6xl aspect-[382/182] rounded-[50px] mx-auto">
+      <div className="relative w-[90%] max-w-5xl aspect-[382/182] rounded-[50px] mx-auto">
         {/* WhaleLightBulb behind content */}
         <Image
           src={whaleLightBulb}

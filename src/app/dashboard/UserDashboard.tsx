@@ -4,8 +4,6 @@ import { useState } from 'react'
 import CardButton from './CardButton'
 import SessionTimer from './SessionTimer'
 
-
-
 export default function Dashboard() {
   const router = useRouter()
 

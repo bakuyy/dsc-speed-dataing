@@ -1,17 +1,36 @@
 import React from 'react'
+import Image, { StaticImageData } from 'next/image'
 
 type StepCardProps = {
   step: string
-  title: string
-  description: string
+  description: React.ReactNode
+  opacity?: number 
+  icon?: StaticImageData 
 }
 
-export default function StepCard({ step, title, description }: StepCardProps) {
+export default function StepCard({
+  step,
+  description,
+  opacity = 0.9,
+  icon,
+}: StepCardProps) {
   return (
-    <div className="bg-gray-300 p-6 h-120 rounded-lg shadow relative flex flex-col items-center justify-center">
-      <div className="absolute top-6 left-6 text-sm font-bold text-gray-500">{step}</div>
-      <h3 className="mt-2 font-semibold text-lg text-gray-800 text-center">{title}</h3>
-      <p className="absolute bottom-5 left-6 text-xs text-gray-500">{description}</p>
+    <div
+      className="relative rounded-[20px] shadow-md p-6 min-h-[220px] flex flex-col"
+      style={{
+        background: `rgba(255,255,255,${opacity})`,
+        backdropFilter: 'blur(2px)',
+      }}
+    >
+      <div className="text-md sm:text-xl md:text-3xl text-[#1F2A44] mb-2">{step}</div>
+      {icon ? (
+        <div className="absolute top-[-20] right-[-30] w-25 h-25 md:w-20 md:h-20 pointer-events-none">
+          <Image src={icon} alt="" fill style={{ objectFit: 'contain' }} />
+        </div>
+      ) : null}
+      <div className="mt-2 text-[0.6rem] sm:text-[1.2rem] md:text-xl text-[#1F2A44] leading-relaxed">
+        {description}
+      </div>
     </div>
   )
 }

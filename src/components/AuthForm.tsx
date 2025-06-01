@@ -34,7 +34,7 @@ export default function AuthForm() {
           role: data.role,
         })
       );
-      router.push('/home');
+      router.push('/dashboard');
     } catch (e: any) {
       console.error(`[Login Failed] Email: ${email}, Error: ${e.message}`);
       setError("Invalid email or password");

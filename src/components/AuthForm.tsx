@@ -82,7 +82,7 @@ export default function AuthForm() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          className="rounded p-1 text-[#374995] transition-all duration-300 ease-in-out flex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
+          className="rounded z-50 p-1 text-[#374995] transition-all duration-300 ease-in-out flex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
         >
           continue 
           <FaArrowRightLong/>

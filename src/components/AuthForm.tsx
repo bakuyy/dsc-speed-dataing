@@ -6,7 +6,7 @@ import { login } from "@/store/loginTokenSlice";
 import { sendSignInInfo } from "@/utils/apiCalls";
 import { useRouter } from "next/navigation";
 import { FaArrowRightLong } from "react-icons/fa6";
-import Logo from "../../public/images/logo.png"
+import Logo from "../../public/images/logo.png";
 import Image from "next/image";
 
 export default function AuthForm() {
@@ -34,7 +34,7 @@ export default function AuthForm() {
           role: data.role,
         })
       );
-      router.push('/home');
+      router.push('/dashboard');
     } catch (e: any) {
       console.error(`[Login Failed] Email: ${email}, Error: ${e.message}`);
       setError("Invalid email or password");

@@ -6,7 +6,7 @@ import { login } from "@/store/loginTokenSlice";
 import { sendSignInInfo } from "@/utils/apiCalls";
 import { useRouter } from "next/navigation";
 import { FaArrowRightLong } from "react-icons/fa6";
-import Logo from "../../public/images/logo.png"
+import Logo from "../../public/images/logo.png";
 import Image from "next/image";
 
 export default function AuthForm() {
@@ -34,7 +34,7 @@ export default function AuthForm() {
           role: data.role,
         })
       );
-      router.push('/home');
+      router.push('/dashboard');
     } catch (e: any) {
       console.error(`[Login Failed] Email: ${email}, Error: ${e.message}`);
       setError("Invalid email or password");
@@ -82,7 +82,7 @@ export default function AuthForm() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          className="rounded p-1 text-[#374995] transition-all duration-300 ease-in-out flex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
+          className="z-50 rounded p-1 text-[#374995] transition-all duration-300 ease-in-out flex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
         >
           continue 
           <FaArrowRightLong/>

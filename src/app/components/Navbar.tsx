@@ -16,7 +16,7 @@ const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleClick = () => {
-    router.push("/");
+    router.push("/dashboard");
   }
 
   const handleSignOut = () => {
@@ -38,7 +38,7 @@ const Navbar = () => {
         </span>
       </div>
 
-      <div className="hidden md:flex items-center gap-6">
+      <div className="hidden md:flex items-center gap-6 sticky">
         <a href="/dashboard" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</a>
         <a href="#info" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
         <button onClick={handleSignOut} className="rounded-xl cursor-pointer font-semibold px-4 py-2 hover:bg-[#e1eaf8] transition text-white bg-blue-500">Log Out</button>
@@ -51,7 +51,7 @@ const Navbar = () => {
         aria-label="Open menu"
       >
         {
-            menuOpen ? <FaRegSmileWink/> : <FaRegSmile/>
+            menuOpen ? <FaRegSmileWink className='text-blue-700'/> : <FaRegSmile  className='text-blue-700'/>
         }
       </button>
 

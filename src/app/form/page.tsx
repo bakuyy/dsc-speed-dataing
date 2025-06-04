@@ -190,11 +190,6 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Footer Text */}
-          <p className="text-center text-[#374995] mt-4">
-            populate the form according to the finalized questions
-          </p>
-
           {/* Submit Button */}
           <button
             type="submit"
@@ -202,8 +197,7 @@ const Page = () => {
           >
             Submit Survey
           </button>
-
-          {/* Footer */}
+          
           <footer className="text-center text-[#374995] text-sm mt-10">
             Speed Friending, an UWDSC event <br />
             © Copyright 2025

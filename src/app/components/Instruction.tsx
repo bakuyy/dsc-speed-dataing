@@ -5,7 +5,7 @@ import instructionBackground from '../../../public/images/dashboard/InstructionB
 import whale1 from '../../../public/images/dashboard/whaleLightBulb.svg'
 import whale2 from '../../../public/images/dashboard/whaleCup.svg'
 import fancyText from '../../../public/images/dashboard/fancytext1.svg'
-import StepCard from './StepCard'
+import StepCard from '../dashboard/StepCard'
 
 export default function InstructionPage() {
   const [showBg, setShowBg] = useState(true)

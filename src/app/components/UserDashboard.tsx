@@ -13,8 +13,8 @@ export default function Dashboard() {
   type ButtonType = 'start' | 'running' | 'locked'
   const buttonType: ButtonType = 'running' // ADD LOGIC
   const buttonRoutes: Record<ButtonType, string> = {
-    start: '/survey', // FIX PATH HERE
-    running: '/survey',
+    start: '/form', // FIX PATH HERE
+    running: '/form',
     locked: '/',
   }
   const [isTime, setIsTime] = useState(true)

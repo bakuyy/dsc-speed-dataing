@@ -3,10 +3,7 @@ import fs from "fs";
 import path from "path";
 
 interface Participant {
-  name: {
-    first: string;
-    last: string;
-  };
+  name: string;
   email: string;
 }
 
@@ -18,7 +15,7 @@ async function test() {
 
   const nameFromEmail = (email: string): string => {
     const p = participants.find(p => p.email === email);
-    return p ? `${p.name.first} ${p.name.last}` : "Unknown";
+    return p ? `${p.name}` : "Unknown";
   };
 
   for (const { pair, score } of matches) {

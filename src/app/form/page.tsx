@@ -10,6 +10,8 @@ const Page = () => {
     <div className="bg-[#e1eaf8] min-h-screen w-screen">
       <Navbar />
       {/* Back to Top Button */}
+      {/* test */}
+
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-[#374995] text-white shadow-md hover:bg-[#2c3d85] transition"

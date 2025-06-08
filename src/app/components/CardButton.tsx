@@ -36,7 +36,7 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
     start: 'Start\nSurvey',
     running: 'Session is\nrunning',
     locked: 'Session\nis locked',
-    match: 'View My\nMatches',
+    match: 'View My\n Previous Matches',
   }
 
   const description: Record<typeof type, React.ReactNode> = {

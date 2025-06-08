@@ -82,27 +82,33 @@ export default function Dashboard() {
         <p className="text-xs lg:text-xl text-[#374995]">Thanks for joining :P</p>
       </header>
 
-      <main className="mt-4 lg:mt-8 grid grid-cols-2 gap-4 lg:gap-10">
-        <CardButton
-          type={buttonType}
-          onClick={() => router.push(buttonRoutes[buttonType])}
-        />
-        <CardButton
-          type="match"
-          onClick={() => router.push('/matches')}
-        />
+      <main className="mt-4 lg:mt-8 grid grid-cols-2 gap-4 lg:gap-8 max-w-4xl mx-auto">
+        <div className="flex justify-center">
+          <CardButton
+            type={buttonType}
+            onClick={() => router.push(buttonRoutes[buttonType])}
+          />
+        </div>
+        <div className="flex justify-center">
+          <CardButton
+            type="match"
+            onClick={() => router.push('/matches')}
+          />
+        </div>
       </main>
 
-      <div className="relative mt-6">
-        <div className="w-full rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
+      <div className="mt-6 max-w-4xl mx-auto">
+        <div className="mx-4 rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
           <span className="absolute top-1 md:top-3 right-4 text-xs text-black">
             <SessionTimer onTimeChange={(timeReady) => setIsTime(timeReady)} />
           </span>
           
-          <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
-            It's <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
-            <span className="font-bold">Matches</span>!
-          </p>
+          <div className="flex justify-center items-center">
+            <p className="mt-2 text-center text-sm px-4 sm:text-xl md:text-2xl font-medium text-black">
+              It's <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
+              <span className="font-bold">Matches</span>!
+            </p>
+          </div>
         </div>
       </div>
     </div>

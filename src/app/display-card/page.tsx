@@ -1,6 +1,6 @@
 'use client';
 
-import MatchDisplay from '@/app/components/MatchDisplay';
+import MatchDisplay from '@/app/display-card/MatchDisplay';
 
 const DisplayPage = () => {
   return (

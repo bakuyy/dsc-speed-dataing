@@ -2,11 +2,10 @@ import React from 'react'
 import { FaRegSmile } from 'react-icons/fa'
 import Image from 'next/image'
 import Heart from "../../../public/images/dashboard/heart.svg"
-import SessionTimer from './SessionTimer'
 
 type CardButtonProps = {
   onClick: () => void
-  type: 'start' | 'running' | 'locked' | 'match'
+  type: 'start' | 'running' | 'locked' | 'match' 
   active?: boolean
 }
 
@@ -34,16 +33,16 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
 
   const labels: Record<typeof type, string> = {
     start: 'Start\nSurvey',
-    running: 'Session is\nrunning',
+    running: 'Fill out\n the survey',
     locked: 'Session\nis locked',
-    match: 'View My\nMatches',
+    match: 'View My\n Match',
   }
 
   const description: Record<typeof type, React.ReactNode> = {
     start: 'Please wait until the start of the session is announced by execs',
-    running: <span className='text-white'><SessionTimer /></span>,
+    running: "",
     locked: 'Please wait until the start of the session is announced by execs',
-    match: '2 Sessions Has Started', // ADD NUMBER OF SESSION LOGIC
+    match: '', // ADD NUMBER OF SESSION LOGIC
   }
 
 

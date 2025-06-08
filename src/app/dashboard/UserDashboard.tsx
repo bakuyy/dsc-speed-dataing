@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store/store'
 import { login } from '@/store/loginTokenSlice'
 import CardButton from '../components/CardButton'
-import SessionTimer from '../components/SessionTimer'
 import axios from 'axios'
 
 
@@ -15,8 +14,8 @@ export default function Dashboard() {
   const fullName = useSelector((state: RootState) => state.auth.name)
   const [userName, setUserName] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isViewMatch, setIsViewMatch] = useState(false)
 
-  // Force refresh user data on mount
   useEffect(() => {
     const refreshUserData = async () => {
       try {
@@ -76,34 +75,52 @@ export default function Dashboard() {
   return (
     <div className="mx-4 p-6 lg:p-12 bg-white rounded-t-4xl">
       <header>
-        <h1 className="text-xl lg:text-6xl mt-1 text-[#374995] lg:pb-3">
-          Welcome to the event, <span className="font-bold">{userName}</span>!
+        <h1 className="text-xl text-center font-semibold py-5 lg:text-6xl mt-1 text-[#374995] lg:pb-3">
+          Welcome to the event, <span className="font-bold animate-pulse">{userName}</span>!
         </h1>
-        <p className="text-xs lg:text-xl text-[#374995]">Thanks for joining :P</p>
       </header>
 
-      <main className="mt-4 lg:mt-8 grid grid-cols-2 gap-4 lg:gap-10">
-        <CardButton
-          type={buttonType}
-          onClick={() => router.push(buttonRoutes[buttonType])}
-        />
-        <CardButton
-          type="match"
-          onClick={() => router.push('/matches')}
-        />
+      <main className="mt-4 lg:mt-8 grid grid-cols-2 gap-4 lg:gap-8 max-w-4xl mx-auto">
+        <div className="flex justify-center">
+          <CardButton
+            type={buttonType}
+            onClick={() => router.push(buttonRoutes[buttonType])}
+          />
+        </div>
+        <div className="flex justify-center">
+          <CardButton
+            type="match"
+            onClick={() => router.push('/matches')}
+          />
+        </div>
       </main>
 
-      <div className="relative mt-6">
-        <div className="w-full rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
-          <span className="absolute top-1 md:top-3 right-4 text-xs text-black">
-            <SessionTimer onTimeChange={(timeReady) => setIsTime(timeReady)} />
-          </span>
+      <div className="mt-6 max-w-4xl mx-auto">
+        <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
+
           
-          <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
-            It's <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
-            <span className="font-bold">Matches</span>!
-          </p>
+          <div className="flex justify-center items-center">
+            <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
+              {isViewMatch? 
+             <div> matching in session!</div>
+              :
+              <div className='font-plus-jakarta-sans italic font-bold'> please wait to view your match...</div>
+}
+              
+            </p>
+
+            
+          </div>
+          
         </div>
+        <button 
+              onClick={() => router.push('/history')}
+              className="w-full my-8  h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow bg-[#A6C3EA] text-white hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300 flex items-center justify-center"
+            >
+              <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold">
+                View Previous Matches
+              </span>
+            </button>
       </div>
     </div>
   )

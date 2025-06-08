@@ -17,7 +17,7 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
     md:max-w-[400px]
     lg:max-w-[42rem]
     h-55 sm:h-80 md:h-[20rem] lg:h-[33rem]
-    rounded-2xl shadow hover:shadow-xl
+    rounded-2xl shadow 
     transition relative overflow-hidden
     flex items-start text-left 
     px-5 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-10
@@ -50,7 +50,7 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
   return (
     <button
       onClick={onClick}
-      className={`${baseClasses} ${variants[type]}`}
+      className={`${baseClasses} ${variants[type]} hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300`}
     >
     
     <div className="flex flex-col justify-between items-start h-full z-10">

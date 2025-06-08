@@ -1,9 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import CardButton from '../components/CardButton'
-import SessionTimer from '../components/SessionTimer'
-
+import CardButton from './CardButton'
+import SessionTimer from './SessionTimer'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -41,11 +40,11 @@ export default function Dashboard() {
       <div className="relative mt-6">
         <div className="w-full rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
           <span className="absolute top-1 md:top-3 right-4 text-xs text-black">
-            <SessionTimer onTimeChange={(timeReady: boolean) => setIsTime(timeReady)} />
+            <SessionTimer onTimeChange={(timeReady) => setIsTime(timeReady)} />
           </span>
           
           <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
-            It's <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
+            It’s <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
             <span className="font-bold">Matches</span>!
           </p>
         </div>

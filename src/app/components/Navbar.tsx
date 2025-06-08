@@ -27,7 +27,7 @@ const Navbar = () => {
 
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-6 bg-white shadow-sm relative z-20 rounded-b-2xl font-jakarta">
+    <nav className="sticky top-0 w-full flex items-center justify-between px-6 py-6 bg-white shadow-sm relative z-20 rounded-b-2xl font-jakarta">
       <div className="flex items-center">
         <Image src={Logo} onClick={handleClick} alt="Logo" className="w-8 h-8 md:w-12 md:h-12 cursor-pointer" />
       </div>

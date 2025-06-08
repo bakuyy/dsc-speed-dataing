@@ -1,9 +1,7 @@
 import "dotenv/config";
-import { readFileSync } from "fs";
-import path from "path";
 import OpenAI from "openai";
 import dotenv from "dotenv";
-import { classSeatMap, evilHobbyMap, mostLikelyToMap, caughtWatchingMap } from "./multipleChoiceMap";
+import { classSeatMap, evilHobbyMap, mostLikelyToMap, caughtWatchingMap } from "./multipleChoiceMap.js";
 
 dotenv.config();
 
@@ -34,16 +32,14 @@ interface Participant {
   evil_hobby: "a" | "b" | "c" | "d" | "e";
   most_likely_to: "a" | "b" | "c" | "d" | "e";
   caught_watching: "a" | "b" | "c" | "d" | "e";
+  // Not a question, but used for embeddings. This is the output of the OpenAI embeddings API.
+  vector_embedding?: number[];
 }
 
-export async function generateEmbeddings(): Promise<
-  { participant: Participant; embedding: number[] }[]
-> {
-  const filePath = path.join(process.cwd(), "src", "data", "participants.json");
-  const fileContents = readFileSync(filePath, "utf-8");
-  const participants: Participant[] = JSON.parse(fileContents);
-
-  const results = [];
+export async function generateEmbeddings(
+  participants: Participant[]
+): Promise<Participant[]> {
+  const results: Participant[] = [];
 
   for (const person of participants) {
     const input = [
@@ -64,14 +60,14 @@ export async function generateEmbeddings(): Promise<
       mostLikelyToMap[person.most_likely_to],
       caughtWatchingMap[person.caught_watching]
     ].join("\n");
-    
+
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input
     });
 
     const embedding = embeddingResponse.data[0].embedding;
-    results.push({ participant: person, embedding });
+    results.push({ ...person, vector_embedding: embedding });
   }
 
   return results;

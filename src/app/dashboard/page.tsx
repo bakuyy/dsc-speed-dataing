@@ -1,10 +1,9 @@
 import React from 'react'
-import Dashboard from '../components/UserDashboard'
+import Dashboard from './UserDashboard'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Logo from "../../../public/images/logo.png"
 import Image from "next/image"
-import About from '../components/About'
 
 export default function DashPage() {
   return (

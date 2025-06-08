@@ -1,5 +1,5 @@
 "use client";
-import AuthForm from "@/components/AuthForm";
+import AuthForm from "@/app/components/AuthForm";
 import Image from "next/image";
 import Footer from "../../public/images/login/footer.png"
 import Header from "../../public/images/login/header.png"

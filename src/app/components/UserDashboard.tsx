@@ -33,7 +33,7 @@ export default function Dashboard() {
         />
         <CardButton
           type="match"
-          onClick={() => router.push('/matches')} // FIX PATH HERE
+          onClick={() => router.push('/matches')}
         />
       </main>
 

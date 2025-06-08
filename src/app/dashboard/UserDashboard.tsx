@@ -96,23 +96,31 @@ export default function Dashboard() {
       </main>
 
       <div className="mt-6 max-w-4xl mx-auto">
-        <div className="mx-4 rounded-[1.5rem] bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
-          <span className="absolute top-1 md:top-3 right-4 text-xs text-black">
-          </span>
+        <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
+
           
           <div className="flex justify-center items-center">
-            <p className="mt-2 text-center text-sm px-4 sm:text-xl md:text-2xl font-medium text-black">
+            <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
               {isViewMatch? 
-             <p>It's <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
-              <span className="font-bold">Matches</span>!</p> 
+             <div> matching in session!</div>
               :
-              <p>It's <span className="font-bold">{isTime ? 'Time' : 'Almost Time'}</span> To View Your{' '}
-              <span className="font-bold">Matches</span>!</p> 
-            }
+              <div className='font-plus-jakarta-sans italic font-bold'> please wait to view your match...</div>
+}
               
             </p>
+
+            
           </div>
+          
         </div>
+        <button 
+              onClick={() => router.push('/history')}
+              className="w-full my-8  h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow bg-[#A6C3EA] text-white hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300 flex items-center justify-center"
+            >
+              <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold">
+                View Previous Matches
+              </span>
+            </button>
       </div>
     </div>
   )

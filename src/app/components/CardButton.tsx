@@ -5,7 +5,7 @@ import Heart from "../../../public/images/dashboard/heart.svg"
 
 type CardButtonProps = {
   onClick: () => void
-  type: 'start' | 'running' | 'locked' | 'match'
+  type: 'start' | 'running' | 'locked' | 'match' 
   active?: boolean
 }
 
@@ -33,9 +33,9 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
 
   const labels: Record<typeof type, string> = {
     start: 'Start\nSurvey',
-    running: 'Session is\nrunning',
+    running: 'Fill out\n the survey',
     locked: 'Session\nis locked',
-    match: 'View My\n Previous Matches',
+    match: 'View My\n Match',
   }
 
   const description: Record<typeof type, React.ReactNode> = {

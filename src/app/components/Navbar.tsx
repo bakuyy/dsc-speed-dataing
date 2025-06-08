@@ -71,6 +71,7 @@ const Navbar = () => {
         </button>
         <a href="/" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>Dashboard</a>
         <a href="/about" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>How it works</a>
+        <a href="/form" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>Form</a>
         <button onClick={handleSignOut} className="rounded-xl p-2 text-[#374995] hover:bg-[#374995] hover:text-white transition font-jakarta">Log Out</button>
 
       </div>

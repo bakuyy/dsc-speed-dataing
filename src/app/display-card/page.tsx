@@ -6,7 +6,7 @@ export default function MatchPage() {
   return (
     <main className="min-h-screen bg-[#A6C3EA]">
       <Navbar />
-      <DisplayCard />
+      <DisplayCard currentId={currentId}/> 
       <Footer />
     </main>
   )

@@ -5,25 +5,6 @@ const emojiRanges = {
   animal: { start: 0x1f400, range: 52 },  // Animals
 };
 
-// Helper to get a random integer in [0, range)
-function getRandomInt(range: number): number {
-  return Math.floor(Math.random() * range);
-}
-
-// Generate a random emoji of a given type/category
-export function generateRandomEmoji(type: 'face' | 'symbol' | 'animal'): string {
-  const { start, range } = emojiRanges[type] || emojiRanges.face;
-  const codePoint = start + getRandomInt(range);
-  return String.fromCodePoint(codePoint);
-}
-
-// Optionally, pick a random category
-export function generateRandomEmojiAny(): string {
-  const types = Object.keys(emojiRanges) as Array<'face' | 'symbol' | 'animal'>;
-  const type = types[getRandomInt(types.length)];
-  return generateRandomEmoji(type);
-}
-
 // Deterministically generate a unique emoji for a match based on its id and names
 export function generateEmojiForMatch(id: string, name1: string, name2: string): string {
   // Combine id and names to create a hash

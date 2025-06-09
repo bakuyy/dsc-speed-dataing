@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-//import { supabase } from '@/lib/supabase';
+// import { supabase } from '../../lib/supabase';
 
 type Match = {
   id: string;
@@ -19,90 +19,78 @@ type Match = {
   reach: string;
 };
 
-export default function DisplayCard() {
+interface DisplayCardProps {
+  currentId: string;
+}
+
+export default function DisplayCard({ currentId }: DisplayCardProps) {
   const [match, setMatch] = useState<Match | null>(null);
   const [loading, setLoading] = useState(true);
   const [showMatch, setShowMatch] = useState(false);
 
   useEffect(() => {
-    // const fetchMatch = async () => {
-    //   // Get current user
-    //   const { data: { user } } = await supabase.auth.getUser();
-    //   if (!user) {
-    //     setLoading(false);
-    //     return;
-    //   }
+    // Dummy data for UI testing
+    const dummyMatch: Match = {
+      id: "1",
+      name1: "Alice",
+      year1: "2",
+      program1: "Computer Science",
+      pronouns1: "she/her",
+      socials1: "alice@email.com",
+      name2: "Bob",
+      year2: "3",
+      program2: "Mathematics",
+      pronouns2: "he/him",
+      socials2: "bob@email.com",
+      emoji: "🌟",
+      reach: "Met at the hackathon!",
+    };
+    setMatch(dummyMatch);
+    setLoading(false);
 
-    //   // Find the match where the user is either person 1 or 2
+    // --- Actual fetch logic ---
+    // const fetchMatch = async () => {
     //   const { data, error } = await supabase
     //     .from('matches')
     //     .select('*')
-    //     .or(`socials1.eq.${user.email},socials2.eq.${user.email}`)
+    //     .or(
+    //       `socials1.eq.${currentId},socials2.eq.${currentId},name1.eq.${currentId},name2.eq.${currentId}`
+    //     )
     //     .single();
-
-    //   if (error) {
+    //   if (error || !data) {
     //     setLoading(false);
+    //     setMatch(null);
     //     return;
     //   }
-
     //   setMatch(data as Match);
     //   setLoading(false);
     // };
-
     // fetchMatch();
+  }, [currentId]);
 
-      const fakeMatch: Match = {
-        id: "1",
-        name1: "Alice",
-        year1: "2",
-        program1: "Computer Science",
-        pronouns1: "she/her",
-        socials1: "alice@email.com",
-        name2: "Bob",
-        year2: "3",
-        program2: "Mathematics",
-        pronouns2: "he/him",
-        socials2: "bob@email.com",
-        emoji: "🌟",
-        reach: "Met at the hackathon!",
+  if (loading) return <div className='min-h-screen'>Loading...</div>;
+  if (!match) return <div className='min-h-screen'>No match found.</div>;
+
+  // Determine which person is the user
+  const isPerson1 =
+    match.socials1 === currentId ||
+    match.name1 === currentId;
+  const matchInfo = isPerson1
+    ? {
+        name: match.name2,
+        year: match.year2,
+        program: match.program2,
+        pronouns: match.pronouns2,
+        socials: match.socials2,
+      }
+    : {
+        name: match.name1,
+        year: match.year1,
+        program: match.program1,
+        pronouns: match.pronouns1,
+        socials: match.socials1,
       };
-      setMatch(fakeMatch);
-      setLoading(false);
-  }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (!match) return <div>No match found.</div>;
-
-  // // Determine which person is the user
-  // const userEmail = supabase.auth.getUser().then(res => res.data.user?.email);
-  // const isPerson1 = match.socials1 === userEmail;
-
-  // const userInfo = isPerson1
-  //   ? {
-  //       name: match.name1,
-  //       year: match.year1,
-  //       program: match.program1,
-  //       pronouns: match.pronouns1,
-  //       socials: match.socials1,
-  //     }
-  //   : {
-  //       name: match.name2,
-  //       year: match.year2,
-  //       program: match.program2,
-  //       pronouns: match.pronouns2,
-  //       socials: match.socials2,
-  //     };
-
-  // return (
-  //   <div style={{ border: '1px solid #ccc', padding: 24, borderRadius: 8, maxWidth: 400 }}>
-  //     <h2>{userInfo.name}</h2>
-  //     <p><strong>Year:</strong> {userInfo.year}</p>
-  //     <p><strong>Program:</strong> {userInfo.program}</p>
-  //     <p><strong>Pronouns:</strong> {userInfo.pronouns}</p>
-  //     <p><strong>Socials:</strong> {userInfo.socials}</p>
-  //     <div style={{ fontSize: 48, marginTop: 16 }}>{match.emoji}</div>
-
-  const matchName = match.name2;
   const emoji = match.emoji;
 
   return (
@@ -116,7 +104,7 @@ export default function DisplayCard() {
             {emoji}
           </div>
           <h2 className="font-bold text-4xl text-[#222949]">
-            {matchName}
+            {matchInfo.name}
           </h2>
           <button 
             onClick={() => setShowMatch(!showMatch)}
@@ -139,11 +127,11 @@ export default function DisplayCard() {
           >
             <div className="bg-[#314077] rounded-lg p-6 mx-4">
               <h3 className="text-white text-lg font-semibold mb-2">Your Match</h3>
-              <p className="text-white/80">Name: {match.name2}</p>
-              <p className="text-white/80">Year: {match.year2}</p>
-              <p className="text-white/80">Program: {match.program2}</p>
-              <p className="text-white/80">Pronouns: {match.pronouns2}</p>
-              <p className="text-white/80">Socials: {match.socials2}</p>
+              <p className="text-white/80">Name: {matchInfo.name}</p>
+              <p className="text-white/80">Year: {matchInfo.year}</p>
+              <p className="text-white/80">Program: {matchInfo.program}</p>
+              <p className="text-white/80">Pronouns: {matchInfo.pronouns}</p>
+              <p className="text-white/80">Socials: {matchInfo.socials}</p>
               <p className="text-white/80">Reason: {match.reach}</p>
             </div>
           </div>

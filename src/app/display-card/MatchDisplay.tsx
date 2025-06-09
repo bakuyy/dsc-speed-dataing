@@ -106,7 +106,7 @@ export default function DisplayCard() {
   const emoji = match.emoji;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#A6C3EA]">
+    <div className="min-h-screen flex flex-col">
       <p className="text-[#222949] text-lg py-6 mx-10 text-center">
         You've got a match! Find your pair with the same emoji :)
       </p>

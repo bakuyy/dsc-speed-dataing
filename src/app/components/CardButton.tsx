@@ -2,11 +2,10 @@ import React from 'react'
 import { FaRegSmile } from 'react-icons/fa'
 import Image from 'next/image'
 import Heart from "../../../public/images/dashboard/heart.svg"
-import SessionTimer from './SessionTimer'
 
 type CardButtonProps = {
   onClick: () => void
-  type: 'start' | 'running' | 'locked' | 'match'
+  type: 'start' | 'running' | 'locked' | 'match' 
   active?: boolean
 }
 
@@ -17,7 +16,7 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
     md:max-w-[400px]
     lg:max-w-[42rem]
     h-55 sm:h-80 md:h-[20rem] lg:h-[33rem]
-    rounded-2xl shadow hover:shadow-xl
+    rounded-2xl shadow 
     transition relative overflow-hidden
     flex items-start text-left 
     px-5 sm:px-6 lg:px-10 py-5 sm:py-6 lg:py-10
@@ -34,23 +33,23 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
 
   const labels: Record<typeof type, string> = {
     start: 'Start\nSurvey',
-    running: 'Session is\nrunning',
+    running: 'Fill out\n the survey',
     locked: 'Session\nis locked',
-    match: 'View My\nMatches',
+    match: 'View My\n Match',
   }
 
   const description: Record<typeof type, React.ReactNode> = {
     start: 'Please wait until the start of the session is announced by execs',
-    running: <span className='text-white'><SessionTimer /></span>,
+    running: "",
     locked: 'Please wait until the start of the session is announced by execs',
-    match: '2 Sessions Has Started', // ADD NUMBER OF SESSION LOGIC
+    match: '', // ADD NUMBER OF SESSION LOGIC
   }
 
 
   return (
     <button
       onClick={onClick}
-      className={`${baseClasses} ${variants[type]}`}
+      className={`${baseClasses} ${variants[type]} hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300`}
     >
     
     <div className="flex flex-col justify-between items-start h-full z-10">

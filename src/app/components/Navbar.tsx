@@ -16,7 +16,7 @@ const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleClick = () => {
-    router.push("/");
+    router.push("/dashboard");
   }
 
   const handleSignOut = () => {
@@ -27,7 +27,7 @@ const Navbar = () => {
 
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-6 bg-white shadow-sm relative z-20 rounded-b-2xl font-jakarta">
+    <nav className="sticky top-0 w-full flex items-center justify-between px-6 py-6 bg-white shadow-sm relative z-20 rounded-b-2xl font-jakarta">
       <div className="flex items-center">
         <Image src={Logo} onClick={handleClick} alt="Logo" className="w-8 h-8 md:w-12 md:h-12 cursor-pointer" />
       </div>
@@ -40,8 +40,8 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center gap-6">
         <a href="/dashboard" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</a>
-        <a href="#info" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
-        <button onClick={handleSignOut} className="rounded-xl cursor-pointer font-semibold px-4 py-2 hover:bg-[#e1eaf8] transition text-white bg-blue-500">Log Out</button>
+        <a href="/information" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
+        <button onClick={handleSignOut} className="rounded-xl cursor-pointer font-semibold p-2 hover:bg-[#e1eaf8] transition font-jakarta">Log Out</button>
       </div>
       
 
@@ -69,9 +69,10 @@ const Navbar = () => {
           aria-label="Close menu"
         >
         </button>
-        <a href="/dashboard" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>Dashboard</a>
-        <a href="#infoMobile" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>How it works</a>
-        <button onClick={handleSignOut} className="rounded-xl p-2 text-[#374995] hover:bg-[#374995] bg-blue-500 text-white px-8 hover:text-white transition font-jakarta">Log Out</button>
+        <a href="/" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>Dashboard</a>
+        <a href="/about" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>How it works</a>
+        <a href="/form" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>Form</a>
+        <button onClick={handleSignOut} className="rounded-xl p-2 text-[#374995] hover:bg-[#374995] hover:text-white transition font-jakarta">Log Out</button>
 
       </div>
     </nav>

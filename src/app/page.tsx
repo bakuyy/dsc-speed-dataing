@@ -1,8 +1,8 @@
 "use client";
-// import AuthForm from "@/components/AuthForm";
-// import Image from "next/image";
-// import Footer from "../../public/images/login/footer.png";
-// import Header from "../../public/images/login/header.png";
+import AuthForm from "@/app/components/AuthForm";
+import Image from "next/image";
+import Footer from "../../public/images/login/footer.png"
+import Header from "../../public/images/login/header.png"
 import MatchPage from "./display-card/page";
 
 {/* <main className="min-h-screen flex flex-col items-center justify-center">
@@ -13,12 +13,12 @@ import MatchPage from "./display-card/page";
       <Image
       src={Footer} alt="Footer" 
       className="w-full h-1/5 absolute bottom-0 opacity-90"/>
-    </main> */}
+</main> */}
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
-     <MatchPage />
-    </main>
+    <div>
+      <MatchPage />
+    </div>
   );
 }

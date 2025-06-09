@@ -22,7 +22,7 @@ type Match = {
 export default function DisplayCard() {
   const [match, setMatch] = useState<Match | null>(null);
   const [loading, setLoading] = useState(true);
-  const [flipped, setFlipped] = useState(false);
+  const [showMatch, setShowMatch] = useState(false);
 
   useEffect(() => {
     // const fetchMatch = async () => {
@@ -101,82 +101,52 @@ export default function DisplayCard() {
   //     <p><strong>Pronouns:</strong> {userInfo.pronouns}</p>
   //     <p><strong>Socials:</strong> {userInfo.socials}</p>
   //     <div style={{ fontSize: 48, marginTop: 16 }}>{match.emoji}</div>
+
   const matchName = match.name2;
   const emoji = match.emoji;
 
-  const matchInfo = (
-    <div style={{ padding: 16 }}>
-      <h2>{match.name2}</h2>
-      <p><strong>Year:</strong> {match.year2}</p>
-      <p><strong>Program:</strong> {match.program2}</p>
-      <p><strong>Pronouns:</strong> {match.pronouns2}</p>
-      <p><strong>Socials:</strong> {match.socials2}</p>
-      <div style={{ fontSize: 32, marginTop: 8 }}>{match.emoji}</div>
-      <p><em>{match.reach}</em></p>
-    </div>
-  );
-
   return (
-    <div
-      style={{
-        perspective: '1000px',
-        width: 320,
-        height: 220,
-        margin: '40px auto',
-        cursor: 'pointer',
-      }}
-      onClick={() => setFlipped(f => !f)}
-    >
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-          transition: 'transform 0.6s',
-          transformStyle: 'preserve-3d',
-          transform: flipped ? 'rotateY(180deg)' : 'none',
-        }}
-      >
-        {/* Front */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            backfaceVisibility: 'hidden',
-            background: '#fff',
-            border: '1px solid #ccc',
-            borderRadius: 12,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 28,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          }}
-        >
-          <div style={{ fontWeight: 600 }}>{matchName}</div>
-          <div style={{ fontSize: 64, marginTop: 12 }}>{emoji}</div>
-          <div style={{ fontSize: 14, color: '#888', marginTop: 8 }}>Click to flip</div>
-        </div>
-        {/* Back */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            backfaceVisibility: 'hidden',
-            background: '#f9f9f9',
-            border: '1px solid #ccc',
-            borderRadius: 12,
-            transform: 'rotateY(180deg)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
-          {matchInfo}
+    <div className="min-h-screen flex flex-col bg-[#A6C3EA]">
+      <p className="text-[#222949] text-lg py-6 mx-10 text-center">
+        You've got a match! Find your pair with the same emoji :)
+      </p>
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="text-center">
+          <div className="text-[15rem] leading-none mb-20 text-white">
+            {emoji}
+          </div>
+          <h2 className="font-bold text-4xl text-[#222949]">
+            {matchName}
+          </h2>
+          <button 
+            onClick={() => setShowMatch(!showMatch)}
+            className="mt-20 text-white/60 hover:text-white transition-colors"
+            aria-label="Show match details"
+          >
+            <svg 
+              className={`w-8 h-8 transform transition-transform duration-300 ${showMatch ? 'rotate-180' : ''} animate-bounce-subtle`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div 
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              showMatch ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="bg-[#314077] rounded-lg p-6 mx-4">
+              <h3 className="text-white text-lg font-semibold mb-2">Your Match</h3>
+              <p className="text-white/80">Name: {match.name2}</p>
+              <p className="text-white/80">Year: {match.year2}</p>
+              <p className="text-white/80">Program: {match.program2}</p>
+              <p className="text-white/80">Pronouns: {match.pronouns2}</p>
+              <p className="text-white/80">Socials: {match.socials2}</p>
+              <p className="text-white/80">Reason: {match.reach}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

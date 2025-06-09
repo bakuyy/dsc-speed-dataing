@@ -192,7 +192,6 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="bg-[#4b6cb7] hover:bg-[#3f5cb1] text-white py-3 px-6 rounded-full w-full text-lg font-jakarta"

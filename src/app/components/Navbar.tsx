@@ -16,7 +16,7 @@ const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleClick = () => {
-    router.push("/home");
+    router.push("/dashboard");
   }
 
   const handleSignOut = () => {
@@ -39,7 +39,7 @@ const Navbar = () => {
       </div>
 
       <div className="hidden md:flex items-center gap-6">
-        <a href="/home" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</a>
+        <a href="/dashboard" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</a>
         <a href="/information" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
         <button onClick={handleSignOut} className="rounded-xl cursor-pointer font-semibold p-2 hover:bg-[#e1eaf8] transition font-jakarta">Log Out</button>
       </div>

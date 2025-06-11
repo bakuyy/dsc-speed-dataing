@@ -31,7 +31,7 @@ export default function SessionTimer({ onTimeChange }: SessionTimerProps) {
   }, [onTimeChange])
 
   return (
-    <span className="text-[0.5rem] md:text-lg">
+    <span className="text-[1rem] text-slate-600 md:text-lg">
       Session running: {formatTime(remaining)}
     </span>
   )

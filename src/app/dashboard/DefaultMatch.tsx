@@ -5,7 +5,11 @@ const MatchComponent = ({ isViewMatch = false }) => {
     <div className="w-full min-h-[400px] bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50 rounded-2xl shadow-lg overflow-hidden">
       {/* Hero Image Section */}
       <div className="w-full h-48 bg-gradient-to-r from-blue-400 to-blue-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url(https://i.pinimg.com/originals/79/5c/cb/795ccbc6b43baffe39982b297c882f70.gif)] bg-opacity-20"></div>
+        <div className={`absolute inset-0 
+        ${!isViewMatch ? "bg-[url(https://i.pinimg.com/originals/79/5c/cb/795ccbc6b43baffe39982b297c882f70.gif)]" : 
+            "bg-[url(https://i.pinimg.com/originals/ca/3b/ba/ca3bbaf943e160b1296708f3fc01457b.gif)]"
+        } 
+         bg-opacity-20`}></div>
         <div className="absolute inset-0 flex items-center justify-center">
           {/* <svg className="w-24 h-24 text-white opacity-80" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />

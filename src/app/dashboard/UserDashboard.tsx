@@ -6,6 +6,7 @@ import { RootState } from '@/store/store'
 import { login } from '@/store/loginTokenSlice'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
+import MatchComponent from './DefaultMatch'
 
 
 export default function Dashboard() {
@@ -73,7 +74,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="mx-4 p-6 lg:p-12 bg-white rounded-t-4xl">
+    <div className="w-screen p-6 lg:p-16 bg-white rounded-t-4xl">
       <header>
         <h1 className="text-xl text-center font-semibold py-5 lg:text-6xl mt-1 text-[#374995] lg:pb-3">
           Welcome to the event, <span className="font-bold animate-pulse">{userName}</span>!
@@ -96,23 +97,11 @@ export default function Dashboard() {
       </main>
 
       <div className="mt-6 max-w-4xl mx-auto">
-        <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
+        {/* <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative"> */}
 
+          <MatchComponent isViewMatch={true} />
           
-          <div className="flex justify-center items-center">
-            <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
-              {isViewMatch? 
-             <div> matching in session!</div>
-              :
-              <div className='font-plus-jakarta-sans italic font-bold'> please wait to view your match...</div>
-}
-              
-            </p>
-
-            
-          </div>
-          
-        </div>
+        {/* </div> */}
         <button 
               onClick={() => router.push('/history')}
               className="w-full my-8  h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow bg-[#A6C3EA] text-white hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300 flex items-center justify-center"
@@ -122,6 +111,7 @@ export default function Dashboard() {
               </span>
             </button>
       </div>
+      
     </div>
   )
 }

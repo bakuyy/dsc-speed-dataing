@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { generateEmbeddings } from "./embeddings.js";
 import { runMatching } from "./match.js";
+import blossom from 'edmonds-blossom' // npm install edmonds-blossom
+                                      // npm install --save-dev @types/edmonds-blossom || echo "No types available, using as any"
 
 interface Participant {
   // Basic info

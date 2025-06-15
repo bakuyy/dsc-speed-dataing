@@ -1,8 +1,8 @@
-import { supabase } from "@/lib/supabase";
-import { generateEmbeddings } from "./embeddings.js";
-import { runMatching } from "./match.js";
-import blossom from 'edmonds-blossom' // npm install edmonds-blossom
-                                      // npm install --save-dev @types/edmonds-blossom || echo "No types available, using as any"
+import { supabase } from "../supabase.js";
+import { getMCAnswer } from "./multipleChoiceMap.js";
+
+import dotenv from "dotenv";
+dotenv.config();
 
 interface Participant {
   // Basic info
@@ -80,8 +80,12 @@ export async function getFormResponses() {
       most_likely_to: row.most_likely_to,
       caught_watching: row.caught_watching,
     };
-    console.log(participant);
+    console.log({
+      ...participant, 
+      class_seat_text: getMCAnswer("class_seat", participant.class_seat),
+      evil_hobby_text: getMCAnswer("evil_hobby", participant.evil_hobby),
+      most_likely_to_text: getMCAnswer("most_likely_to", participant.most_likely_to),
+      caught_watching_text: getMCAnswer("caught_watching", participant.caught_watching),
+    });
   });
 }
-
-

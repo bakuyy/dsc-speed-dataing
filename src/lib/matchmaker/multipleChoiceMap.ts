@@ -1,5 +1,5 @@
 // M1. In class, I...
-export const classSeatMap: Record<string, string> = {
+export const classSeatMap: Record<"a"|"b"|"c"|"d"|"e", string> = {
   a: "Sit in the front of class and try to absorb as much info as I can.",
   b: "Sit in the back and play Clash Royale.",
   c: "Sit somewhere in the middle, with my friends.",
@@ -8,7 +8,7 @@ export const classSeatMap: Record<string, string> = {
 };
 
 // M2. Pick your favourite evil hobby...
-export const evilHobbyMap: Record<string, string> = {
+export const evilHobbyMap: Record<"a"|"b"|"c"|"d"|"e", string> = {
   a: "Gossiping the latest tea",
   b: "Splurging money on (useless?) items",
   c: "Mukbanging food",
@@ -17,7 +17,7 @@ export const evilHobbyMap: Record<string, string> = {
 };
 
 // M3. I am most likely to...
-export const mostLikelyToMap: Record<string, string> = {
+export const mostLikelyToMap: Record<"a"|"b"|"c"|"d"|"e", string> = {
   a: "Become a UW blogger on Instagram reels",
   b: "Eat a Lazeeza (Lazeez pizza)",
   c: "Disappear from campus and not tell anyone",
@@ -26,7 +26,7 @@ export const mostLikelyToMap: Record<string, string> = {
 };
 
 // M4. You're most likely to catch me watching...
-export const caughtWatchingMap: Record<string, string> = {
+export const caughtWatchingMap: Record<"a"|"b"|"c"|"d"|"e", string> = {
   a: "Wooden soup ASMR",
   b: "1-hour mock SWE interview + solutions LEAKED!!!",
   c: "How to recover from a bad exam",
@@ -42,11 +42,11 @@ export type MCQuestion =
   | "most_likely_to" 
   | "caught_watching";
 
-const multipleChoiceMaps: Record<MCQuestion, Record<string,string>> = {
-  class_seat:     classSeatMap,
-  evil_hobby:     evilHobbyMap,
-  most_likely_to: mostLikelyToMap,
-  caught_watching:caughtWatchingMap,
+const multipleChoiceMaps: Record<MCQuestion, Record<"a"|"b"|"c"|"d"|"e", string>> = {
+  class_seat:      classSeatMap,
+  evil_hobby:      evilHobbyMap,
+  most_likely_to:  mostLikelyToMap,
+  caught_watching: caughtWatchingMap,
 };
 
 /**
@@ -55,6 +55,6 @@ const multipleChoiceMaps: Record<MCQuestion, Record<string,string>> = {
  * @param letter [a, b, c, d, e]
  * @returns string corresponding to the letter response of the multiple choice question. 
  */
-export function getMCAnswer(question: MCQuestion, letter: string): string | undefined {
+export function getMCAnswer(question: MCQuestion, letter: "a"|"b"|"c"|"d"|"e"): string {
   return multipleChoiceMaps[question][letter];
 }

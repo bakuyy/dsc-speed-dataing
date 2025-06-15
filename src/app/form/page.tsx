@@ -247,11 +247,13 @@ const Page = () => {
 
             {/* Question 4 */}
             <div>
-              <p className="text-[#374995] font-jakarta mb-2">Which of the following do you find the most funny?</p>
+              <p className="text-[#374995] font-jakarta mb-2">You're most likely to catch me watching...</p>
               {[
-                { value: "a", label: "Tralaleo tralala" },
-                { value: "b", label: "Bread tastes better than key" },
-                { value: "c", label: "Seeing small dogs fail to complete simple obstacle courses" }
+                { value: "a", label: "Wooden soup ASMR" },
+                { value: "b", label: "1-hour mock SWE interview + solutions LEAKED!!!!" },
+                { value: "c", label: "How to recover from a bad exam" },
+                { value: "d", label: "Can 100,000 Elephants defeat 1 MILLION Ostriches?"},
+                { value: "e", label: "How to make a matcha strawberry latte"}
               ].map(({ value, label }, idx) => (
                 <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
                   <input type="radio" name="caught_watching" value={value} className="accent-[#4b6cb7]" />

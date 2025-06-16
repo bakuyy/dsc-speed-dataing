@@ -188,7 +188,7 @@ export async function handleOddParticipant(participants: { id: string }[]) {
  * RETURNS ARRAY OF Match TO BE INSERTED INTO curr_matches TABLE and the previous_matches TABLE. 
  */
 export async function matchParticipants(): Promise<Match[]> {
-  // 1) fetch everyone’s id + embedding
+  // fetch everyone’s id + embedding
   const { data: rows, error: fetchErr } = await supabase
     .from('form_responses')
     .select('id, vector_embedding');
@@ -198,7 +198,7 @@ export async function matchParticipants(): Promise<Match[]> {
   }
   if (!rows) return [];
 
-  // 2) build all pairwise similarities
+  // build all pairwise similarities
   type Pair = { i: number; j: number; sim: number };
   const pairs: Pair[] = [];
   for (let i = 0; i < rows.length; i++) {
@@ -209,29 +209,149 @@ export async function matchParticipants(): Promise<Match[]> {
     }
   }
 
-  // 3) sort descending by similarity
-  pairs.sort((a, b) => b.sim - a.sim);
+  // determine already_matched array from previous_matches table 
+  const { data: already_matched, error: prevErr } = await supabase
+    .from('previous_matches')
+    .select('id, matched_with'); // get the id: uuid, matched_with: uuid[]
+  if (prevErr) throw prevErr;
 
-  // 4) greedy match: pick best pairs without reusing any participant
+  // map each participant → set of UUIDs they’ve already been matched with
+  const prevMap = new Map<string, Set<string>>();
+  for (const { id, matched_with } of already_matched || []) {
+    prevMap.set(id, new Set(matched_with));
+  }
+
+  // greedy match: pick best pairs without reusing any participant
   const used = new Set<number>();
   const matches: Match[] = [];
-  for (const { i, j, sim } of pairs) {
+
+  pairs.sort((a, b) => b.sim - a.sim); // sort descending by similarity
+
+  for (const { i, j, sim } of pairs) { // for each pair and similarity
+    const id1 = rows[i].id, id2 = rows[j].id;
+    
+    // skip if either is already in a new match
     if (used.has(i) || used.has(j)) continue;
+
+    // skip if they’ve met before
+    const met1 = prevMap.get(id1)?.has(id2) ?? false;
+    const met2 = prevMap.get(id2)?.has(id1) ?? false;
+    if (met1 || met2) continue;
+
+    // otherwise take this pair
     used.add(i);
     used.add(j);
-    matches.push({
-      person1_id: rows[i].id,
-      person2_id: rows[j].id,
-      similarity_score: sim,
-      emoji: 'TBD'
-    });
+    matches.push({ person1_id: id1, person2_id: id2, similarity_score: sim, emoji: '' });
+
     if (used.size === rows.length) break;
   }
 
+  // return the array of Match
   return matches;
 }
 
 // TAKES AN ARRAY Match[] AND UPDATES curr_matches WITH EACH ENTRY. 
-export async function updateCurrMatches(matches: Match[]) {}
+// curr_matches TABLE MATCHES EXACTLY THE STRUCTURE OF Match: person1_id (uuid), person2_id (uuid), similarity_score (float8), emoji (text). 
+export async function updateCurrMatches(matches: Match[]): Promise<Match[]> {
 
-export async function updatePreviousMatches(matches: Match[]) {}
+  if (matches.length === 0) { // Print helpful log message if matches: Match[] is an empty array. 
+    console.log('No matches to insert into curr_matches.');
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('curr_matches')
+    .insert(matches) // insert all matches into the table curr_matches. 
+    .select('*');
+
+  if (error) { // catch error if occurred.
+    console.error('Failed to update curr_matches:', error);
+    throw error;
+  }
+
+  console.log(`Inserted ${data?.length ?? 0} matches into curr_matches.`);
+  return data ?? [];
+
+}
+
+// TAKES AN ARRAY Match[] AND APPENDS THE UUID Match.person2_id TO Match.person1_id's ROW. 
+// ALSO APPENDS THE Match.similarity_score TO THE similarity_scores[] OF Match.person1_id's ROW, 
+// AND THE Match.emoji TO THE emojis[] OF Match.person1_id's ROW.
+// IF ROW FOR Match.person1_id DOES NOT ALREADY EXIST, CREATES A ROW.
+export async function updatePreviousMatches(matches: Match[]): Promise<void> {
+  if (matches.length === 0) {
+    console.log('No matches to update in previous_matches.');
+    return;
+  }
+
+  for (const m of matches) {
+    const { person1_id, person2_id, similarity_score, emoji } = m;
+
+    // fetch existing previous_matches row if any
+    const { data: prevRow, error: fetchErr } = await supabase
+      .from('previous_matches')
+      .select('matched_with, similarity_scores, emojis')
+      .eq('id', person1_id)
+      .maybeSingle();
+    if (fetchErr) {
+      console.error('Error fetching previous_matches for', person1_id, fetchErr);
+      continue;
+    }
+
+    if (!prevRow) { // if row for Match.person1_id does not exist (first round) insert the row and initialize arrays.
+
+      const { data: formRow, error: formErr } = await supabase
+        .from('form_responses')
+        .select('email')
+        .eq('id', person1_id)
+        .single();
+      if (formErr || !formRow) {
+        console.error('Error fetching email for', person1_id, formErr);
+        continue;
+      }
+      const email = formRow.email;
+
+      const { error: insertErr } = await supabase
+        .from('previous_matches')
+        .insert([{ 
+          id: person1_id,
+          email,
+          matched_with: [person2_id],
+          similarity_scores: [similarity_score],
+          emojis: [emoji]
+        }]);
+      if (insertErr) {
+        console.error('Error inserting previous_matches for', person1_id, insertErr);
+      } else {
+        console.log('Created previous_matches row for', person1_id);
+      }
+
+    } else { // otherwise, the row for Match.person1_id already exists, append to arrays if not already.
+
+      const newMatchedWith = prevRow.matched_with.includes(person2_id)
+        ? prevRow.matched_with
+        : [...prevRow.matched_with, person2_id];
+      const newSimScores = prevRow.similarity_scores.includes(similarity_score)
+        ? prevRow.similarity_scores
+        : [...prevRow.similarity_scores, similarity_score];
+      const newEmojis = prevRow.emojis.includes(emoji)
+        ? prevRow.emojis
+        : [...prevRow.emojis, emoji];
+
+      const { error: updateErr } = await supabase
+        .from('previous_matches')
+        .update({
+          matched_with: newMatchedWith,
+          similarity_scores: newSimScores,
+          emojis: newEmojis
+        })
+        .eq('id', person1_id);
+      if (updateErr) {
+        console.error('Error updating previous_matches for', person1_id, updateErr);
+      } else {
+        console.log('Updated previous_matches row for', person1_id);
+      }
+
+    }
+  }
+}

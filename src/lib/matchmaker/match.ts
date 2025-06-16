@@ -1,4 +1,4 @@
-// src/lib/matchmaker/testMatch2k.ts
+// src/lib/matchmaker/match.ts
 
 import 'dotenv/config';
 import { supabase } from '../supabase.js';
@@ -42,14 +42,20 @@ async function main() {
     // If the odd_participant is already there, removes it. 
     handleOddParticipant(participants);
 
-    // Match participants based on the cosine similarities of their vector embeddings. 
-    const matches = await matchParticipants();
-
     // Clear the curr_matches table of all matches. 
     clearCurrMatchesTable();
 
-    // Grab result of Matches inserted into curr_matches and append to arrays in previous_matches. 
+    // Match participants based on the cosine similarities of their vector embeddings. 
+    const matches = await matchParticipants();
+
+    // Populates the curr_matches table. 
+    updateCurrMatches(matches);
+
+    // TBD: EMOJI GENERATION?
+
+    // Updates the previous_matches table. 
+    updatePreviousMatches(matches);
 
 }
 
-main();
+main(); // run using node --loader ts-node/esm src/lib/matchmaker/match.ts

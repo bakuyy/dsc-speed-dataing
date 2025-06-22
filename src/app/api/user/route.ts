@@ -2,9 +2,22 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-export async function GET() {
-  const token = (await cookies()).get("token")?.value;
+export async function GET(request: Request) {
+  // Try to get token from cookies first
+  let token = (await cookies()).get("token")?.value;
   console.log('[User API] Token from cookies:', token);
+  
+  // If no token in cookies, try to get it from Authorization header
+  if (!token) {
+    const authHeader = request.headers.get('authorization');
+    console.log('[User API] Authorization header:', authHeader);
+    if (authHeader?.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+      console.log('[User API] Token from Authorization header:', token);
+    }
+  }
+  
+  console.log('[User API] Final token:', token);
 
   if (!token) {
     console.log('[User API] No token found');

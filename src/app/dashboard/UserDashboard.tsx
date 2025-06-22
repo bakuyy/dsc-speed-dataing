@@ -6,7 +6,7 @@ import { RootState } from '@/store/store'
 import { login } from '@/store/loginTokenSlice'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
-
+import Cookies from 'js-cookie'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -14,16 +14,28 @@ export default function Dashboard() {
   const fullName = useSelector((state: RootState) => state.auth.name)
   const [userName, setUserName] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [isViewMatch, setIsViewMatch] = useState(false)
 
   useEffect(() => {
     const refreshUserData = async () => {
       try {
-        const response = await axios.get('/api/user')
+        // Get token from cookies (same as other components)
+        const token = Cookies.get('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+        
+        if (!token) {
+          console.error('No token found for user data refresh');
+          return;
+        }
+
+        const response = await axios.get('/api/user', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
         if (response.data) {
           dispatch(login({
             name: response.data.name,
-            token: response.data.token,
+            token: token,
             role: response.data.role
           }))
         }
@@ -55,7 +67,6 @@ export default function Dashboard() {
     running: '/form',
     locked: '/',
   }
-  const [isTime, setIsTime] = useState(true)
 
   if (isLoading) {
     return (
@@ -90,28 +101,18 @@ export default function Dashboard() {
         <div className="flex justify-center">
           <CardButton
             type="match"
-            onClick={() => router.push('/matches')}
+            onClick={() => router.push('/display-card')}
           />
         </div>
       </main>
 
       <div className="mt-6 max-w-4xl mx-auto">
         <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
-
-          
           <div className="flex justify-center items-center">
             <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
-              {isViewMatch? 
-             <div> matching in session!</div>
-              :
-              <div className='font-plus-jakarta-sans italic font-bold'> please wait to view your match...</div>
-}
-              
+              <span className='font-plus-jakarta-sans italic font-bold'> please wait to view your match...</span>
             </p>
-
-            
           </div>
-          
         </div>
         <button 
               onClick={() => router.push('/history')}

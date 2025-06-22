@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-// import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 type Match = {
   id: string;
@@ -20,61 +20,86 @@ type Match = {
 };
 
 interface DisplayCardProps {
-  currentId: string;
+  currentId: string; // This will be the user's email
 }
 
 export default function DisplayCard({ currentId }: DisplayCardProps) {
   const [match, setMatch] = useState<Match | null>(null);
   const [loading, setLoading] = useState(true);
   const [showMatch, setShowMatch] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Dummy data for UI testing
-    const dummyMatch: Match = {
-      id: "1",
-      name1: "Alice",
-      year1: "2",
-      program1: "Computer Science",
-      pronouns1: "she/her",
-      socials1: "alice@email.com",
-      name2: "Bob",
-      year2: "3",
-      program2: "Mathematics",
-      pronouns2: "he/him",
-      socials2: "bob@email.com",
-      emoji: "🌟",
-      reach: "Met at the hackathon!",
-    };
-    setMatch(dummyMatch);
-    setLoading(false);
+    const fetchMatch = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Query the matches table to find a match for the current user
+        const { data, error: fetchError } = await supabase
+          .from('matches')
+          .select('*')
+          .or(`socials1.eq.${currentId},socials2.eq.${currentId}`)
+          .single();
 
-    // --- Actual fetch logic ---
-    // const fetchMatch = async () => {
-    //   const { data, error } = await supabase
-    //     .from('matches')
-    //     .select('*')
-    //     .or(
-    //       `socials1.eq.${currentId},socials2.eq.${currentId},name1.eq.${currentId},name2.eq.${currentId}`
-    //     )
-    //     .single();
-    //   if (error || !data) {
-    //     setLoading(false);
-    //     setMatch(null);
-    //     return;
-    //   }
-    //   setMatch(data as Match);
-    //   setLoading(false);
-    // };
-    // fetchMatch();
+        if (fetchError) {
+          console.error('Error fetching match:', fetchError);
+          if (fetchError.code === 'PGRST116') {
+            // No match found
+            setMatch(null);
+          } else {
+            setError('Failed to load match data');
+          }
+        } else if (data) {
+          setMatch(data as Match);
+        } else {
+          setMatch(null);
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        setError('An unexpected error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentId) {
+      fetchMatch();
+    }
   }, [currentId]);
 
-  if (loading) return <div className='min-h-screen'>Loading...</div>;
-  if (!match) return <div className='min-h-screen'>No match found.</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-[#222949] text-xl">Loading your match...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-[#222949] text-xl text-center">
+          <p>Error: {error}</p>
+          <p className="text-sm mt-2">Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!match) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-[#222949] text-xl text-center">
+          <p>No match found yet!</p>
+          <p className="text-sm mt-2">Check back later for your speed dating match</p>
+        </div>
+      </div>
+    );
+  }
 
   // Determine which person is the user
-  const isPerson1 =
-    match.socials1 === currentId ||
-    match.name1 === currentId;
+  const isPerson1 = match.socials1 === currentId;
   const matchInfo = isPerson1
     ? {
         name: match.name2,
@@ -96,7 +121,7 @@ export default function DisplayCard({ currentId }: DisplayCardProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <p className="text-[#222949] text-lg py-6 mx-10 text-center">
-        You've got a match! Find your pair with the same emoji :)
+        You&apos;ve got a match! Find your pair with the same emoji :)
       </p>
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="text-center">

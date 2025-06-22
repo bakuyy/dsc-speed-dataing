@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase.js'
+import { supabase } from './supabase.js'
 
 // --- Logic from emojiGenerator.ts ---
 const emojiRanges = {

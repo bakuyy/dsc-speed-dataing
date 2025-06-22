@@ -3,75 +3,97 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 
-type Match = {
+type MatchData = {
   id: string;
-  name1: string;
-  year1: string;
-  program1: string;
-  pronouns1: string;
-  socials1: string;
-  name2: string;
-  year2: string;
-  program2: string;
-  pronouns2: string;
-  socials2: string;
+  person1_id: string;
+  person2_id: string;
   emoji: string;
-  reach: string;
+};
+
+type PersonDetails = {
+  name: string;
+  year: string;
+  program: string;
+  pronouns: string;
+  social_media_links: string;
 };
 
 interface DisplayCardProps {
-  currentId: string; // This will be the user's email
+  currentId: string; // This is the user's UUID
 }
 
 export default function DisplayCard({ currentId }: DisplayCardProps) {
-  const [match, setMatch] = useState<Match | null>(null);
+  const [matchData, setMatchData] = useState<MatchData | null>(null);
+  const [matchedPerson, setMatchedPerson] = useState<PersonDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [showMatch, setShowMatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMatch = async () => {
+    const fetchMatchAndPersonDetails = async () => {
+      if (!currentId) return;
+
       try {
         setLoading(true);
         setError(null);
-        
-        // Query the matches table to find a match for the current user
-        const { data, error: fetchError } = await supabase
-          .from('matches')
+
+        // 1. Find the match in curr_matches using the current user's UUID
+        const { data: match, error: matchError } = await supabase
+          .from('curr_matches')
           .select('*')
-          .or(`socials1.eq.${currentId},socials2.eq.${currentId}`)
+          .or(`person1_id.eq.${currentId},person2_id.eq.${currentId}`)
           .single();
 
-        if (fetchError) {
-          console.error('Error fetching match:', fetchError);
-          if (fetchError.code === 'PGRST116') {
-            // No match found
-            setMatch(null);
+        if (matchError) {
+          if (matchError.code === 'PGRST116') { // Specific code for no rows found
+            setMatchData(null);
           } else {
-            setError('Failed to load match data');
+            throw new Error(`Failed to load match data: ${matchError.message}`);
           }
-        } else if (data) {
-          setMatch(data as Match);
-        } else {
-          setMatch(null);
+          return;
         }
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        setError('An unexpected error occurred');
+
+        if (!match) {
+          setMatchData(null);
+          return;
+        }
+        
+        setMatchData(match);
+
+        // 2. Determine the matched person's UUID
+        const matchedPersonUuid = match.person1_id === currentId
+          ? match.person2_id
+          : match.person1_id;
+
+        // 3. Fetch the matched person's details from form_responses
+        const { data: personDetails, error: personError } = await supabase
+          .from('form_responses')
+          .select('name, year, program, pronouns, social_media_links')
+          .eq('id', matchedPersonUuid)
+          .single();
+        
+        if (personError) {
+          throw new Error(`Could not find your match's details: ${personError.message}`);
+        }
+
+        setMatchedPerson(personDetails);
+
+      } catch (err: unknown) {
+        console.error('Error fetching match details:', err);
+        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred.';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
-    if (currentId) {
-      fetchMatch();
-    }
+    fetchMatchAndPersonDetails();
   }, [currentId]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-[#222949] text-xl">Loading your match...</div>
+        <div className="text-[#222949] text-xl">Searching for your match...</div>
       </div>
     );
   }
@@ -80,43 +102,26 @@ export default function DisplayCard({ currentId }: DisplayCardProps) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-[#222949] text-xl text-center">
-          <p>Error: {error}</p>
-          <p className="text-sm mt-2">Please try refreshing the page</p>
+          <p>{error}</p>
+          <p className="text-sm mt-2">Please try refreshing the page.</p>
         </div>
       </div>
     );
   }
 
-  if (!match) {
+  if (!matchData || !matchedPerson) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-[#222949] text-xl text-center">
           <p>No match found yet!</p>
-          <p className="text-sm mt-2">Check back later for your speed dating match</p>
+          <p className="text-sm mt-2">Check back later for your speed dating match.</p>
         </div>
       </div>
     );
   }
 
-  // Determine which person is the user
-  const isPerson1 = match.socials1 === currentId;
-  const matchInfo = isPerson1
-    ? {
-        name: match.name2,
-        year: match.year2,
-        program: match.program2,
-        pronouns: match.pronouns2,
-        socials: match.socials2,
-      }
-    : {
-        name: match.name1,
-        year: match.year1,
-        program: match.program1,
-        pronouns: match.pronouns1,
-        socials: match.socials1,
-      };
-
-  const emoji = match.emoji;
+  const { name, year, program, pronouns, social_media_links} = matchedPerson;
+  const { emoji } = matchData;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -129,7 +134,7 @@ export default function DisplayCard({ currentId }: DisplayCardProps) {
             {emoji}
           </div>
           <h2 className="font-bold text-4xl text-[#222949]">
-            {matchInfo.name}
+            {name}
           </h2>
           <button 
             onClick={() => setShowMatch(!showMatch)}
@@ -152,12 +157,11 @@ export default function DisplayCard({ currentId }: DisplayCardProps) {
           >
             <div className="bg-[#314077] rounded-lg p-6 mx-4">
               <h3 className="text-white text-lg font-semibold mb-2">Your Match</h3>
-              <p className="text-white/80">Name: {matchInfo.name}</p>
-              <p className="text-white/80">Year: {matchInfo.year}</p>
-              <p className="text-white/80">Program: {matchInfo.program}</p>
-              <p className="text-white/80">Pronouns: {matchInfo.pronouns}</p>
-              <p className="text-white/80">Socials: {matchInfo.socials}</p>
-              <p className="text-white/80">Reason: {match.reach}</p>
+              <p className="text-white/80">Name: {name}</p>
+              <p className="text-white/80">Year: {year}</p>
+              <p className="text-white/80">Program: {program}</p>
+              <p className="text-white/80">Pronouns: {pronouns}</p>
+              <p className="text-white/80">Socials: {social_media_links}</p>
             </div>
           </div>
         </div>

@@ -6,60 +6,66 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from 'axios';
 import Cookies from 'js-cookie';
-
-interface User {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-}
+import { supabase } from '../../lib/supabase';
 
 export default function MatchPage() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userUuid, setUserUuid] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
-    const fetchCurrentUser = async () => {
+    const fetchUserData = async () => {
       try {
         setLoading(true);
-        
-        // Get token from cookies (same as AuthHydrator)
+        setError(null);
+
+        // 1. Get token from cookies
         const token = Cookies.get('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-        
-        console.log('[Display Card] Token from cookies:', token);
-        console.log('[Display Card] All cookies:', document.cookie);
         
         if (!token) {
           setError('Please log in to view your matches');
-          setCurrentUser(null);
+          setLoading(false);
           return;
         }
 
-        console.log('[Display Card] Making API request with token:', token);
+        // 2. Get user profile (including email) from our API
         const response = await axios.get('/api/user', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
+        const user = response.data;
+
+        console.log(`[Display Card Page] Attempting to find UUID for email: ${user.email}`);
+
+        // 3. Use email to get UUID from form_responses (case-insensitive)
+        const { data: formData, error: formError } = await supabase
+          .from('form_responses')
+          .select('id')
+          .ilike('email', user.email)
+          .single();
+
+        if (formError || !formData) {
+          console.error('Error fetching UUID:', formError);
+          setError('Could not find your form submission. Please make sure you have submitted the event form.');
+          setLoading(false);
+          return;
+        }
         
-        setCurrentUser(response.data);
-        setError(null);
+        setUserUuid(formData.id);
+
       } catch (err: unknown) {
         console.error('Error fetching user:', err);
-        const error = err as { response?: { status?: number } };
-        if (error.response?.status === 401) {
+        const typedError = err as { response?: { status?: number } };
+        if (typedError.response?.status === 401) {
           setError('Please log in to view your matches');
         } else {
-          setError('Failed to load user data');
+          setError('Failed to load your user data.');
         }
-        setCurrentUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCurrentUser();
+    fetchUserData();
   }, []);
 
   if (loading) {
@@ -67,7 +73,7 @@ export default function MatchPage() {
       <main className="min-h-screen bg-[#A6C3EA]">
         <Navbar />
         <div className="flex items-center justify-center min-h-screen">
-          <div className="text-[#222949] text-xl">Loading...</div>
+          <div className="text-[#222949] text-xl">Loading your data...</div>
         </div>
         <Footer />
       </main>
@@ -81,7 +87,7 @@ export default function MatchPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-[#222949] text-xl text-center">
             <p>{error}</p>
-            <p className="text-sm mt-2">Please make sure you&apos;re logged in</p>
+            <p className="text-sm mt-2">Please make sure you&apos;re logged in and have submitted the form.</p>
           </div>
         </div>
         <Footer />
@@ -92,7 +98,7 @@ export default function MatchPage() {
   return (
     <main className="min-h-screen bg-[#A6C3EA]">
       <Navbar />
-      {currentUser && <DisplayCard currentId={currentUser.email} />}
+      {userUuid && <DisplayCard currentId={userUuid} />}
       <Footer />
     </main>
   );

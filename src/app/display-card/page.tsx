@@ -15,15 +15,12 @@ export default function MatchPage() {
   const token = useAuthToken();
   
   useEffect(() => {
-    // This effect should only execute when the token's status has been determined.
-    // The useAuthToken hook returns `null` while it's checking cookies.
     if (token === null) {
-      return; // Wait for the hook to finish.
+      return;
     }
 
     const fetchUserData = async () => {
       try {
-        // No need to set loading to true, it's already the default state.
         setError(null);
 
         if (!token) {
@@ -32,7 +29,6 @@ export default function MatchPage() {
           return;
         }
 
-        // 2. Get user profile (including email) from our API
         const response = await axios.get('/api/user', {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -40,7 +36,6 @@ export default function MatchPage() {
 
         console.log(`[Display Card Page] Attempting to find UUID for email: ${user.email}`);
 
-        // 3. Use email to get UUID from form_responses (case-insensitive)
         const { data: formData, error: formError } = await supabase
           .from('form_responses')
           .select('id')
@@ -50,7 +45,7 @@ export default function MatchPage() {
         if (formError || !formData) {
           console.error('Error fetching UUID:', formError);
           setError('Could not find your form submission. Please make sure you have submitted the event form.');
-          setLoading(false); // Stop loading on failure
+          setLoading(false);
           return;
         }
         
@@ -65,13 +60,12 @@ export default function MatchPage() {
           setError('Failed to load your user data.');
         }
       } finally {
-        // This is the only place loading should be set to false.
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [token]); // The effect now ONLY depends on the token.
+  }, [token]); 
 
   if (loading) {
     return (

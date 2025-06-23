@@ -15,21 +15,20 @@ export default function MatchPage() {
   const token = useAuthToken();
   
   useEffect(() => {
-    // We need to wait for the token to be retrieved from the cookie.
-    if (token === null && loading) {
-      // Still loading the token, do nothing yet.
-      return;
+    // This effect should only execute when the token's status has been determined.
+    // The useAuthToken hook returns `null` while it's checking cookies.
+    if (token === null) {
+      return; // Wait for the hook to finish.
     }
 
     const fetchUserData = async () => {
       try {
-        setLoading(true);
+        // No need to set loading to true, it's already the default state.
         setError(null);
 
-        // 1. Get token from our custom hook
         if (!token) {
           setError('Please log in to view your matches');
-          setLoading(false);
+          setLoading(false); // Stop loading on failure
           return;
         }
 
@@ -51,7 +50,7 @@ export default function MatchPage() {
         if (formError || !formData) {
           console.error('Error fetching UUID:', formError);
           setError('Could not find your form submission. Please make sure you have submitted the event form.');
-          setLoading(false);
+          setLoading(false); // Stop loading on failure
           return;
         }
         
@@ -66,12 +65,13 @@ export default function MatchPage() {
           setError('Failed to load your user data.');
         }
       } finally {
+        // This is the only place loading should be set to false.
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [token]);
+  }, [token]); // The effect now ONLY depends on the token.
 
   if (loading) {
     return (

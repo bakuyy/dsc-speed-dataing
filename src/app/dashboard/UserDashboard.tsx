@@ -99,7 +99,7 @@ export default function Dashboard() {
       <div className="mt-6 max-w-4xl mx-auto">
         {/* <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative"> */}
 
-          <MatchComponent isViewMatch={true} />
+          <MatchComponent isViewMatch={isViewMatch} />
           
         {/* </div> */}
         <button 

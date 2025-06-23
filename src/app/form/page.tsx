@@ -4,13 +4,62 @@ import Navbar from '../components/Navbar'
 import Image from 'next/image'
 import Logo from '../../../public/images/logo.png'
 import { FaArrowUp } from "react-icons/fa";
+import { supabase } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const Page = () => {
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorMessage('')
+    console.log("submitting form!");
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+    console.log(data);
+    const requiredFields = [
+      'name',
+      'email',
+      'program',
+      'year',
+      'pronouns',
+      'career',
+      'friend_traits',
+      'self_desc',
+      'goal',
+      'fun',
+      'music',
+      'class_seat',
+      'evil_hobby',
+      'most_likely_to',
+      'caught_watching'
+    ];
+    for (const field of requiredFields) {
+      if (!formData.get(field)) {
+        setErrorMessage('Please fill out all required fields!');
+        setShowError(true);
+        return;
+      }
+    }
+
+    const { error } = await supabase.from('form_responses').insert([data]);
+    if (error){
+      console.error('Form submission error:', error.message);
+      alert('something went wrong :( Please try again!');
+    } else {
+      router.push('/form/success')
+      e.currentTarget.reset();
+    }
+  };
+
   return (
     <div className="bg-[#e1eaf8] min-h-screen w-screen">
       <Navbar />
       {/* Back to Top Button */}
-      {/* test */}
 
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -20,7 +69,27 @@ const Page = () => {
         <FaArrowUp />
       </button>
       <main className="pt-12 max-w-4xl mx-auto px-4 flex flex-col gap-8">
-        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-8">
+        {errorMessage && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <strong className="font-bold">Error:</strong>
+            <span className="block sm:inline ml-2">{errorMessage}</span>
+          </div>
+        )}
+        {showError && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="bg-red-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-jakarta">
+              <span>{errorMessage}</span>
+              <button
+                onClick={() => setShowError(false)}
+                className="text-white font-bold ml-4"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
 
           {/* Logo and Header */}
           <div className="flex flex-col items-center justify-center text-center gap-2">
@@ -92,7 +161,7 @@ const Page = () => {
               </label>
               <input
                 type="text"
-                name="socials"
+                name="social_media_links"
                 placeholder="Add your Instagram, Discord, etc."
                 className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none"
               />
@@ -104,9 +173,9 @@ const Page = () => {
             {[
               { name: "career", label: "What career are you aiming for? (e.g., data scientist, SWE, quant...)" },
               { name: "friend_traits", label: "You will meet a new friend today. What personality traits do you hope this new friend possesses?" },
-              { name: "self_description", label: "What would your friends describe you as?" },
-              { name: "experience_goals", label: "What do you hope to gain out of this experience?" },
-              { name: "fun_activities", label: "What do you like to do for fun?" },
+              { name: "self_desc", label: "What would your friends describe you as?" },
+              { name: "goal", label: "What do you hope to gain out of this experience?" },
+              { name: "fun", label: "What do you like to do for fun?" },
               { name: "music", label: "What genre of music do you listen to? List some of your favourite artists." }
             ].map((q, index) => (
               <div key={index} className="flex flex-col">
@@ -128,70 +197,72 @@ const Page = () => {
             {/* Question 1 */}
             <div>
               <p className="text-[#374995] font-jakarta mb-2">In class, I...</p>
-              {["front", "back", "middle", "dont_go", "professor"].map((value, idx) => (
+              {[
+                { value: "a", label: "Sit in the front of class and try to absorb as much info as I can." },
+                { value: "b", label: "Sit in the back and play Clash Royale." },
+                { value: "c", label: "Sit somewhere in the middle, with my friends." },
+                { value: "d", label: "I do not go to class ;-;" },
+                { value: "e", label: "Lowkey I be the professor bro." }
+              ].map(({ value, label }, idx) => (
                 <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
-                  <input type="radio" name="in_class" value={value} className="accent-[#4b6cb7]" />
-                  {{
-                    front: "Sit in the front of class and try to absorb as much info as I can.",
-                    back: "Sit in the back and play Clash Royale.",
-                    middle: "Sit somewhere in the middle, with my friends.",
-                    dont_go: "I do not go to class ;-;",
-                    professor: "Lowkey I be the professor bro."
-                  }[value]}
+                  <input type="radio" name="class_seat" value={value} className="accent-[#4b6cb7]" />
+                  {label}
                 </label>
               ))}
             </div>
 
             {/* Question 2 */}
-            <div>
-              <p className="text-[#374995] font-jakarta mb-2">Pick your favourite evil hobby:</p>
-              {["gossip", "splurge", "mukbang", "valorant", "wiki"].map((value, idx) => (
-                <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
-                  <input type="radio" name="evil_hobby" value={value} className="accent-[#4b6cb7]" />
-                  {{
-                    gossip: "Gossiping the latest tea",
-                    splurge: "Splurging money on (useless?) items",
-                    mukbang: "Mukbanging food",
-                    valorant: "Entering a ranked match in Valorant",
-                    wiki: "Going down Wikipedia rabbit holes"
-                  }[value]}
-                </label>
-              ))}
-            </div>
+              <div>
+                <p className="text-[#374995] font-jakarta mb-2">Pick your favourite evil hobby:</p>
+                {[
+                  { value: "a", label: "Gossiping the latest tea" },
+                  { value: "b", label: "Splurging money on (useless?) items" },
+                  { value: "c", label: "Mukbanging food" },
+                  { value: "d", label: "Entering a ranked match in Valorant" },
+                  { value: "e", label: "Going down Wikipedia rabbit holes" }
+                ].map(({ value, label }, idx) => (
+                  <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
+                    <input type="radio" name="evil_hobby" value={value} className="accent-[#4b6cb7]" />
+                    {label}
+                  </label>
+                ))}
+              </div>
 
             {/* Question 3 */}
             <div>
               <p className="text-[#374995] font-jakarta mb-2">I am most likely to...</p>
-              {["blogger", "lazeeza", "disappear", "sleep", "startup"].map((value, idx) => (
+              {[
+                { value: "a", label: "Become a UW blogger on Instagram reels" },
+                { value: "b", label: "Eat a Lazeeza (Lazeez pizza)" },
+                { value: "c", label: "Disappear from campus and not tell anyone" },
+                { value: "d", label: "Sleep through a midterm" },
+                { value: "e", label: "Start a business" }
+              ].map(({ value, label }, idx) => (
                 <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
-                  <input type="radio" name="likely_to" value={value} className="accent-[#4b6cb7]" />
-                  {{
-                    blogger: "Become a UW blogger on Instagram reels",
-                    lazeeza: "Eat a Lazeeza (Lazeez pizza)",
-                    disappear: "Disappear from campus and not tell anyone",
-                    sleep: "Sleep through a midterm",
-                    startup: "Start a business"
-                  }[value]}
+                  <input type="radio" name="most_likely_to" value={value} className="accent-[#4b6cb7]" />
+                  {label}
                 </label>
               ))}
             </div>
 
             {/* Question 4 */}
             <div>
-              <p className="text-[#374995] font-jakarta mb-2">Which of the following do you find the most funny?</p>
-              {["tralaleo", "bread", "dogs"].map((value, idx) => (
+              <p className="text-[#374995] font-jakarta mb-2">You’re most likely to catch me watching…</p>
+              {[
+                { value: "a", label: "Wooden soup ASMR" },
+                { value: "b", label: "1-hour mock SWE interview + solutions LEAKED!!!" },
+                { value: "c", label: "How to recover from a bad exam" },
+                { value: "d", label: "Can 100,000 Elephants defeat 1 MILLION Ostriches?"},
+                { value: "e", label: "How to make a matcha strawberry latte"}
+              ].map(({ value, label }, idx) => (
                 <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
-                  <input type="radio" name="funny" value={value} className="accent-[#4b6cb7]" />
-                  {{
-                    tralaleo: "Tralaleo tralala",
-                    bread: "Bread tastes better than key",
-                    dogs: "Seeing small dogs fail to complete simple obstacle courses"
-                  }[value]}
+                  <input type="radio" name="caught_watching" value={value} className="accent-[#4b6cb7]" />
+                  {label}
                 </label>
               ))}
             </div>
-          </div>
-
+            </div>
+          {/* Submit Button */}
           <button
             type="submit"
             className="bg-[#4b6cb7] hover:bg-[#3f5cb1] text-white py-3 px-6 rounded-full w-full text-lg font-jakarta"
@@ -203,7 +274,6 @@ const Page = () => {
             Speed Friending, an UWDSC event <br />
             © Copyright 2025
           </footer>
-
         </form>
       </main>
     </div>

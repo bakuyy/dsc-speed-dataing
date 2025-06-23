@@ -1,11 +1,16 @@
 import React from 'react'
-import Dashboard from './UserDashboard'
-import Navbar from '../components/Navbar'
+import Dashboard from './Dashboard'
+import Navbar from '@/app/components/Navbar'
 import Footer from '../components/Footer'
 import Logo from "../../../public/images/logo.png"
 import Image from "next/image"
 
-export default function DashPage() {
+export const metadata = {
+  title: 'Dashboard',
+  description: 'View your matches and event information.',
+}
+
+export default function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#E6EFFD]">
       <Navbar />

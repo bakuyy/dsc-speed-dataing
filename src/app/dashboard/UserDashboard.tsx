@@ -1,90 +1,20 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from '@/store/store'
-import { login } from '@/store/loginTokenSlice'
 import CardButton from '../components/CardButton'
-import axios from 'axios'
-import { useAuthToken } from '@/hooks/useAuthToken'
 
-export default function Dashboard() {
+interface UserDashboardProps {
+  userName: string;
+}
+
+export default function UserDashboard({ userName }: UserDashboardProps) {
   const router = useRouter()
-  const dispatch = useDispatch()
-  const fullName = useSelector((state: RootState) => state.auth.name)
-  const token = useAuthToken();
-  const [userName, setUserName] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    if (token === null) {
-      return;
-    }
-
-    const refreshUserData = async () => {
-      try {
-        if (!token) {
-          console.error('No token found for user data refresh');
-          // Optional: redirect to login if no token and not already on a public page
-          // router.push('/'); 
-          return;
-        }
-
-        const response = await axios.get('/api/user', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
-        if (response.data) {
-          dispatch(login({
-            name: response.data.name,
-            token: token,
-            role: response.data.role
-          }))
-        }
-      } catch (error) {
-        console.error('Error refreshing user data:', error)
-      }
-    }
-
-    refreshUserData()
-  }, [token, dispatch, router])
-
-  useEffect(() => {
-    if (fullName) {
-      const timer = setTimeout(() => {
-        const processedName = fullName.split(' ')[0].toLowerCase().charAt(0).toUpperCase() + 
-                            fullName.split(' ')[0].toLowerCase().slice(1)
-        setUserName(processedName)
-        setIsLoading(false)
-      }, 1000) 
-
-      return () => clearTimeout(timer)
-    }
-  }, [fullName])
-
+  
   type ButtonType = 'start' | 'running' | 'locked'
   const buttonType: ButtonType = 'running' 
   const buttonRoutes: Record<ButtonType, string> = {
     start: '/form',
     running: '/form',
     locked: '/',
-  }
-
-  if (isLoading) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-          </div>
-          <p className="mt-4 text-[#374995] text-lg">Loading your dashboard</p>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -129,4 +59,4 @@ export default function Dashboard() {
       </div>
     </div>
   )
-}
+} 

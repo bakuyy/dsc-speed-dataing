@@ -5,21 +5,23 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/store';
 import { login, logout } from '@/store/loginTokenSlice';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useAuthToken } from '@/hooks/useAuthToken';
 
 export function AuthHydrator() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const token = useAuthToken();
 
   useEffect(() => {
+    if (token === null) {
+      // Hook is still determining token status
+      return;
+    }
+
     const validateSession = async () => {
       try {
-        // Try to get token from both js-cookie and document.cookie
-        const token = Cookies.get('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-        console.log('[Auth Hydration] Token from cookies:', token);
-        
         if (!token) {
           console.log('[Auth Hydration] No token found');
           dispatch(logout());
@@ -33,35 +35,30 @@ export function AuthHydrator() {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log('[Auth Hydration] User data response:', response.data);
         
         if (response.data) {
           console.log('[Auth Hydration] Session restored for:', response.data.name);
-          // Add a small delay to ensure Redux store is ready
-          setTimeout(() => {
-            dispatch(login({
-              name: response.data.name,
-              token: token,
-              role: response.data.role
-            }));
-            setIsLoading(false);
-          }, 100);
+          dispatch(login({
+            name: response.data.name,
+            token: token,
+            role: response.data.role
+          }));
         } else {
           console.log('[Auth Hydration] Invalid session - no user data');
           dispatch(logout());
-          setIsLoading(false);
           router.push('/');
         }
       } catch (error) {
         console.error('[Auth Hydration] Error validating session:', error);
         dispatch(logout());
-        setIsLoading(false);
         router.push('/');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     validateSession();
-  }, [dispatch, router]);
+  }, [token, dispatch, router]);
 
   if (isLoading) {
     return null; // or return a loading spinner if you want

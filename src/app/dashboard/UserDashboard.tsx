@@ -6,23 +6,27 @@ import { RootState } from '@/store/store'
 import { login } from '@/store/loginTokenSlice'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
-import Cookies from 'js-cookie'
+import { useAuthToken } from '@/hooks/useAuthToken'
 
 export default function Dashboard() {
   const router = useRouter()
   const dispatch = useDispatch()
   const fullName = useSelector((state: RootState) => state.auth.name)
+  const token = useAuthToken();
   const [userName, setUserName] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    if (token === null) {
+      return;
+    }
+
     const refreshUserData = async () => {
       try {
-        // Get token from cookies (same as other components)
-        const token = Cookies.get('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-        
         if (!token) {
           console.error('No token found for user data refresh');
+          // Optional: redirect to login if no token and not already on a public page
+          // router.push('/'); 
           return;
         }
 
@@ -45,7 +49,7 @@ export default function Dashboard() {
     }
 
     refreshUserData()
-  }, [dispatch, router])
+  }, [token, dispatch, router])
 
   useEffect(() => {
     if (fullName) {

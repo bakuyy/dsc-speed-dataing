@@ -5,23 +5,28 @@ import DisplayCard from "./MatchDisplay";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { supabase } from '../../lib/supabase';
+import { useAuthToken } from '../../hooks/useAuthToken';
 
 export default function MatchPage() {
   const [userUuid, setUserUuid] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const token = useAuthToken();
   
   useEffect(() => {
+    // We need to wait for the token to be retrieved from the cookie.
+    if (token === null && loading) {
+      // Still loading the token, do nothing yet.
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // 1. Get token from cookies
-        const token = Cookies.get('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-        
+        // 1. Get token from our custom hook
         if (!token) {
           setError('Please log in to view your matches');
           setLoading(false);
@@ -66,7 +71,7 @@ export default function MatchPage() {
     };
 
     fetchUserData();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return (

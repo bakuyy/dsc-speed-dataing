@@ -7,12 +7,15 @@ import { FaArrowUp } from "react-icons/fa";
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useAuthToken } from '@/hooks/useAuthToken'
 
 const Page = () => {
   const router = useRouter();
+  const watiam_user = useAuthToken();
   const [submitting, setSubmitting] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage('')
@@ -20,10 +23,18 @@ const Page = () => {
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    if (!watiam_user) {
+      setErrorMessage('User not authenticated. Please log in.');
+      setShowError(true);
+      return;
+    }
+
+    data['watiam_user'] = watiam_user;
     console.log(data);
+
     const requiredFields = [
       'name',
-      'email',
       'program',
       'year',
       'pronouns',
@@ -38,6 +49,7 @@ const Page = () => {
       'most_likely_to',
       'caught_watching'
     ];
+
     for (const field of requiredFields) {
       if (!formData.get(field)) {
         setErrorMessage('Please fill out all required fields!');
@@ -46,8 +58,20 @@ const Page = () => {
       }
     }
 
+    const { data: existingEntry, error: fetchError } = await supabase
+      .from('form_responses')
+      .select('*')
+      .eq('watiam_user', watiam_user)
+      .maybeSingle();
+
+    if (existingEntry) {
+      setErrorMessage('You have already submitted this form.');
+      setShowError(true);
+      return;
+    }
+
     const { error } = await supabase.from('form_responses').insert([data]);
-    if (error){
+    if (error) {
       console.error('Form submission error:', error.message);
       alert('something went wrong :( Please try again!');
     } else {
@@ -59,8 +83,6 @@ const Page = () => {
   return (
     <div className="bg-[#e1eaf8] min-h-screen w-screen">
       <Navbar />
-      {/* Back to Top Button */}
-
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-[#374995] text-white shadow-md hover:bg-[#2c3d85] transition"
@@ -90,14 +112,11 @@ const Page = () => {
           </div>
         )}
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-
-          {/* Logo and Header */}
           <div className="flex flex-col items-center justify-center text-center gap-2">
             <Image src={Logo} alt="Logo" className="w-2/5 h-auto" />
             <h1 className="text-3xl md:text-4xl font-bold text-[#374995]">Speed Friending</h1>
           </div>
 
-          {/* Name and Pronouns */}
           <div className="flex flex-col md:flex-row gap-6 justify-between">
             <div className="flex flex-col w-full">
               <label className="mb-1 text-[#374995] font-jakarta">Your Name</label>
@@ -123,16 +142,26 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Email, program, year, social Media Links */}
           <div className="flex flex-col gap-4 mt-4">
             <div className="flex flex-col w-full">
-              <label className="mb-1 text-[#374995] font-jakarta">UWaterloo Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your @uwaterloo.ca email"
-                className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none"
-              />
+              <label className="mb-1 text-[#374995] font-jakarta">DSC Email</label>
+              {watiam_user ? (
+                <input
+                  type="email"
+                  name="watiam_user_display"
+                  value={watiam_user}
+                  disabled
+                  className="p-3 rounded-full w-full bg-gray-100 text-black placeholder-[#aabbd7] outline-none font-jakarta cursor-not-allowed"
+                />
+              ) : (
+                <input
+                  type="email"
+                  name="watiam_user_display"
+                  placeholder="Loading your email..."
+                  disabled
+                  className="p-3 rounded-full w-full bg-gray-100 text-gray-400 placeholder-[#aabbd7] outline-none font-jakarta italic cursor-not-allowed"
+                />
+              )}
             </div>
 
             <div className="flex flex-col w-full">
@@ -167,7 +196,7 @@ const Page = () => {
               />
             </div>
           </div>
-
+{/* cut from here */}
           {/* Open-Ended Questions */}
           <div className="flex flex-col gap-6 mt-8">
             {[

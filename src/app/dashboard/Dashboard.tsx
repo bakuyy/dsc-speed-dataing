@@ -9,7 +9,6 @@ import UserDashboard from './UserDashboard'
 export default function Dashboard() {
   const user = useSelector((state: RootState) => state.user.data);
   const isLoading = useSelector((state: RootState) => state.user.loading);
-  console.log('[Dashboard] Redux user:', user);
 
   if (isLoading) {
     return (
@@ -26,8 +25,9 @@ export default function Dashboard() {
     );
   }
 
-  if (!user || !user.name) {
-    return <div className="text-center p-12">User data incomplete. Please contact support.</div>;
+  if (!user) {
+    // This can be a login prompt or a redirect
+    return <div className="text-center p-12">Please log in to view the dashboard.</div>
   }
 
   const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());

@@ -1,50 +1,15 @@
 'use client'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { useAuthToken } from '@/hooks/useAuthToken'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 import { ADMIN_EMAILS } from '@/lib/admins'
 
 import AdminDashboard from './AdminDashboard'
 import UserDashboard from './UserDashboard'
 
-interface User {
-  name: string;
-  email: string;
-}
-
 export default function Dashboard() {
-  const token = useAuthToken();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (token === null) {
-      return; // Wait for token to be loaded
-    }
-
-    if (!token) {
-      // If no token, stop loading and maybe redirect or show a message.
-      // For now, we'll just show nothing.
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchUserData = async () => {
-      try {
-        const { data } = await axios.get('/api/user', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUser(data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setUser(null); // Clear user on error
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [token]);
+  const user = useSelector((state: RootState) => state.user.data);
+  const isLoading = useSelector((state: RootState) => state.user.loading);
+  console.log('[Dashboard] Redux user:', user);
 
   if (isLoading) {
     return (
@@ -61,9 +26,8 @@ export default function Dashboard() {
     );
   }
 
-  if (!user) {
-    // This can be a login prompt or a redirect
-    return <div className="text-center p-12">Please log in to view the dashboard.</div>
+  if (!user || !user.name) {
+    return <div className="text-center p-12">User data incomplete. Please contact support.</div>;
   }
 
   const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());

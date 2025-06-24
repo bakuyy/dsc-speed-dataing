@@ -12,6 +12,7 @@ export default function UserFetcher() {
       dispatch(setLoading(true));
       try {
         const res = await axios.get('/api/user');
+        console.log('[UserFetcher] API user data:', res.data);
         dispatch(setUser(res.data));
       } catch {
         dispatch(setUser(null));

@@ -1,4 +1,4 @@
 export const ADMIN_EMAILS: string[] = [
-  'a37tran@uwaterloo.ca',
+  'sscoutin@uwaterloo.ca',
   // Add other admin emails here
 ]; 

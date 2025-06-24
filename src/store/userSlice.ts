@@ -1,23 +1,25 @@
 export interface UserData {
-  username: string;
-  userStatus: string;
-  hasPaid: boolean;
-  faculty: string;
-  term: string;
-  heardFromWhere: string;
-  isEmailVerified: boolean;
-  memberIdeas: string;
-  isCheckedIn: boolean;
-  isIncomplete: boolean;
-  createdAt: string;
-  updatedAt: string;
-  watIAM: string;
+  name: string;
+  userStatus?: string;
+  hasPaid?: boolean;
+  faculty?: string;
+  term?: string;
+  heardFromWhere?: string;
+  isEmailVerified?: boolean;
+  memberIdeas?: string;
+  isCheckedIn?: boolean;
+  isIncomplete?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  watIAM?: string;
   email: string;
-  paymentLocation: string;
-  paymentMethod: string;
-  verifier: string;
-  eventList: string[];
-  isMathSocMember: boolean;
+  paymentLocation?: string;
+  paymentMethod?: string;
+  verifier?: string;
+  eventList?: string[];
+  isMathSocMember?: boolean;
+  id?: string;
+  role?: string;
 }
 
 import { createSlice } from '@reduxjs/toolkit';

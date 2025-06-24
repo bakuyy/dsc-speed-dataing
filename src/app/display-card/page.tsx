@@ -6,16 +6,17 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from 'axios';
 import { supabase } from '../../lib/supabase';
-import { useAuthToken } from '../../hooks/useAuthToken';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 export default function MatchPage() {
   const [userUuid, setUserUuid] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const token = useAuthToken();
+  const userEmail = useSelector((state: RootState) => state.user.data?.email || null);
   
   useEffect(() => {
-    if (token === null) {
+    if (userEmail === null) {
       return;
     }
 
@@ -23,14 +24,14 @@ export default function MatchPage() {
       try {
         setError(null);
 
-        if (!token) {
+        if (!userEmail) {
           setError('Please log in to view your matches');
           setLoading(false); // Stop loading on failure
           return;
         }
 
         const response = await axios.get('/api/user', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${userEmail}` }
         });
         const user = response.data;
 
@@ -65,7 +66,7 @@ export default function MatchPage() {
     };
 
     fetchUserData();
-  }, [token]); 
+  }, [userEmail]); 
 
   if (loading) {
     return (

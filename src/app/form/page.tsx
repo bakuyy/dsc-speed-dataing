@@ -7,12 +7,12 @@ import { FaArrowUp } from "react-icons/fa";
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useAuthToken } from '@/hooks/useAuthToken'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 
 const Page = () => {
   const router = useRouter();
-  const watiam_user = useAuthToken();
-  const [submitting, setSubmitting] = useState(false);
+  const watiam_user = useSelector((state: RootState) => state.user.data?.email || null);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -58,7 +58,7 @@ const Page = () => {
       }
     }
 
-    const { data: existingEntry, error: fetchError } = await supabase
+    const { data: existingEntry } = await supabase
       .from('form_responses')
       .select('*')
       .eq('watiam_user', watiam_user)
@@ -196,7 +196,7 @@ const Page = () => {
               />
             </div>
           </div>
-{/* cut from here */}
+
           {/* Open-Ended Questions */}
           <div className="flex flex-col gap-6 mt-8">
             {[
@@ -276,7 +276,7 @@ const Page = () => {
 
             {/* Question 4 */}
             <div>
-              <p className="text-[#374995] font-jakarta mb-2">You're most likely to catch me watching...</p>
+              <p className="text-[#374995] font-jakarta mb-2">You&apos;re most likely to catch me watching...</p>
               {[
                 { value: "a", label: "Wooden soup ASMR" },
                 { value: "b", label: "1-hour mock SWE interview + solutions LEAKED!!!!" },

@@ -19,7 +19,9 @@ export function AuthHydrator() {
       try {
         // Get token from js-cookie (more reliable than document.cookie parsing)
         const token = Cookies.get('token');
+        const existingRole = Cookies.get('role');
         console.log('[Auth Hydration] Token from cookies:', token ? 'present' : 'not found');
+        console.log('[Auth Hydration] Existing role from cookies:', existingRole);
         
         if (!token) {
           console.log('[Auth Hydration] No token found, logging out');
@@ -37,7 +39,17 @@ export function AuthHydrator() {
         console.log('[Auth Hydration] User data response:', response.data);
         
         if (response.data) {
-          console.log('[Auth Hydration] Session restored for:', response.data.name);
+          console.log('[Auth Hydration] Session restored for:', response.data.name, 'Role:', response.data.role);
+          
+          // Set role cookie for middleware access
+          Cookies.set('role', response.data.role, { 
+            expires: 120,
+            path: '/',
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production'
+          });
+          console.log('[Auth Hydration] Role cookie set to:', response.data.role);
+          
           dispatch(login({
             name: response.data.name,
             token: token,

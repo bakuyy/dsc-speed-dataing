@@ -21,7 +21,15 @@ const loginTokenSlice = createSlice({
       state.name = action.payload.name;
       state.token = action.payload.token;
       state.role = action.payload.role;
+      // Set token cookie with same expiration as login API (120 days)
       Cookies.set('token', action.payload.token, { 
+        expires: 120,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+      }); 
+      // Set role cookie for middleware authentication
+      Cookies.set('role', action.payload.role, { 
         expires: 120,
         path: '/',
         sameSite: 'lax',
@@ -33,6 +41,8 @@ const loginTokenSlice = createSlice({
       state.token = "";
       state.role = "";
       Cookies.remove('token', { path: '/' });
+      Cookies.remove('role', { path: '/' });
+      Cookies.remove('adminVerified', { path: '/' });
     },
   },
 });

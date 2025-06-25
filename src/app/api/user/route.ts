@@ -2,22 +2,9 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-export async function GET(request: Request) {
-  // Try to get token from cookies first
-  let token = (await cookies()).get("token")?.value;
-  console.log('[User API] Token from cookies:', token);
-  
-  // If no token in cookies, try to get it from Authorization header
-  if (!token) {
-    const authHeader = request.headers.get('authorization');
-    console.log('[User API] Authorization header:', authHeader);
-    if (authHeader?.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-      console.log('[User API] Token from Authorization header:', token);
-    }
-  }
-  
-  console.log('[User API] Final token:', token);
+export async function GET() {
+  const token = (await cookies()).get("token")?.value;
+  console.log('[User API] Token from cookies:', token ? 'present' : 'not found');
 
   if (!token) {
     console.log('[User API] No token found');
@@ -34,6 +21,7 @@ export async function GET(request: Request) {
       },
     );
     console.log('[User API] External API response:', data);
+    console.log('[User API] User status/role from external API:', data.userStatus);
 
     return NextResponse.json(
       {
@@ -44,8 +32,18 @@ export async function GET(request: Request) {
       },
       { status: 200 },
     );
-  } catch (error) {
-    console.error('[User API] Error fetching user data:', error);
-    return NextResponse.json({ message: "Session expired" }, { status: 401 });
+  } catch (error: any) {
+    console.error('[User API] Error fetching user data:', error.response?.status, error.response?.data || error.message);
+    
+    // Return more specific error messages based on the error
+    if (error.response?.status === 401) {
+      return NextResponse.json({ message: "Token expired or invalid" }, { status: 401 });
+    } else if (error.response?.status === 404) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    } else if (error.code === 'ECONNABORTED') {
+      return NextResponse.json({ message: "Request timeout" }, { status: 408 });
+    } else {
+      return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    }
   }
 }

@@ -11,6 +11,7 @@ import axios from 'axios';
 const Page = () => {
   const watiam_user = useSelector((state: RootState) => state.user.data?.email || null);
   const [isFormActive, setIsFormActive] = useState<boolean | null>(null);
+  const [sessionState, setSessionState] = useState<string>('idle');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,11 +21,13 @@ const Page = () => {
     try {
       const response = await axios.get('/api/form-status');
       setIsFormActive(response.data.isActive);
+      setSessionState(response.data.sessionState || 'idle');
       console.log('[Survey Page] Form status:', response.data);
     } catch (error) {
       console.error('[Survey Page] Error checking form status:', error);
       setError('Failed to check form status');
       setIsFormActive(false);
+      setSessionState('idle');
     } finally {
       setIsLoading(false);
     }
@@ -37,8 +40,14 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isFormActive) {
-      alert('Form is currently locked. Please wait for the session to begin.');
+    if (sessionState !== 'form_active') {
+      let message = 'Form is currently locked.';
+      if (sessionState === 'matching_in_progress') {
+        message = 'Form is locked while matching algorithm is running.';
+      } else if (sessionState === 'matches_released') {
+        message = 'Form is locked. Matches have been released.';
+      }
+      alert(message);
       return;
     }
 
@@ -75,19 +84,30 @@ const Page = () => {
       <main className="pt-12 max-w-4xl mx-auto px-4 flex flex-col gap-8">
         {/* Form Status Banner */}
         <div className={`p-4 rounded-lg border-2 ${
-          isFormActive 
+          sessionState === 'form_active'
             ? 'bg-green-50 border-green-300 text-green-800' 
+            : sessionState === 'matching_in_progress'
+            ? 'bg-yellow-50 border-yellow-300 text-yellow-800'
+            : sessionState === 'matches_released'
+            ? 'bg-blue-50 border-blue-300 text-blue-800'
             : 'bg-red-50 border-red-300 text-red-800'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {isFormActive ? (
+              {sessionState === 'form_active' ? (
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              ) : sessionState === 'matching_in_progress' ? (
+                <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+              ) : sessionState === 'matches_released' ? (
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               ) : (
                 <FaLock className="text-red-500" />
               )}
               <span className="font-medium">
-                {isFormActive ? 'Form is Active' : 'Form is Locked'}
+                {sessionState === 'form_active' ? 'Form is Active' : 
+                 sessionState === 'matching_in_progress' ? 'Matching in Progress' :
+                 sessionState === 'matches_released' ? 'Matches Released' :
+                 'Form is Locked'}
               </span>
             </div>
             <button
@@ -100,8 +120,12 @@ const Page = () => {
             </button>
           </div>
           <p className="text-sm mt-1">
-            {isFormActive 
+            {sessionState === 'form_active' 
               ? 'You can now submit your survey responses.' 
+              : sessionState === 'matching_in_progress'
+              ? 'The matching algorithm is currently running. Please wait for matches to be released.'
+              : sessionState === 'matches_released'
+              ? 'Matches have been released! Check your dashboard to see your matches.'
               : 'Please wait for the session to begin. The form will be unlocked by administrators.'
             }
           </p>
@@ -292,14 +316,17 @@ const Page = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={!isFormActive}
+            disabled={sessionState !== 'form_active'}
             className={`py-3 px-6 rounded-full w-full text-lg font-jakarta transition-colors ${
-              isFormActive
+              sessionState === 'form_active'
                 ? 'bg-[#4b6cb7] hover:bg-[#3f5cb1] text-white cursor-pointer'
                 : 'bg-gray-400 text-gray-600 cursor-not-allowed'
             }`}
           >
-            {isFormActive ? 'Submit Survey' : 'Form is Locked'}
+            {sessionState === 'form_active' ? 'Submit Survey' : 
+             sessionState === 'matching_in_progress' ? 'Matching in Progress...' :
+             sessionState === 'matches_released' ? 'Matches Released' :
+             'Form is Locked'}
           </button>
           
           <footer className="text-center text-[#374995] text-sm mt-10">

@@ -12,7 +12,11 @@ export async function POST(req: Request) {
       { email: email.toLowerCase(), password },
       { headers: { "Content-Type": "application/json" } }
     );
-    console.log('[Login API] External login successful, setting token');
+    console.log('[Login API] External login successful, user data:', { 
+      username: data.username, 
+      userStatus: data.userStatus,
+      accessToken: data.accessToken ? 'present' : 'not found'
+    });
 
     if (secretKey !== process.env.NEXT_PUBLIC_SECRET_KEY) {
       console.log('[Login API] Invalid secret key');
@@ -25,6 +29,7 @@ export async function POST(req: Request) {
       role: data.userStatus
     });
 
+    // Set token cookie
     response.cookies.set({
       name: "token",
       value: data.accessToken,
@@ -34,7 +39,19 @@ export async function POST(req: Request) {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
-    console.log('[Login API] Token set in cookies');
+
+    // Set role cookie for middleware authentication
+    response.cookies.set({
+      name: "role",
+      value: data.userStatus,
+      httpOnly: false,
+      path: "/",
+      maxAge: 60 * 60 * 24 * 120, // 120 days
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    console.log('[Login API] Token and role set in cookies. Role:', data.userStatus);
 
     return response;
   } catch (error) {

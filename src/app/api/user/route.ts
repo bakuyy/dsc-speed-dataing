@@ -21,6 +21,7 @@ export async function GET() {
       },
     );
     console.log('[User API] External API response:', data);
+    console.log('[User API] User status/role from external API:', data.userStatus);
 
     return NextResponse.json(
       {

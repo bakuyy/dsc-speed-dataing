@@ -91,7 +91,7 @@ export default function UserDashboard() {
   
   const handleFormClick = () => {
     if (isFormClickable) {
-      router.push('/form')
+      router.push('/survey')
     } else {
       // Show alert or notification that form is not available
       alert(`Form is currently ${sessionState === 'idle' ? 'not started' : sessionState === 'matching_in_progress' ? 'locked while matching is in progress' : 'locked'}. Please wait for the session to begin.`)
@@ -104,12 +104,6 @@ export default function UserDashboard() {
     } else {
       alert('Matches have not been released yet. Please wait for the matching process to complete.')
     }
-  }
-
-  const buttonRoutes: Record<ButtonType, string> = {
-    start: '/display-card',
-    running: '/form',
-    locked: '/form',
   }
 
   return (

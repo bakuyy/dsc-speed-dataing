@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import Navbar from '../components/Navbar'
@@ -14,6 +14,9 @@ const Page = () => {
   const [sessionState, setSessionState] = useState<string>('idle');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const checkFormStatus = async () => {
     setIsLoading(true);
@@ -37,8 +40,17 @@ const Page = () => {
     checkFormStatus();
   }, []);
 
+  useEffect(() => {
+    console.log('[Survey Page] Component mounted/updated');
+    console.log('[Survey Page] Current session state:', sessionState);
+    console.log('[Survey Page] Form ref:', formRef.current);
+  }, [sessionState]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[Survey Page] Submit button clicked!');
+    console.log('[Survey Page] Current session state:', sessionState);
+    console.log('[Survey Page] Form event:', e);
     
     if (sessionState !== 'form_active') {
       let message = 'Form is currently locked.';
@@ -47,12 +59,129 @@ const Page = () => {
       } else if (sessionState === 'matches_released') {
         message = 'Form is locked. Matches have been released.';
       }
+      console.log('[Survey Page] Form locked, showing alert:', message);
       alert(message);
       return;
     }
 
-    // Add your form submission logic here
-    console.log('Form submitted');
+    console.log('[Survey Page] Form is active, proceeding with submission...');
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Get form data
+      const formElement = e.target as HTMLFormElement;
+      console.log('[Survey Page] Form element:', formElement);
+      
+      // Try both FormData and direct element access
+      const formData = new FormData(formElement);
+      
+      // Convert FormData to object
+      const formDataObject: any = {};
+      formData.forEach((value, key) => {
+        formDataObject[key] = value;
+        console.log(`[Survey Page] FormData - ${key}:`, value);
+      });
+
+      // Also try direct element access for textareas
+      const textareaFields = ['career', 'friend_traits', 'self_desc', 'goal', 'fun', 'music'];
+      textareaFields.forEach(fieldName => {
+        const textarea = formElement.querySelector(`[name="${fieldName}"]`) as HTMLTextAreaElement;
+        if (textarea) {
+          const value = textarea.value;
+          console.log(`[Survey Page] Direct access - ${fieldName}:`, value);
+          if (value && value.trim() !== '') {
+            formDataObject[fieldName] = value;
+          }
+        }
+      });
+
+      // Check radio button values
+      const radioFields = ['class_seat', 'evil_hobby', 'most_likely_to', 'caught_watching'];
+      radioFields.forEach(fieldName => {
+        const radio = formElement.querySelector(`input[name="${fieldName}"]:checked`) as HTMLInputElement;
+        if (radio) {
+          formDataObject[fieldName] = radio.value;
+          console.log(`[Survey Page] Radio - ${fieldName}:`, radio.value);
+        }
+      });
+
+      console.log('[Survey Page] Final form data collected:', formDataObject);
+
+      // Add the watiam_user if not already present
+      if (watiam_user && !formDataObject.watiam_user_display) {
+        formDataObject.watiam_user_display = watiam_user;
+      }
+
+      // Client-side validation
+      const requiredFields = ['name', 'watiam_user_display', 'program', 'year'];
+      const missingFields = requiredFields.filter(field => 
+        !formDataObject[field] || formDataObject[field].toString().trim() === ''
+      );
+
+      console.log('[Survey Page] Missing fields:', missingFields);
+
+      if (missingFields.length > 0) {
+        setError(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate pronouns selection
+      if (!formDataObject.pronouns || formDataObject.pronouns === 'Select from the following') {
+        setError('Please select your pronouns');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate year length (max 2 characters as per database constraint)
+      if (formDataObject.year && formDataObject.year.toString().trim().length > 2) {
+        setError('Year must be 2 characters or less (e.g., "2A", "3B")');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate text field lengths (max 500 characters as per database constraints)
+      const textFields = ['career', 'friend_traits', 'self_desc', 'goal', 'fun', 'music'];
+      const longFields = textFields.filter(field => 
+        formDataObject[field] && formDataObject[field].toString().trim().length > 500
+      );
+
+      if (longFields.length > 0) {
+        setError(`Please keep your responses under 500 characters: ${longFields.join(', ')}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      console.log('[Survey Page] Validation passed, submitting to API...');
+
+      // Submit to API
+      const response = await axios.post('/api/form-submit', formDataObject);
+      
+      if (response.data.success) {
+        console.log('[Survey Page] Form submitted successfully:', response.data);
+        setSubmitSuccess(true);
+        // Redirect to success page or show success message
+        setTimeout(() => {
+          window.location.href = '/form/success';
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('[Survey Page] Error submitting form:', error);
+      
+      let errorMessage = 'Failed to submit form. Please try again.';
+      
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+        if (error.response.data.missingFields) {
+          errorMessage += ` Missing: ${error.response.data.missingFields.join(', ')}`;
+        }
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading) {
@@ -131,7 +260,27 @@ const Page = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+        <form onSubmit={handleSubmit} ref={formRef} className="flex flex-col gap-8">
+
+          {/* Error Display */}
+          {error && (
+            <div className="p-4 rounded-lg border-2 border-red-300 bg-red-50 text-red-800">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Error:</span>
+                <span>{error}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Success Display */}
+          {submitSuccess && (
+            <div className="p-4 rounded-lg border-2 border-green-300 bg-green-50 text-green-800">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Success!</span>
+                <span>Form submitted successfully. Redirecting...</span>
+              </div>
+            </div>
+          )}
 
           {/* Logo and Header */}
           <div className="flex flex-col items-center justify-center text-center gap-2">
@@ -141,18 +290,20 @@ const Page = () => {
 
           <div className="flex flex-col md:flex-row gap-6 justify-between">
             <div className="flex flex-col w-full">
-              <label className="mb-1 text-[#374995] font-jakarta">Your Name</label>
+              <label className="mb-1 text-[#374995] font-jakarta">Your Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="name"
                 placeholder="First and Last Name"
+                required
                 className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none font-jakarta"
               />
             </div>
             <div className="flex flex-col w-full">
-              <label className="mb-1 text-[#374995] font-jakarta">Pronouns</label>
+              <label className="mb-1 text-[#374995] font-jakarta">Pronouns <span className="text-red-500">*</span></label>
               <select
                 name="pronouns"
+                required
                 className="p-3 rounded-full w-full bg-[#4b6cb7] text-white placeholder-white outline-none font-jakarta"
               >
                 <option>Select from the following</option>
@@ -187,21 +338,24 @@ const Page = () => {
             </div>
 
             <div className="flex flex-col w-full">
-              <label className="mb-1 text-[#374995] font-jakarta">Program</label>
+              <label className="mb-1 text-[#374995] font-jakarta">Program <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="program"
                 placeholder="Enter your program (e.g., Computer Science)"
+                required
                 className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none"
               />
             </div>
 
             <div className="flex flex-col w-full">
-              <label className="mb-1 text-[#374995] font-jakarta">Year</label>
+              <label className="mb-1 text-[#374995] font-jakarta">Year <span className="text-red-500">*</span> <span className="text-sm text-[#aabbd7]">(max 2 chars)</span></label>
               <input
                 type="text"
                 name="year"
                 placeholder="Enter your year (e.g., 2A)"
+                required
+                maxLength={2}
                 className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none"
               />
             </div>
@@ -231,13 +385,29 @@ const Page = () => {
             ].map((q, index) => (
               <div key={index} className="flex flex-col">
                 <label htmlFor={q.name} className="mb-1 text-[#374995] font-jakarta">{q.label}</label>
-                <textarea
-                  id={q.name}
-                  name={q.name}
-                  rows={4}
-                  placeholder="Type your response here..."
-                  className="p-4 rounded-2xl w-full bg-white text-[#374995] placeholder-[#aabbd7] resize-none outline-none"
-                />
+                <div className="relative">
+                  <textarea
+                    id={q.name}
+                    name={q.name}
+                    rows={4}
+                    maxLength={500}
+                    placeholder="Type your response here..."
+                    className="p-4 rounded-2xl w-full bg-white text-[#374995] placeholder-[#aabbd7] resize-none outline-none"
+                    onChange={(e) => {
+                      const charCount = e.target.value.length;
+                      const counter = e.target.parentElement?.querySelector('.char-counter');
+                      if (counter) {
+                        counter.textContent = `${charCount}/500`;
+                        if (charCount > 450) {
+                          counter.className = 'char-counter text-red-500 text-xs absolute bottom-2 right-4';
+                        } else {
+                          counter.className = 'char-counter text-[#aabbd7] text-xs absolute bottom-2 right-4';
+                        }
+                      }
+                    }}
+                  />
+                  <span className="char-counter text-[#aabbd7] text-xs absolute bottom-2 right-4">0/500</span>
+                </div>
               </div>
             ))}
           </div>
@@ -316,17 +486,57 @@ const Page = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={sessionState !== 'form_active'}
+            disabled={sessionState !== 'form_active' || isSubmitting}
+            onClick={() => {
+              console.log('[Survey Page] Submit button clicked via onClick!');
+              console.log('[Survey Page] Form ref:', formRef.current);
+              console.log('[Survey Page] Session state:', sessionState);
+              console.log('[Survey Page] Is submitting:', isSubmitting);
+              
+              // Test manual form submission if form submission doesn't work
+              if (formRef.current && sessionState === 'form_active' && !isSubmitting) {
+                console.log('[Survey Page] Attempting manual form submission...');
+                // Trigger form submission manually
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                formRef.current.dispatchEvent(submitEvent);
+              }
+            }}
             className={`py-3 px-6 rounded-full w-full text-lg font-jakarta transition-colors ${
-              sessionState === 'form_active'
+              sessionState === 'form_active' && !isSubmitting
                 ? 'bg-[#4b6cb7] hover:bg-[#3f5cb1] text-white cursor-pointer'
                 : 'bg-gray-400 text-gray-600 cursor-not-allowed'
             }`}
           >
-            {sessionState === 'form_active' ? 'Submit Survey' : 
+            {isSubmitting ? 'Submitting...' :
+             sessionState === 'form_active' ? 'Submit Survey' : 
              sessionState === 'matching_in_progress' ? 'Matching in Progress...' :
              sessionState === 'matches_released' ? 'Matches Released' :
              'Form is Locked'}
+          </button>
+
+          {/* Debug Button - Remove this after testing */}
+          <button
+            type="button"
+            onClick={() => {
+              console.log('[Survey Page] Debug button clicked');
+              if (formRef.current) {
+                const formData = new FormData(formRef.current);
+                console.log('[Survey Page] Debug - FormData entries:');
+                formData.forEach((value, key) => {
+                  console.log(`  ${key}:`, value);
+                });
+                
+                // Test direct access
+                const careerTextarea = formRef.current.querySelector('[name="career"]') as HTMLTextAreaElement;
+                const friendTraitsTextarea = formRef.current.querySelector('[name="friend_traits"]') as HTMLTextAreaElement;
+                console.log('[Survey Page] Debug - Direct access:');
+                console.log('  career:', careerTextarea?.value);
+                console.log('  friend_traits:', friendTraitsTextarea?.value);
+              }
+            }}
+            className="mt-4 py-2 px-4 bg-yellow-500 text-white rounded text-sm"
+          >
+            Debug Form Data
           </button>
           
           <footer className="text-center text-[#374995] text-sm mt-10">

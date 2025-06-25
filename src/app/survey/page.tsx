@@ -346,43 +346,43 @@ const Page = () => {
           {/* Show form only if not submitted and not checking */}
           {!hasSubmitted && !isCheckingSubmission && (
             <>
-              {/* Logo and Header */}
-              <div className="flex flex-col items-center justify-center text-center gap-2">
-                <Image src={Logo} alt="Logo" className="w-2/5 h-auto" />
-                <h1 className="text-3xl md:text-4xl font-bold text-[#374995]">Speed Friending</h1>
-              </div>
+          {/* Logo and Header */}
+          <div className="flex flex-col items-center justify-center text-center gap-2">
+            <Image src={Logo} alt="Logo" className="w-2/5 h-auto" />
+            <h1 className="text-3xl md:text-4xl font-bold text-[#374995]">Speed Friending</h1>
+          </div>
 
-              <div className="flex flex-col md:flex-row gap-6 justify-between">
-                <div className="flex flex-col w-full">
+          <div className="flex flex-col md:flex-row gap-6 justify-between">
+            <div className="flex flex-col w-full">
                   <label className="mb-1 text-[#374995] font-jakarta">Your Name <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="First and Last Name"
+              <input
+                type="text"
+                name="name"
+                placeholder="First and Last Name"
                     required
                     disabled={hasSubmitted}
                     className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none font-jakarta disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
-                <div className="flex flex-col w-full">
+              />
+            </div>
+            <div className="flex flex-col w-full">
                   <label className="mb-1 text-[#374995] font-jakarta">Pronouns <span className="text-red-500">*</span></label>
-                  <select
-                    name="pronouns"
+              <select
+                name="pronouns"
                     required
                     disabled={hasSubmitted}
                     className="p-3 rounded-full w-full bg-[#4b6cb7] text-white placeholder-white outline-none font-jakarta disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  >
-                    <option>Select from the following</option>
-                    <option>She/Her</option>
-                    <option>He/Him</option>
-                    <option>They/Them</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </div>
+              >
+                <option>Select from the following</option>
+                <option>She/Her</option>
+                <option>He/Him</option>
+                <option>They/Them</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
 
-              <div className="flex flex-col gap-4 mt-4">
-                <div className="flex flex-col w-full">
+          <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col w-full">
                   <label className="mb-1 text-[#374995] font-jakarta">DSC Email</label>
                   {watiam_user ? (
                     <input
@@ -393,74 +393,74 @@ const Page = () => {
                       className="p-3 rounded-full w-full bg-gray-100 text-black placeholder-[#aabbd7] outline-none font-jakarta cursor-not-allowed"
                     />
                   ) : (
-                    <input
-                      type="email"
+              <input
+                type="email"
                       name="watiam_user_display"
                       placeholder="Loading your email..."
                       disabled
                       className="p-3 rounded-full w-full bg-gray-100 text-gray-400 placeholder-[#aabbd7] outline-none font-jakarta italic cursor-not-allowed"
-                    />
+              />
                   )}
-                </div>
+            </div>
 
-                <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full">
                   <label className="mb-1 text-[#374995] font-jakarta">Program <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    name="program"
-                    placeholder="Enter your program (e.g., Computer Science)"
+              <input
+                type="text"
+                name="program"
+                placeholder="Enter your program (e.g., Computer Science)"
                     required
                     disabled={hasSubmitted}
                     className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
+              />
+            </div>
 
-                <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full">
                   <label className="mb-1 text-[#374995] font-jakarta">Year <span className="text-red-500">*</span> <span className="text-sm text-[#aabbd7]">(max 2 chars)</span></label>
-                  <input
-                    type="text"
-                    name="year"
-                    placeholder="Enter your year (e.g., 2A)"
+              <input
+                type="text"
+                name="year"
+                placeholder="Enter your year (e.g., 2A)"
                     required
                     maxLength={2}
                     disabled={hasSubmitted}
                     className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
+              />
+            </div>
 
-                <div className="flex flex-col w-full">
-                  <label className="mb-1 text-[#374995] font-jakarta">
-                    Social Media Links <span className="text-sm text-[#aabbd7]">(optional)</span>
-                  </label>
-                  <input
-                    type="text"
+            <div className="flex flex-col w-full">
+              <label className="mb-1 text-[#374995] font-jakarta">
+                Social Media Links <span className="text-sm text-[#aabbd7]">(optional)</span>
+              </label>
+              <input
+                type="text"
                     name="social_media_links"
-                    placeholder="Add your Instagram, Discord, etc."
+                placeholder="Add your Instagram, Discord, etc."
                     disabled={hasSubmitted}
                     className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              />
+            </div>
+          </div>
 
-              {/* Open-Ended Questions */}
-              <div className="flex flex-col gap-6 mt-8">
-                {[
-                  { name: "career", label: "What career are you aiming for? (e.g., data scientist, SWE, quant...)" },
-                  { name: "friend_traits", label: "You will meet a new friend today. What personality traits do you hope this new friend possesses?" },
+          {/* Open-Ended Questions */}
+          <div className="flex flex-col gap-6 mt-8">
+            {[
+              { name: "career", label: "What career are you aiming for? (e.g., data scientist, SWE, quant...)" },
+              { name: "friend_traits", label: "You will meet a new friend today. What personality traits do you hope this new friend possesses?" },
                   { name: "self_desc", label: "What would your friends describe you as?" },
                   { name: "goal", label: "What do you hope to gain out of this experience?" },
                   { name: "fun", label: "What do you like to do for fun?" },
-                  { name: "music", label: "What genre of music do you listen to? List some of your favourite artists." }
-                ].map((q, index) => (
-                  <div key={index} className="flex flex-col">
-                    <label htmlFor={q.name} className="mb-1 text-[#374995] font-jakarta">{q.label}</label>
+              { name: "music", label: "What genre of music do you listen to? List some of your favourite artists." }
+            ].map((q, index) => (
+              <div key={index} className="flex flex-col">
+                <label htmlFor={q.name} className="mb-1 text-[#374995] font-jakarta">{q.label}</label>
                     <div className="relative">
-                      <textarea
-                        id={q.name}
-                        name={q.name}
-                        rows={4}
+                <textarea
+                  id={q.name}
+                  name={q.name}
+                  rows={4}
                         maxLength={500}
-                        placeholder="Type your response here..."
+                  placeholder="Type your response here..."
                         disabled={hasSubmitted}
                         className="p-4 rounded-2xl w-full bg-white text-[#374995] placeholder-[#aabbd7] resize-none outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                         onChange={(e) => {
@@ -478,16 +478,16 @@ const Page = () => {
                       />
                       <span className="char-counter text-[#aabbd7] text-xs absolute bottom-2 right-4">0/500</span>
                     </div>
-                  </div>
-                ))}
               </div>
+            ))}
+          </div>
 
-              {/* Multiple Choice Questions */}
-              <div className="flex flex-col gap-8 mt-12">
+          {/* Multiple Choice Questions */}
+          <div className="flex flex-col gap-8 mt-12">
 
-                {/* Question 1 */}
-                <div>
-                  <p className="text-[#374995] font-jakarta mb-2">In class, I...</p>
+            {/* Question 1 */}
+            <div>
+              <p className="text-[#374995] font-jakarta mb-2">In class, I...</p>
                   {[
                     { value: "a", label: "Sit in the front of class and try to absorb as much info as I can." },
                     { value: "b", label: "Sit in the back and play Clash Royale." },
@@ -495,7 +495,7 @@ const Page = () => {
                     { value: "d", label: "I do not go to class ;-;" },
                     { value: "e", label: "Lowkey I be the professor bro." }
                   ].map(({ value, label }, idx) => (
-                    <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
+                <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
                       <input 
                         type="radio" 
                         name="class_seat" 
@@ -504,13 +504,13 @@ const Page = () => {
                         className="accent-[#4b6cb7] disabled:opacity-50" 
                       />
                       {label}
-                    </label>
-                  ))}
-                </div>
+                </label>
+              ))}
+            </div>
 
-                {/* Question 2 */}
-                  <div>
-                    <p className="text-[#374995] font-jakarta mb-2">Pick your favourite evil hobby:</p>
+            {/* Question 2 */}
+            <div>
+              <p className="text-[#374995] font-jakarta mb-2">Pick your favourite evil hobby:</p>
                     {[
                       { value: "a", label: "Gossiping the latest tea" },
                       { value: "b", label: "Splurging money on (useless?) items" },
@@ -518,7 +518,7 @@ const Page = () => {
                       { value: "d", label: "Entering a ranked match in Valorant" },
                       { value: "e", label: "Going down Wikipedia rabbit holes" }
                     ].map(({ value, label }, idx) => (
-                      <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
+                <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
                         <input 
                           type="radio" 
                           name="evil_hobby" 
@@ -527,13 +527,13 @@ const Page = () => {
                           className="accent-[#4b6cb7] disabled:opacity-50" 
                         />
                         {label}
-                      </label>
-                    ))}
-                  </div>
+                </label>
+              ))}
+            </div>
 
-                {/* Question 3 */}
-                <div>
-                  <p className="text-[#374995] font-jakarta mb-2">I am most likely to...</p>
+            {/* Question 3 */}
+            <div>
+              <p className="text-[#374995] font-jakarta mb-2">I am most likely to...</p>
                   {[
                     { value: "a", label: "Become a UW blogger on Instagram reels" },
                     { value: "b", label: "Eat a Lazeeza (Lazeez pizza)" },
@@ -541,7 +541,7 @@ const Page = () => {
                     { value: "d", label: "Sleep through a midterm" },
                     { value: "e", label: "Start a business" }
                   ].map(({ value, label }, idx) => (
-                    <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
+                <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
                       <input 
                         type="radio" 
                         name="most_likely_to" 
@@ -550,12 +550,12 @@ const Page = () => {
                         className="accent-[#4b6cb7] disabled:opacity-50" 
                       />
                       {label}
-                    </label>
-                  ))}
-                </div>
+                </label>
+              ))}
+            </div>
 
-                {/* Question 4 */}
-                <div>
+            {/* Question 4 */}
+            <div>
                   <p className="text-[#374995] font-jakarta mb-2">You&apos;re most likely to catch me watching...</p>
                   {[
                     { value: "a", label: "Wooden soup ASMR" },
@@ -564,7 +564,7 @@ const Page = () => {
                     { value: "d", label: "Can 100,000 Elephants defeat 1 MILLION Ostriches?"},
                     { value: "e", label: "How to make a matcha strawberry latte"}
                   ].map(({ value, label }, idx) => (
-                    <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
+                <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
                       <input 
                         type="radio" 
                         name="caught_watching" 
@@ -573,13 +573,13 @@ const Page = () => {
                         className="accent-[#4b6cb7] disabled:opacity-50" 
                       />
                       {label}
-                    </label>
-                  ))}
-                </div>
-                </div>
+                </label>
+              ))}
+            </div>
+          </div>
               {/* Submit Button */}
-              <button
-                type="submit"
+          <button
+            type="submit"
                 disabled={sessionState !== 'form_active' || isSubmitting || hasSubmitted}
                 onClick={() => {
                   console.log('[Survey Page] Submit button clicked via onClick!');
@@ -638,7 +638,7 @@ const Page = () => {
                   className="bg-[#A6C3EA] text-white px-6 py-2 rounded-full hover:bg-[#8bb3e8] transition-colors"
                 >
                   View History
-                </button>
+          </button>
               </div>
             </div>
           )}

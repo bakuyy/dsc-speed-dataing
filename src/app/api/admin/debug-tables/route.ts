@@ -97,12 +97,44 @@ export async function GET() {
       }
     }
 
+    // Specifically check the settings table
+    let settingsInfo = null;
+    try {
+      console.log('[Debug Tables API] Checking settings table...');
+      const { data: settingsData, error: settingsError, count: settingsCount } = await supabase
+        .from('settings')
+        .select('*', { count: 'exact' });
+
+      if (!settingsError) {
+        console.log(`[Debug Tables API] Settings table exists with ${settingsCount} rows`);
+        settingsInfo = {
+          exists: true,
+          rowCount: settingsCount || 0,
+          hasData: (settingsCount || 0) > 0,
+          data: settingsData || []
+        };
+      } else {
+        console.log(`[Debug Tables API] Error accessing settings table:`, settingsError.message);
+        settingsInfo = {
+          exists: false,
+          error: settingsError.message
+        };
+      }
+    } catch (error) {
+      console.log(`[Debug Tables API] Exception accessing settings table:`, error);
+      settingsInfo = {
+        exists: false,
+        error: 'Table does not exist or access denied'
+      };
+    }
+
     const result = {
       responseTables: responseTableInfo,
       tablesWithData: tablesWithData.map(t => t.tableName),
       totalTablesTested: possibleResponseTables.length,
       tablesWithDataCount: tablesWithData.length,
       sampleData,
+      settingsTable: settingsInfo,
       timestamp: new Date().toISOString()
     };
 

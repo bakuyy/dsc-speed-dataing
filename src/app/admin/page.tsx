@@ -75,6 +75,7 @@ const AdminPage = () => {
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [settings, setSettings] = useState<any[]>([]);
   const [loadingSettings, setLoadingSettings] = useState(true);
+  const [runningMatching, setRunningMatching] = useState(false);
 
   useEffect(() => {
     const checkAdminAccess = () => {
@@ -178,6 +179,51 @@ const AdminPage = () => {
       }
     } catch (error) {
       console.error('[Admin Page] Error executing action:', error);
+    }
+  };
+
+  const runMatchingAlgorithm = async () => {
+    try {
+      setRunningMatching(true);
+      console.log('[Admin Page] Starting matching algorithm...');
+      
+      const response = await axios.post('/api/admin/run-matching');
+      
+      if (response.data.success) {
+        console.log('[Admin Page] Matching completed successfully:', response.data);
+        alert(`Matching completed! Generated ${response.data.matchCount} matches.`);
+      } else {
+        console.log('[Admin Page] Matching completed with message:', response.data.message);
+        alert(response.data.message || 'Matching completed');
+      }
+    } catch (error: any) {
+      console.error('[Admin Page] Error running matching algorithm:', error);
+      alert(`Error running matching algorithm: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setRunningMatching(false);
+    }
+  };
+
+  const runDatabaseMigration = async () => {
+    try {
+      console.log('[Admin Page] Starting database migration...');
+      
+      const response = await axios.post('/api/admin/migrate-database');
+      
+      if (response.data.success) {
+        console.log('[Admin Page] Migration completed successfully:', response.data);
+        alert('Database migration completed successfully!');
+      } else {
+        console.log('[Admin Page] Migration failed:', response.data);
+        alert(`Migration failed: ${response.data.message || 'Unknown error'}`);
+      }
+    } catch (error: any) {
+      console.error('[Admin Page] Error running database migration:', error);
+      if (error.response?.data?.error === 'Manual migration required') {
+        alert(`Database migration requires manual steps:\n\n${error.response.data.steps.join('\n')}\n\nPlease run the migrate-to-matching-tables.sql script in your Supabase SQL editor.`);
+      } else {
+        alert(`Error running database migration: ${error.response?.data?.error || error.message}`);
+      }
     }
   };
 
@@ -496,6 +542,44 @@ const AdminPage = () => {
                     } disabled:opacity-50`}
                   >
                     {loadingSettings ? 'Processing...' : getSessionStateInfo().nextActionText}
+                  </button>
+                </div>
+
+                {/* Matching Algorithm Button - Only show when matching_in_progress */}
+                {getSessionState() === 'matching_in_progress' && (
+                  <div className="mt-4 flex justify-center">
+                    <button
+                      onClick={runMatchingAlgorithm}
+                      disabled={runningMatching}
+                      className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                        runningMatching 
+                          ? 'bg-yellow-400 text-yellow-600 cursor-not-allowed'
+                          : 'bg-yellow-500 hover:bg-yellow-600 text-white cursor-pointer'
+                      } disabled:opacity-50 flex items-center gap-2`}
+                    >
+                      {runningMatching ? (
+                        <>
+                          <FaSync className="animate-spin" />
+                          Running Algorithm...
+                        </>
+                      ) : (
+                        <>
+                          <FaSync />
+                          Run Matching Algorithm
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+
+                {/* Database Migration Button - Always show */}
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={runDatabaseMigration}
+                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-purple-500 hover:bg-purple-600 text-white cursor-pointer flex items-center gap-2"
+                  >
+                    <FaDownload />
+                    Run Database Migration
                   </button>
                 </div>
 

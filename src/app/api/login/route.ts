@@ -19,18 +19,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid secret key" }, { status: 401 });
     }
 
-    const cookieStore = await cookies();
-    cookieStore.set({
-      name: "token",
-      value: data.accessToken,
-      httpOnly: false,
-      path: "/",
-      maxAge: 60 * 60 * 24 * 120, // 120 days
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
-    console.log('[Login API] Token set in cookies');
-
     const response = NextResponse.json({
       name: data.username,
       accessToken: data.accessToken,
@@ -42,10 +30,11 @@ export async function POST(req: Request) {
       value: data.accessToken,
       httpOnly: false,
       path: "/",
-      maxAge: 60 * 60 * 24 * 120,
+      maxAge: 60 * 60 * 24 * 120, // 120 days
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
+    console.log('[Login API] Token set in cookies');
 
     return response;
   } catch (error) {

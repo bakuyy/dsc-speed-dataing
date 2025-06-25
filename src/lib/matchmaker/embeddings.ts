@@ -1,15 +1,14 @@
-import "dotenv/config"; // local environment variables
 import dotenv from "dotenv";
 import OpenAI from "openai"; // for vector embeddings
-import { getMCAnswer } from "./multipleChoiceMap.js"; // multiple choice answers
-import { supabase } from '../supabase.js'; // supabase tables
+import { supabase } from '../supabase'; // supabase tables
 import { v4 as uuidv4 } from 'uuid'; // generating uuids
-import { cosineSimilarity } from "./similarity.js"; // vector comparisons
+import { cosineSimilarity } from "./similarity"; // vector comparisons
+import { getMCAnswer } from "./multipleChoiceMap"; // multiple choice answers
 
 dotenv.config();
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.NEXT_PUBLIC_OPEN_API_KEY
 });
 
 interface Participant {
@@ -188,7 +187,7 @@ export async function handleOddParticipant(participants: { id: string }[]) {
  * RETURNS ARRAY OF Match TO BE INSERTED INTO curr_matches TABLE and the previous_matches TABLE. 
  */
 export async function matchParticipants(): Promise<Match[]> {
-  // fetch everyone’s id + embedding
+  // fetch everyone's id + embedding
   const { data: rows, error: fetchErr } = await supabase
     .from('form_responses')
     .select('id, vector_embedding');
@@ -215,7 +214,7 @@ export async function matchParticipants(): Promise<Match[]> {
     .select('id, matched_with'); // get the id: uuid, matched_with: uuid[]
   if (prevErr) throw prevErr;
 
-  // map each participant → set of UUIDs they’ve already been matched with
+  // map each participant → set of UUIDs they've already been matched with
   const prevMap = new Map<string, Set<string>>();
   for (const { id, matched_with } of already_matched || []) {
     prevMap.set(id, new Set(matched_with));
@@ -233,7 +232,7 @@ export async function matchParticipants(): Promise<Match[]> {
     // skip if either is already in a new match
     if (used.has(i) || used.has(j)) continue;
 
-    // skip if they’ve met before
+    // skip if they've met before
     const met1 = prevMap.get(id1)?.has(id2) ?? false;
     const met2 = prevMap.get(id2)?.has(id1) ?? false;
     if (met1 || met2) continue;

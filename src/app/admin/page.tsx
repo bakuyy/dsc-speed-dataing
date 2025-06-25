@@ -73,8 +73,9 @@ const AdminPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState('overview');
   const [debugInfo, setDebugInfo] = useState<any>(null);
-  const [settings, setSettings] = useState<Setting[]>([]);
-  const [loadingSettings, setLoadingSettings] = useState(false);
+  const [settings, setSettings] = useState<any[]>([]);
+  const [loadingSettings, setLoadingSettings] = useState(true);
+  const [runningMatching, setRunningMatching] = useState(false);
 
   useEffect(() => {
     const checkAdminAccess = () => {
@@ -149,11 +150,15 @@ const AdminPage = () => {
   };
 
   const fetchSettings = async () => {
-    setLoadingSettings(true);
     try {
+      setLoadingSettings(true);
       const response = await axios.get('/api/admin/settings');
-      setSettings(response.data.settings);
-      console.log('[Admin Page] Settings fetched:', response.data.settings);
+      
+      if (response.data.success) {
+        // Convert single setting to array format for compatibility
+        setSettings([response.data.setting]);
+        console.log('[Admin Page] Settings fetched:', response.data.setting);
+      }
     } catch (error) {
       console.error('[Admin Page] Error fetching settings:', error);
     } finally {
@@ -161,48 +166,116 @@ const AdminPage = () => {
     }
   };
 
-  const toggleSetting = async (key: string) => {
+  const toggleSetting = async (action: string) => {
     try {
-      const currentSetting = settings.find(s => s.key === key);
-      let newValue;
+      console.log('[Admin Page] Executing action:', action);
       
-      if (currentSetting) {
-        // Handle both boolean and string values
-        if (typeof currentSetting.value === 'boolean') {
-          newValue = !currentSetting.value;
-        } else {
-          newValue = currentSetting.value === 'true' ? false : true;
-        }
-      } else {
-        newValue = true; // Default to true if setting doesn't exist
-      }
-      
-      console.log('[Admin Page] Toggling setting:', { key, currentValue: currentSetting?.value, newValue });
-      
-      const response = await axios.put('/api/admin/settings', { key, value: newValue });
+      const response = await axios.put('/api/admin/settings', { action });
       
       if (response.data.success) {
         // Refresh settings from the database to get the latest state
         await fetchSettings();
-        console.log('[Admin Page] Setting updated successfully and refreshed');
+        console.log('[Admin Page] Action executed successfully:', response.data);
       }
     } catch (error) {
-      console.error('[Admin Page] Error toggling setting:', error);
+      console.error('[Admin Page] Error executing action:', error);
     }
   };
 
-  const getSettingValue = (key: string): boolean => {
-    const setting = settings.find(s => s.key === key);
-    if (!setting) return false;
-    
-    // Handle both string and boolean values
-    if (typeof setting.value === 'boolean') {
-      return setting.value;
+  const runMatchingAlgorithm = async () => {
+    try {
+      setRunningMatching(true);
+      console.log('[Admin Page] Starting matching algorithm...');
+      
+      const response = await axios.post('/api/admin/run-matching');
+      
+      if (response.data.success) {
+        console.log('[Admin Page] Matching completed successfully:', response.data);
+        alert(`Matching completed! Generated ${response.data.matchCount} matches.`);
+      } else {
+        console.log('[Admin Page] Matching completed with message:', response.data.message);
+        alert(response.data.message || 'Matching completed');
+      }
+    } catch (error: any) {
+      console.error('[Admin Page] Error running matching algorithm:', error);
+      alert(`Error running matching algorithm: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setRunningMatching(false);
     }
-    if (typeof setting.value === 'string') {
-      return setting.value === 'true';
+  };
+
+  const runDatabaseMigration = async () => {
+    try {
+      console.log('[Admin Page] Starting database migration...');
+      
+      const response = await axios.post('/api/admin/migrate-database');
+      
+      if (response.data.success) {
+        console.log('[Admin Page] Migration completed successfully:', response.data);
+        alert('Database migration completed successfully!');
+      } else {
+        console.log('[Admin Page] Migration failed:', response.data);
+        alert(`Migration failed: ${response.data.message || 'Unknown error'}`);
+      }
+    } catch (error: any) {
+      console.error('[Admin Page] Error running database migration:', error);
+      if (error.response?.data?.error === 'Manual migration required') {
+        alert(`Database migration requires manual steps:\n\n${error.response.data.steps.join('\n')}\n\nPlease run the migrate-to-matching-tables.sql script in your Supabase SQL editor.`);
+      } else {
+        alert(`Error running database migration: ${error.response?.data?.error || error.message}`);
+      }
     }
-    return false;
+  };
+
+  const getSessionState = (): string => {
+    const setting = settings.find(s => s.key === 'session_state');
+    return setting ? setting.value : 'idle';
+  };
+
+  const getSessionStateInfo = () => {
+    const state = getSessionState();
+    switch (state) {
+      case 'idle':
+        return {
+          title: 'Session Inactive',
+          description: 'No form, no matching, no matches visible',
+          color: 'gray',
+          nextAction: 'start_form',
+          nextActionText: 'Start Form'
+        };
+      case 'form_active':
+        return {
+          title: 'Form Active',
+          description: 'Users can submit form responses',
+          color: 'green',
+          nextAction: 'start_matching',
+          nextActionText: 'Start Matching'
+        };
+      case 'matching_in_progress':
+        return {
+          title: 'Matching in Progress',
+          description: 'Form locked, algorithm running',
+          color: 'yellow',
+          nextAction: 'release_matches',
+          nextActionText: 'Release Matches'
+        };
+      case 'matches_released':
+        return {
+          title: 'Matches Released',
+          description: 'Users can view their matches',
+          color: 'blue',
+          nextAction: 'reset',
+          nextActionText: 'Reset Session'
+        };
+      default:
+        return {
+          title: 'Unknown State',
+          description: 'Session state is unclear',
+          color: 'red',
+          nextAction: 'reset',
+          nextActionText: 'Reset Session'
+        };
+    }
   };
 
   const handleSearch = () => {
@@ -290,7 +363,7 @@ const AdminPage = () => {
                   Welcome, <span className="font-semibold text-[#374995]">{name}</span>! 
                   Monitor your application data in real-time.
                 </p>
-              </div>
+    </div>
               <div className="flex gap-3">
                 <button
                   onClick={fetchStats}
@@ -310,14 +383,14 @@ const AdminPage = () => {
                   onClick={async () => {
                     try {
                       const response = await axios.get('/api/admin/debug-settings');
-                      console.log('[Admin Page] Debug settings response:', response.data);
-                      alert(`Settings debug: ${JSON.stringify(response.data, null, 2)}`);
+                      console.log('[Admin Page] Debug settings:', response.data);
+                      alert(`Current Settings:\n${JSON.stringify(response.data, null, 2)}`);
                     } catch (error) {
-                      console.error('[Admin Page] Error debugging settings:', error);
-                      alert('Error debugging settings - check console');
+                      console.error('[Admin Page] Debug error:', error);
+                      alert('Failed to fetch debug info');
                     }
                   }}
-                  className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm"
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors text-sm"
                 >
                   Debug Settings
                 </button>
@@ -441,59 +514,94 @@ const AdminPage = () => {
                     Refresh
                   </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg">
+
+                {/* Current State Display */}
+                <div className="mb-6 p-4 border-2 border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-gray-900">Form Session</h4>
-                      <p className="text-sm text-gray-600">Control form submission access</p>
+                      <h4 className="font-medium text-gray-900">
+                        Current State: {getSessionStateInfo().title}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {getSessionStateInfo().description}
+                      </p>
                     </div>
+                    <div className={`w-4 h-4 rounded-full bg-${getSessionStateInfo().color}-500`}></div>
+                  </div>
+                </div>
+
+                {/* Next Action Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => toggleSetting(getSessionStateInfo().nextAction)}
+                    disabled={loadingSettings}
+                    className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                      loadingSettings 
+                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                        : 'bg-[#374995] hover:bg-[#5989fc] text-white cursor-pointer'
+                    } disabled:opacity-50`}
+                  >
+                    {loadingSettings ? 'Processing...' : getSessionStateInfo().nextActionText}
+                  </button>
+                </div>
+
+                {/* Matching Algorithm Button - Only show when matching_in_progress */}
+                {getSessionState() === 'matching_in_progress' && (
+                  <div className="mt-4 flex justify-center">
                     <button
-                      onClick={() => toggleSetting('form_active')}
-                      disabled={loadingSettings}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                        getSettingValue('form_active')
-                          ? 'bg-green-500 text-white hover:bg-green-600'
-                          : 'bg-red-500 text-white hover:bg-red-600'
-                      } disabled:opacity-50`}
+                      onClick={runMatchingAlgorithm}
+                      disabled={runningMatching}
+                      className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                        runningMatching 
+                          ? 'bg-yellow-400 text-yellow-600 cursor-not-allowed'
+                          : 'bg-yellow-500 hover:bg-yellow-600 text-white cursor-pointer'
+                      } disabled:opacity-50 flex items-center gap-2`}
                     >
-                      {loadingSettings ? '...' : getSettingValue('form_active') ? 'Active' : 'Inactive'}
+                      {runningMatching ? (
+                        <>
+                          <FaSync className="animate-spin" />
+                          Running Algorithm...
+                        </>
+                      ) : (
+                        <>
+                          <FaSync />
+                          Run Matching Algorithm
+                        </>
+                      )}
                     </button>
                   </div>
+                )}
 
-                  <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg">
-                    <div>
-                      <h4 className="font-medium text-gray-900">Matching Session</h4>
-                      <p className="text-sm text-gray-600">Control matching algorithm access</p>
-                    </div>
-                    <button
-                      onClick={() => toggleSetting('matching_active')}
-                      disabled={loadingSettings}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                        getSettingValue('matching_active')
-                          ? 'bg-green-500 text-white hover:bg-green-600'
-                          : 'bg-red-500 text-white hover:bg-red-600'
-                      } disabled:opacity-50`}
-                    >
-                      {loadingSettings ? '...' : getSettingValue('matching_active') ? 'Active' : 'Inactive'}
-                    </button>
-                  </div>
+                {/* Database Migration Button - Always show */}
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={runDatabaseMigration}
+                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-purple-500 hover:bg-purple-600 text-white cursor-pointer flex items-center gap-2"
+                  >
+                    <FaDownload />
+                    Run Database Migration
+                  </button>
+                </div>
 
-                  <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg">
-                    <div>
-                      <h4 className="font-medium text-gray-900">Release Session</h4>
-                      <p className="text-sm text-gray-600">Control results release access</p>
+                {/* State Flow Indicator */}
+                <div className="mt-6">
+                  <h4 className="font-medium text-gray-900 mb-3">Session Flow:</h4>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className={`px-3 py-1 rounded ${getSessionState() === 'idle' ? 'bg-gray-200' : 'bg-gray-100'}`}>
+                      Idle
                     </div>
-                    <button
-                      onClick={() => toggleSetting('release_active')}
-                      disabled={loadingSettings}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                        getSettingValue('release_active')
-                          ? 'bg-green-500 text-white hover:bg-green-600'
-                          : 'bg-red-500 text-white hover:bg-red-600'
-                      } disabled:opacity-50`}
-                    >
-                      {loadingSettings ? '...' : getSettingValue('release_active') ? 'Active' : 'Inactive'}
-                    </button>
+                    <div className="text-gray-400">→</div>
+                    <div className={`px-3 py-1 rounded ${getSessionState() === 'form_active' ? 'bg-green-200' : 'bg-gray-100'}`}>
+                      Form Active
+                    </div>
+                    <div className="text-gray-400">→</div>
+                    <div className={`px-3 py-1 rounded ${getSessionState() === 'matching_in_progress' ? 'bg-yellow-200' : 'bg-gray-100'}`}>
+                      Matching
+                    </div>
+                    <div className="text-gray-400">→</div>
+                    <div className={`px-3 py-1 rounded ${getSessionState() === 'matches_released' ? 'bg-blue-200' : 'bg-gray-100'}`}>
+                      Released
+                    </div>
                   </div>
                 </div>
               </div>

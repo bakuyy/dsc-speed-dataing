@@ -56,19 +56,19 @@ export function AuthHydrator() {
           });
           console.log('[Auth Hydration] Role cookie set to:', response.data.role);
           
-          dispatch(login({
-            name: response.data.name,
-            token: token,
-            role: response.data.role
-          }));
-          setIsLoading(false);
+            dispatch(login({
+              name: response.data.name,
+              token: token,
+              role: response.data.role
+            }));
+            setIsLoading(false);
         } else {
           console.log('[Auth Hydration] Invalid session - no user data');
           dispatch(logout());
           setIsLoading(false);
           // Only redirect if we're not already on the home page
           if (window.location.pathname !== '/') {
-            router.push('/');
+          router.push('/');
           }
         }
       } catch (error: any) {
@@ -77,7 +77,7 @@ export function AuthHydrator() {
         setIsLoading(false);
         // Only redirect if we're not already on the home page
         if (window.location.pathname !== '/') {
-          router.push('/');
+        router.push('/');
         }
       }
     };

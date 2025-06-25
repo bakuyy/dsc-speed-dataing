@@ -9,42 +9,90 @@ import Footer from '../components/Footer';
 import Logo from "../../../public/images/logo.png";
 import Image from "next/image";
 import Cookies from 'js-cookie';
+import axios from 'axios';
+import { 
+  FaUsers, 
+  FaClipboardList, 
+  FaChartLine, 
+  FaCalendarAlt,
+  FaSearch,
+  FaDownload,
+  FaSync,
+  FaEye,
+  FaTrash,
+  FaSort,
+  FaSortUp,
+  FaSortDown
+} from 'react-icons/fa';
+
+interface Stats {
+  totalResponses: number;
+  uniqueUsers: number;
+  weeklyResponses: number;
+  dailyStats: Array<{ date: string; count: number }>;
+  recentResponses: Array<any>;
+  lastUpdated: string;
+}
+
+interface FormResponse {
+  id: string;
+  created_at: string;
+  user_id?: string;
+  name?: string;
+  email?: string;
+  [key: string]: any;
+}
+
+interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  limit: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
 
 const AdminPage = () => {
   const router = useRouter();
   const { name, role } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [responses, setResponses] = useState<FormResponse[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const [loadingResponses, setLoadingResponses] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('created_at');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   useEffect(() => {
     const checkAdminAccess = () => {
-      // Check both Redux store and cookies for admin role
       const cookieRole = Cookies.get('role');
       const reduxRole = role;
       const adminVerified = Cookies.get('adminVerified');
       
       console.log('[Admin Page] Checking admin access:', { cookieRole, reduxRole, adminVerified });
       
-      // If we have admin role in either place and admin is verified, allow access
       if ((cookieRole === 'admin' || reduxRole === 'admin') && adminVerified === 'true') {
         console.log('[Admin Page] Admin access confirmed');
         setIsAdmin(true);
         setIsLoading(false);
+        fetchStats();
+        fetchResponses(1, '', 'created_at', 'desc');
       } else if (cookieRole === 'admin' || reduxRole === 'admin') {
-        // Admin but not verified, redirect to verification
         console.log('[Admin Page] Admin not verified, redirecting to verification');
         router.push('/admin/verify');
       } else if (cookieRole && cookieRole !== 'admin') {
-        // User is logged in but not admin
         console.log('[Admin Page] User is not admin, redirecting to dashboard');
         router.push('/dashboard');
       } else if (!cookieRole && !reduxRole) {
-        // Still loading authentication state
         console.log('[Admin Page] Still loading authentication state');
-        // Wait a bit more for auth to load
         setTimeout(checkAdminAccess, 500);
       } else {
-        // No authentication found
         console.log('[Admin Page] No authentication found, redirecting to login');
         router.push('/');
       }
@@ -53,10 +101,91 @@ const AdminPage = () => {
     checkAdminAccess();
   }, [role, router]);
 
+  const fetchStats = async () => {
+    setLoadingStats(true);
+    try {
+      const response = await axios.get('/api/admin/stats');
+      setStats(response.data);
+    } catch (error) {
+      console.error('[Admin Page] Error fetching stats:', error);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
+  const fetchResponses = async (page = 1, search = searchTerm, sort = sortBy, order = sortOrder) => {
+    setLoadingResponses(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '20',
+        search,
+        sortBy: sort,
+        sortOrder: order
+      });
+      
+      console.log('[Admin Page] Fetching responses with params:', { page, search, sort, order });
+      const response = await axios.get(`/api/admin/responses?${params}`);
+      console.log('[Admin Page] Responses API response:', { 
+        responsesCount: response.data.responses?.length,
+        pagination: response.data.pagination,
+        sampleResponse: response.data.responses?.[0]
+      });
+      setResponses(response.data.responses);
+      setPagination(response.data.pagination);
+    } catch (error) {
+      console.error('[Admin Page] Error fetching responses:', error);
+    } finally {
+      setLoadingResponses(false);
+    }
+  };
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchResponses(1, searchTerm, sortBy, sortOrder);
+  };
+
+  const handleSort = (field: string) => {
+    const newOrder = sortBy === field && sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortBy(field);
+    setSortOrder(newOrder);
+    fetchResponses(currentPage, searchTerm, field, newOrder);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchResponses(page, searchTerm, sortBy, sortOrder);
+  };
+
   const handleAdminLogout = () => {
     console.log('[Admin Page] Admin logout - clearing verification');
     Cookies.remove('adminVerified', { path: '/' });
     router.push('/admin/verify');
+  };
+
+  const checkTableStructure = async () => {
+    try {
+      const response = await axios.get('/api/admin/debug-tables');
+      setDebugInfo(response.data);
+      console.log('[Admin Page] Debug info:', response.data);
+    } catch (error) {
+      console.error('[Admin Page] Error fetching debug info:', error);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getSortIcon = (field: string) => {
+    if (sortBy !== field) return <FaSort className="text-gray-400" />;
+    return sortOrder === 'asc' ? <FaSortUp className="text-blue-500" /> : <FaSortDown className="text-blue-500" />;
   };
 
   if (isLoading) {
@@ -75,7 +204,7 @@ const AdminPage = () => {
   }
 
   if (!isAdmin) {
-    return null; // Will redirect via useEffect
+    return null;
   }
 
   return (
@@ -84,126 +213,429 @@ const AdminPage = () => {
       <Image src={Logo} alt="Logo" className="w-3/5 lg:w-2/5 h-auto mx-auto py-8"/>
       
       <main className="flex-1 p-6 lg:p-16">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
           <header className="mb-8">
-            <h1 className="text-3xl lg:text-5xl font-bold text-[#374995] text-center mb-4">
-              Admin Dashboard
-            </h1>
-            <p className="text-lg text-center text-gray-600">
-              Welcome, <span className="font-semibold text-[#374995]">{name}</span>! 
-              You have admin privileges.
-            </p>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h1 className="text-3xl lg:text-5xl font-bold text-[#374995] mb-2">
+                  Admin Dashboard
+                </h1>
+                <p className="text-lg text-gray-600">
+                  Welcome, <span className="font-semibold text-[#374995]">{name}</span>! 
+                  Monitor your application data in real-time.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={fetchStats}
+                  disabled={loadingStats}
+                  className="bg-[#374995] text-white px-4 py-2 rounded-lg hover:bg-[#5989fc] transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  <FaSync className={loadingStats ? 'animate-spin' : ''} />
+                  Refresh
+                </button>
+                <button
+                  onClick={checkTableStructure}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors text-sm"
+                >
+                  Debug Tables
+                </button>
+                <button
+                  onClick={handleAdminLogout}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm"
+                >
+                  Admin Logout
+                </button>
+              </div>
+            </div>
+            
+            {/* Last Updated */}
+            {stats?.lastUpdated && (
+              <p className="text-sm text-gray-500">
+                Last updated: {formatDate(stats.lastUpdated)}
+              </p>
+            )}
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* User Management Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995] hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold text-[#374995] mb-4">User Management</h3>
-              <p className="text-gray-600 mb-4">Manage user accounts and permissions</p>
-              <button 
-                onClick={() => router.push('/admin/users')}
-                className="w-full bg-[#374995] text-white py-2 px-4 rounded-lg hover:bg-[#5989fc] transition-colors"
-              >
-                Manage Users
-              </button>
-            </div>
-
-            {/* Event Management Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995] hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold text-[#374995] mb-4">Event Management</h3>
-              <p className="text-gray-600 mb-4">Configure event settings and data</p>
-              <button 
-                onClick={() => router.push('/admin/events')}
-                className="w-full bg-[#374995] text-white py-2 px-4 rounded-lg hover:bg-[#5989fc] transition-colors"
-              >
-                Manage Events
-              </button>
-            </div>
-
-            {/* Analytics Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995] hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold text-[#374995] mb-4">Analytics</h3>
-              <p className="text-gray-600 mb-4">View event statistics and reports</p>
-              <button 
-                onClick={() => router.push('/admin/analytics')}
-                className="w-full bg-[#374995] text-white py-2 px-4 rounded-lg hover:bg-[#5989fc] transition-colors"
-              >
-                View Analytics
-              </button>
-            </div>
-
-            {/* System Settings Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995] hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold text-[#374995] mb-4">System Settings</h3>
-              <p className="text-gray-600 mb-4">Configure system preferences</p>
-              <button 
-                onClick={() => router.push('/admin/settings')}
-                className="w-full bg-[#374995] text-white py-2 px-4 rounded-lg hover:bg-[#5989fc] transition-colors"
-              >
-                System Settings
-              </button>
-            </div>
-
-            {/* Match Management Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995] hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold text-[#374995] mb-4">Match Management</h3>
-              <p className="text-gray-600 mb-4">Manage speed dating matches</p>
-              <button 
-                onClick={() => router.push('/admin/matches')}
-                className="w-full bg-[#374995] text-white py-2 px-4 rounded-lg hover:bg-[#5989fc] transition-colors"
-              >
-                Manage Matches
-              </button>
-            </div>
-
-            {/* Back to Dashboard Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995] hover:shadow-xl transition-shadow">
-              <h3 className="text-xl font-semibold text-[#374995] mb-4">User Dashboard</h3>
-              <p className="text-gray-600 mb-4">Return to regular user interface</p>
-              <button 
-                onClick={() => router.push('/dashboard')}
-                className="w-full bg-[#A6C3EA] text-white py-2 px-4 rounded-lg hover:bg-[#8BB3E8] transition-colors"
-              >
-                Go to Dashboard
-              </button>
+          {/* Tab Navigation */}
+          <div className="mb-6">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8">
+                <button
+                  onClick={() => setActiveTab('overview')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'overview'
+                      ? 'border-[#374995] text-[#374995]'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Overview
+                </button>
+                <button
+                  onClick={() => setActiveTab('responses')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'responses'
+                      ? 'border-[#374995] text-[#374995]'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Form Responses
+                </button>
+              </nav>
             </div>
           </div>
 
-          {/* Admin Info Section */}
-          <div className="mt-8 bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-semibold text-[#374995]">Admin Information</h3>
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Statistics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                  <div className="flex items-center">
+                    <div className="p-3 rounded-full bg-blue-100">
+                      <FaClipboardList className="text-[#374995] text-xl" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Total Responses</p>
+                      <p className="text-2xl font-bold text-[#374995]">
+                        {loadingStats ? '...' : stats?.totalResponses || 0}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                  <div className="flex items-center">
+                    <div className="p-3 rounded-full bg-green-100">
+                      <FaUsers className="text-[#374995] text-xl" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Unique Users</p>
+                      <p className="text-2xl font-bold text-[#374995]">
+                        {loadingStats ? '...' : stats?.uniqueUsers || 0}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                  <div className="flex items-center">
+                    <div className="p-3 rounded-full bg-yellow-100">
+                      <FaChartLine className="text-[#374995] text-xl" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">This Week</p>
+                      <p className="text-2xl font-bold text-[#374995]">
+                        {loadingStats ? '...' : stats?.weeklyResponses || 0}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                  <div className="flex items-center">
+                    <div className="p-3 rounded-full bg-purple-100">
+                      <FaCalendarAlt className="text-[#374995] text-xl" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Today</p>
+                      <p className="text-2xl font-bold text-[#374995]">
+                        {loadingStats ? '...' : stats?.dailyStats?.[stats.dailyStats.length - 1]?.count || 0}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Daily Chart */}
+              {stats?.dailyStats && (
+                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                  <h3 className="text-xl font-semibold text-[#374995] mb-4">Daily Responses (Last 7 Days)</h3>
+                  <div className="h-64 flex items-end justify-between gap-2">
+                    {stats.dailyStats.map((day, index) => {
+                      const maxCount = Math.max(...stats.dailyStats.map(d => d.count));
+                      const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
+                      const date = new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      
+                      return (
+                        <div key={index} className="flex-1 flex flex-col items-center">
+                          <div className="text-xs text-gray-600 mb-2">{day.count}</div>
+                          <div 
+                            className="w-full bg-[#374995] rounded-t transition-all duration-300 hover:bg-[#5989fc]"
+                            style={{ height: `${height}%` }}
+                          ></div>
+                          <div className="text-xs text-gray-500 mt-2 text-center">{date}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Responses */}
+              {stats?.recentResponses && stats.recentResponses.length > 0 && (
+                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                  <h3 className="text-xl font-semibold text-[#374995] mb-4">Recent Responses</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            User ID
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {stats.recentResponses.map((response, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {formatDate(response.created_at)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {response.user_id || 'N/A'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button className="text-[#374995] hover:text-[#5989fc] mr-3">
+                                <FaEye />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Responses Tab */}
+          {activeTab === 'responses' && (
+            <div className="space-y-6">
+              {/* Search and Filters */}
+              <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search responses..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                        className="w-full pl-10 pr-4 py-2 border-2 border-[#374995] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#374995] focus:ring-opacity-50"
+                      />
+                      <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleSearch}
+                    className="bg-[#374995] text-white px-6 py-2 rounded-lg hover:bg-[#5989fc] transition-colors flex items-center gap-2"
+                  >
+                    <FaSearch />
+                    Search
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      fetchResponses(1, '', sortBy, sortOrder);
+                    }}
+                    className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              {/* Responses Table */}
+              <div className="bg-white rounded-lg shadow-lg border-2 border-[#374995]">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-[#374995]">
+                    Form Responses ({pagination?.totalCount || 0})
+                  </h3>
+                </div>
+                
+                {loadingResponses ? (
+                  <div className="p-8 text-center">
+                    <div className="inline-flex items-center">
+                      <FaSync className="animate-spin mr-2" />
+                      Loading responses...
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th 
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleSort('created_at')}
+                            >
+                              <div className="flex items-center gap-2">
+                                Date
+                                {getSortIcon('created_at')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleSort('user_id')}
+                            >
+                              <div className="flex items-center gap-2">
+                                User ID
+                                {getSortIcon('user_id')}
+                              </div>
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Data Preview
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {responses.map((response, index) => (
+                            <tr key={response.id || index} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {formatDate(response.created_at)}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {response.user_id || 'N/A'}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-900">
+                                <div className="max-w-xs truncate">
+                                  {JSON.stringify(response).substring(0, 100)}...
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button className="text-[#374995] hover:text-[#5989fc] mr-3">
+                                  <FaEye />
+                                </button>
+                                <button className="text-red-500 hover:text-red-700">
+                                  <FaTrash />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Pagination */}
+                    {pagination && pagination.totalPages > 1 && (
+                      <div className="px-6 py-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-gray-700">
+                            Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to{' '}
+                            {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of{' '}
+                            {pagination.totalCount} results
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handlePageChange(pagination.currentPage - 1)}
+                              disabled={!pagination.hasPrev}
+                              className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            >
+                              Previous
+                            </button>
+                            <span className="px-3 py-1 text-sm">
+                              Page {pagination.currentPage} of {pagination.totalPages}
+                            </span>
+                            <button
+                              onClick={() => handlePageChange(pagination.currentPage + 1)}
+                              disabled={!pagination.hasNext}
+                              className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Debug Info Section */}
+          {debugInfo && (
+            <div className="mb-6 bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-yellow-800 mb-3">Debug Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium text-yellow-700">
+                    Tables Tested ({debugInfo.totalTablesTested}) - Found {debugInfo.tablesWithDataCount} with data
+                  </h4>
+                  <div className="mt-2 space-y-2">
+                    {debugInfo.responseTables.map((table: any, index: number) => (
+                      <div key={index} className={`text-sm p-2 rounded border ${table.hasData ? 'bg-green-50 border-green-300' : 'bg-white border-gray-300'}`}>
+                        <div className="font-medium">{table.tableName}</div>
+                        <div className="text-gray-600">
+                          Rows: {table.rowCount} | 
+                          {table.hasData ? ' ✅ Has Data' : ' ❌ No Data'}
+                        </div>
+                        {table.sampleColumns && table.sampleColumns.length > 0 && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            Columns: {table.sampleColumns.join(', ')}
+                          </div>
+                        )}
+                        {table.sampleData && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            Sample: {JSON.stringify(table.sampleData).substring(0, 150)}...
+                          </div>
+                        )}
+                        {table.error && (
+                          <div className="text-xs text-red-500 mt-1">Error: {table.error}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {debugInfo.tablesWithData && debugInfo.tablesWithData.length > 0 && (
+                  <div>
+                    <h4 className="font-medium text-yellow-700">Tables with Data</h4>
+                    <div className="mt-2">
+                      <div className="text-sm text-green-700 font-medium">
+                        {debugInfo.tablesWithData.join(', ')}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {debugInfo.sampleData && Object.keys(debugInfo.sampleData).length > 0 && (
+                  <div>
+                    <h4 className="font-medium text-yellow-700">Sample Data</h4>
+                    <div className="mt-2 space-y-2">
+                      {Object.entries(debugInfo.sampleData).map(([tableName, data]: [string, any]) => (
+                        <div key={tableName} className="text-sm bg-white p-2 rounded border">
+                          <div className="font-medium">{tableName}</div>
+                          <div className="text-xs text-gray-500 mt-1 max-h-32 overflow-y-auto">
+                            <pre>{JSON.stringify(data, null, 2)}</pre>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
               <button
-                onClick={handleAdminLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm"
+                onClick={() => setDebugInfo(null)}
+                className="mt-3 bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700"
               >
-                Admin Logout
+                Close Debug Info
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-gray-600">Name:</p>
-                <p className="font-semibold">{name}</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Role:</p>
-                <p className="font-semibold text-[#374995]">{role}</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Access Level:</p>
-                <p className="font-semibold text-green-600">Full Administrative Access</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Session Status:</p>
-                <p className="font-semibold text-green-600">Verified & Active</p>
-              </div>
-            </div>
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>Security Note:</strong> You are currently in admin mode. Use the "Admin Logout" button to exit admin mode and return to the verification page.
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </main>
 

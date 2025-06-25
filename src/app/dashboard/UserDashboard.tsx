@@ -1,14 +1,15 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { login } from '@/store/loginTokenSlice'
+import { useState, useEffect } from 'react'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
+import MatchComponent from './DefaultMatch'
+import Cookies from 'js-cookie'
 
-
-export default function Dashboard() {
+export default function UserDashboard() {
   const router = useRouter()
   const dispatch = useDispatch()
   const fullName = useSelector((state: RootState) => state.auth.name)
@@ -19,21 +20,33 @@ export default function Dashboard() {
   useEffect(() => {
     const refreshUserData = async () => {
       try {
-        const response = await axios.get('/api/user')
+        const token = Cookies.get('token')
+        if (!token) {
+          console.log('No token found, skipping user data refresh')
+          return
+        }
+
+        const response = await axios.get('/api/user', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        
         if (response.data) {
           dispatch(login({
             name: response.data.name,
-            token: response.data.token,
+            token: token,
             role: response.data.role
           }))
         }
       } catch (error) {
         console.error('Error refreshing user data:', error)
+        // Don't redirect on error, just log it
       }
     }
 
     refreshUserData()
-  }, [dispatch, router])
+  }, [dispatch])
 
   useEffect(() => {
     if (fullName) {
@@ -55,25 +68,9 @@ export default function Dashboard() {
     running: '/form',
     locked: '/',
   }
-  const [isTime, setIsTime] = useState(true)
-
-  if (isLoading) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-          </div>
-          <p className="mt-4 text-[#374995] text-lg">Loading your dashboard</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
-    <div className="mx-4 p-6 lg:p-12 bg-white rounded-t-4xl">
+    <div className="w-screen p-6 lg:p-16 bg-white rounded-t-4xl">
       <header>
         <h1 className="text-xl text-center font-semibold py-5 lg:text-6xl mt-1 text-[#374995] lg:pb-3">
           Welcome to the event, <span className="font-bold animate-pulse">{userName}</span>!
@@ -90,29 +87,17 @@ export default function Dashboard() {
         <div className="flex justify-center">
           <CardButton
             type="match"
-            onClick={() => router.push('/matches')}
+            onClick={() => router.push('/display-card')}
           />
         </div>
       </main>
 
       <div className="mt-6 max-w-4xl mx-auto">
-        <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
+        {/* <div className=" rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative"> */}
 
+          <MatchComponent isViewMatch={isViewMatch} />
           
-          <div className="flex justify-center items-center">
-            <p className="mt-2 text-center text-sm sm:text-xl md:text-2xl font-medium text-black">
-              {isViewMatch? 
-             <div> matching in session!</div>
-              :
-              <div className='font-plus-jakarta-sans italic font-bold'> please wait to view your match...</div>
-}
-              
-            </p>
-
-            
-          </div>
-          
-        </div>
+        {/* </div> */}
         <button 
               onClick={() => router.push('/history')}
               className="w-full my-8  h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow bg-[#A6C3EA] text-white hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300 flex items-center justify-center"
@@ -122,6 +107,7 @@ export default function Dashboard() {
               </span>
             </button>
       </div>
+      
     </div>
   )
-}
+} 

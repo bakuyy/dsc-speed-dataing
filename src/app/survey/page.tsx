@@ -1,91 +1,15 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 import Navbar from '../components/Navbar'
 import Image from 'next/image'
 import Logo from '../../../public/images/logo.png'
-<<<<<<< HEAD:src/app/form/page.tsx
-import { FaArrowUp } from "react-icons/fa";
-import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/store/store'
-
-const Page = () => {
-  const router = useRouter();
-  const watiam_user = useSelector((state: RootState) => state.user.data?.email || null);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('')
-    console.log("submitting form!");
-
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-
-    if (!watiam_user) {
-      setErrorMessage('User not authenticated. Please log in.');
-      setShowError(true);
-      return;
-    }
-
-    data['watiam_user'] = watiam_user;
-    console.log(data);
-
-    const requiredFields = [
-      'name',
-      'program',
-      'year',
-      'pronouns',
-      'career',
-      'friend_traits',
-      'self_desc',
-      'goal',
-      'fun',
-      'music',
-      'class_seat',
-      'evil_hobby',
-      'most_likely_to',
-      'caught_watching'
-    ];
-
-    for (const field of requiredFields) {
-      if (!formData.get(field)) {
-        setErrorMessage('Please fill out all required fields!');
-        setShowError(true);
-        return;
-      }
-    }
-
-    const { data: existingEntry } = await supabase
-      .from('form_responses')
-      .select('*')
-      .eq('watiam_user', watiam_user)
-      .maybeSingle();
-
-    if (existingEntry) {
-      setErrorMessage('You have already submitted this form.');
-      setShowError(true);
-      return;
-    }
-
-    const { error } = await supabase.from('form_responses').insert([data]);
-    if (error) {
-      console.error('Form submission error:', error.message);
-      alert('something went wrong :( Please try again!');
-    } else {
-      router.push('/form/success')
-      e.currentTarget.reset();
-    }
-  };
-
-=======
 import { FaArrowUp, FaSync, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
 const Page = () => {
+  const watiam_user = useSelector((state: RootState) => state.user.data?.email || null);
   const [isFormActive, setIsFormActive] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -138,7 +62,6 @@ const Page = () => {
     );
   }
 
->>>>>>> 42ac5aa5909d57947a30c32b078401f06638cf59:src/app/survey/page.tsx
   return (
     <div className="bg-[#e1eaf8] min-h-screen w-screen">
       <Navbar />
@@ -150,29 +73,6 @@ const Page = () => {
         <FaArrowUp />
       </button>
       <main className="pt-12 max-w-4xl mx-auto px-4 flex flex-col gap-8">
-<<<<<<< HEAD:src/app/form/page.tsx
-        {errorMessage && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <strong className="font-bold">Error:</strong>
-            <span className="block sm:inline ml-2">{errorMessage}</span>
-          </div>
-        )}
-        {showError && (
-          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="bg-red-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-jakarta">
-              <span>{errorMessage}</span>
-              <button
-                onClick={() => setShowError(false)}
-                className="text-white font-bold ml-4"
-                aria-label="Dismiss"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-=======
         {/* Form Status Banner */}
         <div className={`p-4 rounded-lg border-2 ${
           isFormActive 
@@ -210,7 +110,6 @@ const Page = () => {
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
 
           {/* Logo and Header */}
->>>>>>> 42ac5aa5909d57947a30c32b078401f06638cf59:src/app/survey/page.tsx
           <div className="flex flex-col items-center justify-center text-center gap-2">
             <Image src={Logo} alt="Logo" className="w-2/5 h-auto" />
             <h1 className="text-3xl md:text-4xl font-bold text-[#374995]">Speed Friending</h1>

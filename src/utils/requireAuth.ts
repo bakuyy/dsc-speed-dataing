@@ -3,5 +3,5 @@ import { redirect } from "next/navigation";
 
 export async function requireAuth() {
   const jwt = (await cookies()).get("token");
-  if (!jwt) redirect("/login?return=/");
+  if (!jwt) redirect("/");
 }

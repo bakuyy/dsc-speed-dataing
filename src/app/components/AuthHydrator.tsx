@@ -15,13 +15,14 @@ export function AuthHydrator() {
 
   useEffect(() => {
     const validateSession = async () => {
+      console.log('[Auth Hydration] Starting session validation...');
       try {
-        // Try to get token from both js-cookie and document.cookie
-        const token = Cookies.get('token') || document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-        console.log('[Auth Hydration] Token from cookies:', token);
+        // Get token from js-cookie (more reliable than document.cookie parsing)
+        const token = Cookies.get('token');
+        console.log('[Auth Hydration] Token from cookies:', token ? 'present' : 'not found');
         
         if (!token) {
-          console.log('[Auth Hydration] No token found');
+          console.log('[Auth Hydration] No token found, logging out');
           dispatch(logout());
           setIsLoading(false);
           return;
@@ -37,26 +38,29 @@ export function AuthHydrator() {
         
         if (response.data) {
           console.log('[Auth Hydration] Session restored for:', response.data.name);
-          // Add a small delay to ensure Redux store is ready
-          setTimeout(() => {
-            dispatch(login({
-              name: response.data.name,
-              token: token,
-              role: response.data.role
-            }));
-            setIsLoading(false);
-          }, 100);
+          dispatch(login({
+            name: response.data.name,
+            token: token,
+            role: response.data.role
+          }));
+          setIsLoading(false);
         } else {
           console.log('[Auth Hydration] Invalid session - no user data');
           dispatch(logout());
           setIsLoading(false);
-          router.push('/');
+          // Only redirect if we're not already on the home page
+          if (window.location.pathname !== '/') {
+            router.push('/');
+          }
         }
-      } catch (error) {
-        console.error('[Auth Hydration] Error validating session:', error);
+      } catch (error: any) {
+        console.error('[Auth Hydration] Error validating session:', error.response?.status, error.response?.data || error.message);
         dispatch(logout());
         setIsLoading(false);
-        router.push('/');
+        // Only redirect if we're not already on the home page
+        if (window.location.pathname !== '/') {
+          router.push('/');
+        }
       }
     };
 

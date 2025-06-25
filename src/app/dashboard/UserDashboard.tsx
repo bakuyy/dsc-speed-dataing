@@ -7,7 +7,7 @@ import { login } from '@/store/loginTokenSlice'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
 import MatchComponent from './DefaultMatch'
-
+import Cookies from 'js-cookie'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -20,21 +20,33 @@ export default function Dashboard() {
   useEffect(() => {
     const refreshUserData = async () => {
       try {
-        const response = await axios.get('/api/user')
+        const token = Cookies.get('token')
+        if (!token) {
+          console.log('No token found, skipping user data refresh')
+          return
+        }
+
+        const response = await axios.get('/api/user', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        
         if (response.data) {
           dispatch(login({
             name: response.data.name,
-            token: response.data.token,
+            token: token,
             role: response.data.role
           }))
         }
       } catch (error) {
         console.error('Error refreshing user data:', error)
+        // Don't redirect on error, just log it
       }
     }
 
     refreshUserData()
-  }, [dispatch, router])
+  }, [dispatch])
 
   useEffect(() => {
     if (fullName) {

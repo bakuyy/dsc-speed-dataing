@@ -52,6 +52,11 @@ interface Pagination {
   hasPrev: boolean;
 }
 
+interface Setting {
+  key: string;
+  value: string;
+}
+
 const AdminPage = () => {
   const router = useRouter();
   const { name, role } = useSelector((state: RootState) => state.auth);
@@ -68,6 +73,8 @@ const AdminPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState('overview');
   const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [settings, setSettings] = useState<Setting[]>([]);
+  const [loadingSettings, setLoadingSettings] = useState(false);
 
   useEffect(() => {
     const checkAdminAccess = () => {
@@ -83,6 +90,7 @@ const AdminPage = () => {
         setIsLoading(false);
         fetchStats();
         fetchResponses(1, '', 'created_at', 'desc');
+        fetchSettings();
       } else if (cookieRole === 'admin' || reduxRole === 'admin') {
         console.log('[Admin Page] Admin not verified, redirecting to verification');
         router.push('/admin/verify');
@@ -138,6 +146,52 @@ const AdminPage = () => {
     } finally {
       setLoadingResponses(false);
     }
+  };
+
+  const fetchSettings = async () => {
+    setLoadingSettings(true);
+    try {
+      const response = await axios.get('/api/admin/settings');
+      setSettings(response.data.settings);
+      console.log('[Admin Page] Settings fetched:', response.data.settings);
+    } catch (error) {
+      console.error('[Admin Page] Error fetching settings:', error);
+    } finally {
+      setLoadingSettings(false);
+    }
+  };
+
+  const toggleSetting = async (key: string) => {
+    try {
+      const currentSetting = settings.find(s => s.key === key);
+      const newValue = currentSetting ? currentSetting.value === 'true' ? 'false' : 'true' : 'true';
+      
+      console.log('[Admin Page] Toggling setting:', { key, currentValue: currentSetting?.value, newValue });
+      
+      const response = await axios.put('/api/admin/settings', { key, value: newValue });
+      
+      if (response.data.success) {
+        // Refresh settings from the database to get the latest state
+        await fetchSettings();
+        console.log('[Admin Page] Setting updated successfully and refreshed');
+      }
+    } catch (error) {
+      console.error('[Admin Page] Error toggling setting:', error);
+    }
+  };
+
+  const getSettingValue = (key: string): boolean => {
+    const setting = settings.find(s => s.key === key);
+    if (!setting) return false;
+    
+    // Handle both string and boolean values
+    if (typeof setting.value === 'boolean') {
+      return setting.value;
+    }
+    if (typeof setting.value === 'string') {
+      return setting.value === 'true';
+    }
+    return false;
   };
 
   const handleSearch = () => {
@@ -240,6 +294,21 @@ const AdminPage = () => {
                   className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors text-sm"
                 >
                   Debug Tables
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await axios.get('/api/admin/debug-settings');
+                      console.log('[Admin Page] Debug settings response:', response.data);
+                      alert(`Settings debug: ${JSON.stringify(response.data, null, 2)}`);
+                    } catch (error) {
+                      console.error('[Admin Page] Error debugging settings:', error);
+                      alert('Error debugging settings - check console');
+                    }
+                  }}
+                  className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm"
+                >
+                  Debug Settings
                 </button>
                 <button
                   onClick={handleAdminLogout}
@@ -348,65 +417,75 @@ const AdminPage = () => {
                 </div>
               </div>
 
-              {/* Daily Chart */}
-              {stats?.dailyStats && (
-                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
-                  <h3 className="text-xl font-semibold text-[#374995] mb-4">Daily Responses (Last 7 Days)</h3>
-                  <div className="h-64 flex items-end justify-between gap-2">
-                    {stats.dailyStats.map((day, index) => {
-                      const maxCount = Math.max(...stats.dailyStats.map(d => d.count));
-                      const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
-                      const date = new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                      
-                      return (
-                        <div key={index} className="flex-1 flex flex-col items-center">
-                          <div className="text-xs text-gray-600 mb-2">{day.count}</div>
-                          <div 
-                            className="w-full bg-[#374995] rounded-t transition-all duration-300 hover:bg-[#5989fc]"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                          <div className="text-xs text-gray-500 mt-2 text-center">{date}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
+              {/* Session Controls */}
+              <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold text-[#374995]">Session Controls</h3>
+                  <button
+                    onClick={fetchSettings}
+                    disabled={loadingSettings}
+                    className="bg-[#374995] text-white px-3 py-1 rounded text-sm hover:bg-[#5989fc] transition-colors disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <FaSync className={loadingSettings ? 'animate-spin' : ''} />
+                    Refresh
+                  </button>
                 </div>
-              )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-gray-900">Form Session</h4>
+                      <p className="text-sm text-gray-600">Control form submission access</p>
+                    </div>
+                    <button
+                      onClick={() => toggleSetting('form_active')}
+                      disabled={loadingSettings}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        getSettingValue('form_active')
+                          ? 'bg-green-500 text-white hover:bg-green-600'
+                          : 'bg-red-500 text-white hover:bg-red-600'
+                      } disabled:opacity-50`}
+                    >
+                      {loadingSettings ? '...' : getSettingValue('form_active') ? 'Active' : 'Inactive'}
+                    </button>
+                  </div>
 
-              {/* Recent Responses */}
-              {stats?.recentResponses && stats.recentResponses.length > 0 && (
-                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-[#374995]">
-                  <h3 className="text-xl font-semibold text-[#374995] mb-4">Recent Responses</h3>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            User ID
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {stats.recentResponses.map((response, index) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {response.id || 'N/A'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <button className="text-[#374995] hover:text-[#5989fc] mr-3">
-                                <FaEye />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-gray-900">Matching Session</h4>
+                      <p className="text-sm text-gray-600">Control matching algorithm access</p>
+                    </div>
+                    <button
+                      onClick={() => toggleSetting('matching_active')}
+                      disabled={loadingSettings}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        getSettingValue('matching_active')
+                          ? 'bg-green-500 text-white hover:bg-green-600'
+                          : 'bg-red-500 text-white hover:bg-red-600'
+                      } disabled:opacity-50`}
+                    >
+                      {loadingSettings ? '...' : getSettingValue('matching_active') ? 'Active' : 'Inactive'}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-gray-900">Release Session</h4>
+                      <p className="text-sm text-gray-600">Control results release access</p>
+                    </div>
+                    <button
+                      onClick={() => toggleSetting('release_active')}
+                      disabled={loadingSettings}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        getSettingValue('release_active')
+                          ? 'bg-green-500 text-white hover:bg-green-600'
+                          : 'bg-red-500 text-white hover:bg-red-600'
+                      } disabled:opacity-50`}
+                    >
+                      {loadingSettings ? '...' : getSettingValue('release_active') ? 'Active' : 'Inactive'}
+                    </button>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           )}
 

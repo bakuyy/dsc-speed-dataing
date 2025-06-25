@@ -1,11 +1,64 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Image from 'next/image'
 import Logo from '../../../public/images/logo.png'
-import { FaArrowUp } from "react-icons/fa";
+import { FaArrowUp, FaSync, FaLock } from "react-icons/fa";
+import axios from 'axios';
 
 const Page = () => {
+  const [isFormActive, setIsFormActive] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const checkFormStatus = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('/api/form-status');
+      setIsFormActive(response.data.isActive);
+      console.log('[Survey Page] Form status:', response.data);
+    } catch (error) {
+      console.error('[Survey Page] Error checking form status:', error);
+      setError('Failed to check form status');
+      setIsFormActive(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkFormStatus();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isFormActive) {
+      alert('Form is currently locked. Please wait for the session to begin.');
+      return;
+    }
+
+    // Add your form submission logic here
+    console.log('Form submitted');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#e1eaf8] min-h-screen w-screen">
+        <Navbar />
+        <div className="pt-12 max-w-4xl mx-auto px-4 flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          </div>
+          <p className="mt-4 text-[#374995] text-lg">Checking form status...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#e1eaf8] min-h-screen w-screen">
       <Navbar />
@@ -20,7 +73,41 @@ const Page = () => {
         <FaArrowUp />
       </button>
       <main className="pt-12 max-w-4xl mx-auto px-4 flex flex-col gap-8">
-        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-8">
+        {/* Form Status Banner */}
+        <div className={`p-4 rounded-lg border-2 ${
+          isFormActive 
+            ? 'bg-green-50 border-green-300 text-green-800' 
+            : 'bg-red-50 border-red-300 text-red-800'
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {isFormActive ? (
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              ) : (
+                <FaLock className="text-red-500" />
+              )}
+              <span className="font-medium">
+                {isFormActive ? 'Form is Active' : 'Form is Locked'}
+              </span>
+            </div>
+            <button
+              onClick={checkFormStatus}
+              disabled={isLoading}
+              className="bg-[#374995] text-white px-3 py-1 rounded text-sm hover:bg-[#5989fc] transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              <FaSync className={isLoading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
+          </div>
+          <p className="text-sm mt-1">
+            {isFormActive 
+              ? 'You can now submit your survey responses.' 
+              : 'Please wait for the session to begin. The form will be unlocked by administrators.'
+            }
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
 
           {/* Logo and Header */}
           <div className="flex flex-col items-center justify-center text-center gap-2">
@@ -194,9 +281,14 @@ const Page = () => {
 
           <button
             type="submit"
-            className="bg-[#4b6cb7] hover:bg-[#3f5cb1] text-white py-3 px-6 rounded-full w-full text-lg font-jakarta"
+            disabled={!isFormActive}
+            className={`py-3 px-6 rounded-full w-full text-lg font-jakarta transition-colors ${
+              isFormActive
+                ? 'bg-[#4b6cb7] hover:bg-[#3f5cb1] text-white cursor-pointer'
+                : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+            }`}
           >
-            Submit Survey
+            {isFormActive ? 'Submit Survey' : 'Form is Locked'}
           </button>
           
           <footer className="text-center text-[#374995] text-sm mt-10">

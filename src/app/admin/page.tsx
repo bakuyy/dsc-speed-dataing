@@ -164,7 +164,18 @@ const AdminPage = () => {
   const toggleSetting = async (key: string) => {
     try {
       const currentSetting = settings.find(s => s.key === key);
-      const newValue = currentSetting ? currentSetting.value === 'true' ? 'false' : 'true' : 'true';
+      let newValue;
+      
+      if (currentSetting) {
+        // Handle both boolean and string values
+        if (typeof currentSetting.value === 'boolean') {
+          newValue = !currentSetting.value;
+        } else {
+          newValue = currentSetting.value === 'true' ? false : true;
+        }
+      } else {
+        newValue = true; // Default to true if setting doesn't exist
+      }
       
       console.log('[Admin Page] Toggling setting:', { key, currentValue: currentSetting?.value, newValue });
       

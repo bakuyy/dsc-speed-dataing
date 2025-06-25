@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     if (search) {
       console.log('[Admin Responses API] Applying search filter:', search);
       // Search in common fields that exist in form_responses table
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,program.ilike.%${search}%,career.ilike.%${search}%`);
+      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,program.ilike.%${search}%,year.ilike.%${search}%,career.ilike.%${search}%,pronouns.ilike.%${search}%`);
     }
 
     // Add sorting - try created_at first, fallback to id if created_at doesn't exist

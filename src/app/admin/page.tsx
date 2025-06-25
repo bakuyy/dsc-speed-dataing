@@ -36,8 +36,8 @@ interface Stats {
 
 interface FormResponse {
   id: string;
+  uuid: string;
   created_at: string;
-  user_id?: string;
   name?: string;
   email?: string;
   [key: string]: any;
@@ -382,9 +382,6 @@ const AdminPage = () => {
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             User ID
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -396,10 +393,7 @@ const AdminPage = () => {
                         {stats.recentResponses.map((response, index) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {formatDate(response.created_at)}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {response.user_id || 'N/A'}
+                              {response.id || 'N/A'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <button className="text-[#374995] hover:text-[#5989fc] mr-3">
@@ -477,24 +471,48 @@ const AdminPage = () => {
                           <tr>
                             <th 
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                              onClick={() => handleSort('created_at')}
+                              onClick={() => handleSort('id')}
                             >
                               <div className="flex items-center gap-2">
-                                Date
-                                {getSortIcon('created_at')}
+                                ID
+                                {getSortIcon('id')}
                               </div>
                             </th>
                             <th 
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                              onClick={() => handleSort('user_id')}
+                              onClick={() => handleSort('name')}
                             >
                               <div className="flex items-center gap-2">
-                                User ID
-                                {getSortIcon('user_id')}
+                                Name
+                                {getSortIcon('name')}
                               </div>
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Data Preview
+                            <th 
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleSort('email')}
+                            >
+                              <div className="flex items-center gap-2">
+                                Email
+                                {getSortIcon('email')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleSort('program')}
+                            >
+                              <div className="flex items-center gap-2">
+                                Program
+                                {getSortIcon('program')}
+                              </div>
+                            </th>
+                            <th 
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleSort('year')}
+                            >
+                              <div className="flex items-center gap-2">
+                                Year
+                                {getSortIcon('year')}
+                              </div>
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Actions
@@ -505,21 +523,37 @@ const AdminPage = () => {
                           {responses.map((response, index) => (
                             <tr key={response.id || index} className="hover:bg-gray-50">
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {formatDate(response.created_at)}
+                                {response.id || 'N/A'}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {response.user_id || 'N/A'}
+                                {response.name || 'N/A'}
                               </td>
-                              <td className="px-6 py-4 text-sm text-gray-900">
-                                <div className="max-w-xs truncate">
-                                  {JSON.stringify(response).substring(0, 100)}...
-                                </div>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {response.email || 'N/A'}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {response.program || 'N/A'}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {response.year || 'N/A'}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button className="text-[#374995] hover:text-[#5989fc] mr-3">
+                                <button 
+                                  className="text-[#374995] hover:text-[#5989fc] mr-3"
+                                  onClick={() => {
+                                    console.log('View response details:', response);
+                                    // You can add a modal or expandable row here
+                                  }}
+                                >
                                   <FaEye />
                                 </button>
-                                <button className="text-red-500 hover:text-red-700">
+                                <button 
+                                  className="text-red-500 hover:text-red-700"
+                                  onClick={() => {
+                                    console.log('Delete response:', response.id);
+                                    // Add delete functionality here
+                                  }}
+                                >
                                   <FaTrash />
                                 </button>
                               </td>
@@ -566,76 +600,6 @@ const AdminPage = () => {
             </div>
           )}
 
-          {/* Debug Info Section */}
-          {debugInfo && (
-            <div className="mb-6 bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-yellow-800 mb-3">Debug Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-yellow-700">
-                    Tables Tested ({debugInfo.totalTablesTested}) - Found {debugInfo.tablesWithDataCount} with data
-                  </h4>
-                  <div className="mt-2 space-y-2">
-                    {debugInfo.responseTables.map((table: any, index: number) => (
-                      <div key={index} className={`text-sm p-2 rounded border ${table.hasData ? 'bg-green-50 border-green-300' : 'bg-white border-gray-300'}`}>
-                        <div className="font-medium">{table.tableName}</div>
-                        <div className="text-gray-600">
-                          Rows: {table.rowCount} | 
-                          {table.hasData ? ' ✅ Has Data' : ' ❌ No Data'}
-                        </div>
-                        {table.sampleColumns && table.sampleColumns.length > 0 && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            Columns: {table.sampleColumns.join(', ')}
-                          </div>
-                        )}
-                        {table.sampleData && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            Sample: {JSON.stringify(table.sampleData).substring(0, 150)}...
-                          </div>
-                        )}
-                        {table.error && (
-                          <div className="text-xs text-red-500 mt-1">Error: {table.error}</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {debugInfo.tablesWithData && debugInfo.tablesWithData.length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-yellow-700">Tables with Data</h4>
-                    <div className="mt-2">
-                      <div className="text-sm text-green-700 font-medium">
-                        {debugInfo.tablesWithData.join(', ')}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {debugInfo.sampleData && Object.keys(debugInfo.sampleData).length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-yellow-700">Sample Data</h4>
-                    <div className="mt-2 space-y-2">
-                      {Object.entries(debugInfo.sampleData).map(([tableName, data]: [string, any]) => (
-                        <div key={tableName} className="text-sm bg-white p-2 rounded border">
-                          <div className="font-medium">{tableName}</div>
-                          <div className="text-xs text-gray-500 mt-1 max-h-32 overflow-y-auto">
-                            <pre>{JSON.stringify(data, null, 2)}</pre>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => setDebugInfo(null)}
-                className="mt-3 bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700"
-              >
-                Close Debug Info
-              </button>
-            </div>
-          )}
         </div>
       </main>
 

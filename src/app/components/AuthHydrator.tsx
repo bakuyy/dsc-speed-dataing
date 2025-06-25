@@ -5,15 +5,22 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/store';
 import { login, logout } from '@/store/loginTokenSlice';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useAuthToken } from '@/hooks/useAuthToken';
+import Cookies from 'js-cookie';
 
 export function AuthHydrator() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const token = useAuthToken();
 
   useEffect(() => {
+    if (token === null) {
+      // Hook is still determining token status
+      return;
+    }
+
     const validateSession = async () => {
       console.log('[Auth Hydration] Starting session validation...');
       try {
@@ -36,7 +43,6 @@ export function AuthHydrator() {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log('[Auth Hydration] User data response:', response.data);
         
         if (response.data) {
           console.log('[Auth Hydration] Session restored for:', response.data.name, 'Role:', response.data.role);
@@ -77,7 +83,7 @@ export function AuthHydrator() {
     };
 
     validateSession();
-  }, [dispatch, router]);
+  }, [token, dispatch, router]);
 
   if (isLoading) {
     return null; // or return a loading spinner if you want

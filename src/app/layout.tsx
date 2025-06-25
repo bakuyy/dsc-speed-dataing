@@ -5,6 +5,7 @@ import { store } from "@/store/store";
 import { AuthHydrator } from "@/app/components/AuthHydrator";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Provider } from "react-redux";
+import UserFetcher from "@/app/components/UserFetcher";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Provider store={store}>
           <AuthHydrator />
+          <UserFetcher />
           {children}
         </Provider>
       </body>

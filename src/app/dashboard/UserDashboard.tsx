@@ -1,15 +1,15 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { login } from '@/store/loginTokenSlice'
+import { useState, useEffect } from 'react'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
 import MatchComponent from './DefaultMatch'
 import Cookies from 'js-cookie'
 
-export default function Dashboard() {
+export default function UserDashboard() {
   const router = useRouter()
   const dispatch = useDispatch()
   const fullName = useSelector((state: RootState) => state.auth.name)
@@ -68,22 +68,6 @@ export default function Dashboard() {
     running: '/form',
     locked: '/',
   }
-  const [isTime, setIsTime] = useState(true)
-
-  if (isLoading) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-          </div>
-          <p className="mt-4 text-[#374995] text-lg">Loading your dashboard</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="w-screen p-6 lg:p-16 bg-white rounded-t-4xl">
@@ -103,7 +87,7 @@ export default function Dashboard() {
         <div className="flex justify-center">
           <CardButton
             type="match"
-            onClick={() => router.push('/matches')}
+            onClick={() => router.push('/display-card')}
           />
         </div>
       </main>
@@ -126,4 +110,4 @@ export default function Dashboard() {
       
     </div>
   )
-}
+} 

@@ -29,7 +29,7 @@ export async function GET() {
     
     let message = "Form is currently unavailable";
     if (sessionState === 'form_active') {
-      message = "Form is active - you can submit your responses";
+      message = "Form is active";
     } else if (sessionState === 'matching_in_progress') {
       message = "Form is locked - matching algorithm is running";
     } else if (sessionState === 'matches_released') {

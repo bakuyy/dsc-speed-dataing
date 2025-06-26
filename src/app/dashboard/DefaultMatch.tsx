@@ -1,6 +1,43 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
+
+
+import React, { useState } from 'react';
+
 
 const MatchComponent = ({ isViewMatch = false }) => {
+  const [currentPickupLine, setCurrentPickupLine] = useState(0);
+  
+  const pickupLines = [
+    "You must be a dataset, because I keep finding new things I like about you.",
+    "Are you a histogram? Because you've got me seeing the distribution of my feelings.",
+    "Even without labels, I'd still classify you as awesome.",
+    "Let's build something together — no need to split this train-test relationship.",
+    "You make my heart beat faster than a for-loop in Python.",
+    "You're like clean data — rare and incredibly valuable.",
+    "Can we cluster together? I think we belong in the same group.",
+    "Are you one-hot encoded? Because you're the only one I notice.",
+    "You've got more charm than a well-tuned random forest.",
+    "You must be a linear model — because everything makes sense when you're around.",
+    "Are we running PCA? Because you just reduced the noise in my day.",
+    "Even if we were randomly sampled, I'd still choose you every time.",
+    "You make my confidence interval spike.",
+    "You're like a good visualization — you make everything clearer.",
+    "I'd never drop you from the dataset — you're too important.",
+    "I think you're my optimal hyperparameter setting.",
+    "Talking to you feels better than a perfect F1 score.",
+    "Are you a neural network? Because you've got layers I want to understand.",
+    "Let's not overfit this — but I think we've got a good thing going.",
+    "You're like an unsupervised model — I didn't expect you, but now I can't stop thinking about you."
+  ];
+
+  const getRandomPickupLine = () => {
+    const randomIndex = Math.floor(Math.random() * pickupLines.length);
+    setCurrentPickupLine(randomIndex);
+  };
+
   return (
     <div className="w-full min-h-[400px] bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50 rounded-2xl shadow-lg overflow-hidden">
       {/* Hero Image Section */}
@@ -42,31 +79,35 @@ const MatchComponent = ({ isViewMatch = false }) => {
           </div>
         ) : (
           <div className="text-center">
-            <div className="mb-6">
-              {/* Custom CSS spinning animation */}
-              <div className="relative w-20 h-20 mx-auto">
-                <div className="absolute inset-0 rounded-full border-4 border-blue-200"></div>
-                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-500 animate-spin"></div>
-                <div className="absolute inset-2 rounded-full border-2 border-transparent border-t-blue-400 animate-spin" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-pulse"></div>
-                </div>
-              </div>
-            </div>
+
+            
             
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 font-plus-jakarta-sans">
-              Finding Your Perfect Match
+              Finding your <span className='text-blue-500'>perfect match</span>
             </h2>
             
             <p className="text-gray-600 text-base sm:text-lg font-medium italic font-plus-jakarta-sans mb-4">
-              Please wait while we connect you...
+              aligning the (data) stars...
             </p>
             
-            {/* Animated dots */}
-            <div className="flex justify-center space-x-1">
+            <div className="flex justify-center space-x-1 mb-6">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            </div>
+
+            {/* Pickup Line Generator */}
+            <div className="bg-white bg-opacity-80 rounded-lg p-4 shadow-md max-w-md mx-auto">
+              <div className='text-gray-700 text-sm font-bold mb-3 font-plus-jakarta-sans'>nervous about how to break the ice? get some pickup lines below...</div>
+              <p className="text-gray-700 py-4 text-sm italic mb-3 font-plus-jakarta-sans">
+                "{pickupLines[currentPickupLine]}"
+              </p>
+              <button
+                onClick={getRandomPickupLine}
+                className="bg-gradient-to-r from-blue-200 to-blue-300 hover:from-blue-600 hover:to-blue-700 text-black px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 shadow-md"
+              >
+              another one pls :3
+              </button>
             </div>
           </div>
         )}

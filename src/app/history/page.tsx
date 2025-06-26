@@ -98,7 +98,7 @@ const HistoryPage = () => {
               </button>
             </div>
             <p className="text-gray-600 mt-2">
-              View all your previous matches from speed dating events
+              View all your previous matches from speed friending here
             </p>
           </div>
 
@@ -126,7 +126,7 @@ const HistoryPage = () => {
                 <FaHeart className="text-4xl text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">No Previous Matches</h3>
                 <p className="text-gray-500">
-                  You haven&apos;t been matched with anyone yet. Participate in speed dating events to see your matches here!
+                  You haven&apos;t been matched with anyone yet. Come back later to see your matches!
                 </p>
               </div>
             ) : (

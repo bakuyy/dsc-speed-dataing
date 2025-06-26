@@ -10,6 +10,7 @@ import Image from 'next/image'
 import Logo from '../../../public/images/logo.png'
 import { FaArrowUp, FaSync, FaLock } from "react-icons/fa";
 import axios from 'axios';
+import Footer from '../components/Footer';
 
 const Page = () => {
   const userEmail = useSelector((state: RootState) => state.user.data?.email || null);
@@ -257,34 +258,34 @@ const Page = () => {
         {/* Form Status Banner */}
         <div className={`p-4 rounded-lg border-2 ${
           hasSubmitted
-            ? 'bg-blue-50 border-blue-300 text-blue-800'
+            ? 'bg-blue-50 border-blue-200 text-blue-800'
             : sessionState === 'form_active'
-            ? 'bg-green-50 border-green-300 text-green-800' 
+            ? 'bg-blue-50 border-blue-200 text-blue-800' 
             : sessionState === 'matching_in_progress'
-            ? 'bg-yellow-50 border-yellow-300 text-yellow-800'
+            ? 'bg-blue-50 border-blue-200 text-blue-800'
             : sessionState === 'matches_released'
-            ? 'bg-blue-50 border-blue-300 text-blue-800'
-            : 'bg-red-50 border-red-300 text-red-800'
+            ? 'bg-blue-50 border-blue-200 text-blue-800'
+            : 'bg-blue-50 border-blue-200 text-blue-800'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {hasSubmitted ? (
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               ) : isCheckingSubmission ? (
-                <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
               ) : sessionState === 'form_active' ? (
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               ) : sessionState === 'matching_in_progress' ? (
-                <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
               ) : sessionState === 'matches_released' ? (
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               ) : (
-                <FaLock className="text-red-500" />
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               )}
               <span className="font-medium">
                 {hasSubmitted ? 'Already Submitted' :
                  isCheckingSubmission ? 'Checking Submission Status' :
-                 sessionState === 'form_active' ? 'Form is Active' : 
+                 sessionState === 'form_active' ? 'Form is active' : 
                  sessionState === 'matching_in_progress' ? 'Matching in Progress' :
                  sessionState === 'matches_released' ? 'Matches Released' :
                  'Form is Locked'}
@@ -305,7 +306,7 @@ const Page = () => {
               : isCheckingSubmission
               ? 'Checking if you have already submitted a response...'
               : sessionState === 'form_active' 
-              ? 'You can now submit your survey responses.' 
+              ? '' 
               : sessionState === 'matching_in_progress'
               ? 'The matching algorithm is currently running. Please wait for matches to be released.'
               : sessionState === 'matches_released'
@@ -346,13 +347,10 @@ const Page = () => {
             </div>
           )}
 
-          {/* Show form only if not submitted and not checking */}
           {!hasSubmitted && !isCheckingSubmission && (
             <>
-          {/* Logo and Header */}
           <div className="flex flex-col items-center justify-center text-center gap-2">
             <Image src={Logo} alt="Logo" className="w-2/5 h-auto" />
-            <h1 className="text-3xl md:text-4xl font-bold text-[#374995]">Speed Friending</h1>
           </div>
 
           <div className="flex flex-col md:flex-row gap-6 justify-between">
@@ -373,7 +371,13 @@ const Page = () => {
                 name="pronouns"
                 required
                 disabled={hasSubmitted}
-                className="p-3 rounded-full w-full bg-[#4b6cb7] text-white placeholder-white outline-none font-jakarta disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="px-4 py-3 rounded-full w-full bg-[#4b6cb7] text-white placeholder-white outline-none font-jakarta disabled:bg-gray-400 disabled:cursor-not-allowed appearance-none pr-12"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 1rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.5em 1.5em'
+                }}
               >
                 <option>Select from the following</option>
                 <option>She/Her</option>
@@ -641,16 +645,13 @@ const Page = () => {
                   onClick={() => window.location.href = '/history'}
                   className="bg-[#A6C3EA] text-white px-6 py-2 rounded-full hover:bg-[#8bb3e8] transition-colors"
                 >
-                  View History
+                  View Previous Matches
           </button>
               </div>
             </div>
           )}
           
-          <footer className="text-center text-[#374995] text-sm mt-10">
-            Speed Friending, an UWDSC event <br />
-            © Copyright 2025
-          </footer>
+          <Footer />
         </form>
       </main>
     </div>

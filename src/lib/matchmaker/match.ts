@@ -10,6 +10,7 @@ import {
     updateCurrMatches,
     updatePreviousMatches
 } from './embeddings.js';
+import { fillEmojis } from '../fillEmojis.js';
 
 /**
  * MATCHING ALGORITHM: 
@@ -51,7 +52,7 @@ async function main() {
     // Populates the curr_matches table. 
     updateCurrMatches(matches);
 
-    // TBD: EMOJI GENERATION?
+    await fillEmojis();
 
     // Updates the previous_matches table. 
     updatePreviousMatches(matches);

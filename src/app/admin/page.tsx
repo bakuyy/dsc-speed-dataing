@@ -169,7 +169,7 @@ const AdminPage = () => {
       const response = await axios.put('/api/admin/settings', { action });
       
       if (response.data.success) {
-        // Refresh settings from the database to get the latest state
+        // refresh settings from the database to get the latest state
         await fetchSettings();
         console.log('[Admin Page] Action executed successfully:', response.data);
       }
@@ -334,7 +334,7 @@ const AdminPage = () => {
                   className="bg-[#374995] text-white px-4 py-2 rounded-lg hover:bg-[#5989fc] transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   <FaSync className={loadingStats ? 'animate-spin' : ''} />
-                  Refresh
+                  refresh
                 </button>
 
                 <button
@@ -454,7 +454,7 @@ const AdminPage = () => {
                     className="bg-[#374995] text-white px-3 py-1 rounded text-sm hover:bg-[#5989fc] transition-colors disabled:opacity-50 flex items-center gap-2"
                   >
                     <FaSync className={loadingSettings ? 'animate-spin' : ''} />
-                    Refresh
+                    refresh
                   </button>
                 </div>
 

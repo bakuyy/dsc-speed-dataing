@@ -49,8 +49,8 @@ const Navbar = () => {
       </div>
 
       <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-        <span className="text-md md:text-2xl font-bold tracking-wide text-[#374995] italic font-jakarta">
-          Speed-<span className='text-[#5989fc] font-jakarta'>Friend</span>ing Social
+        <span className="text-md md:text-2xl font-bold tracking-wide text-[#374995]  font-jakarta">
+          Speed-<span className='text-[#5989fc] font-jakarta'>friend</span>ing Social 
         </span>
       </div>
 
@@ -94,9 +94,9 @@ const Navbar = () => {
           aria-label="Close menu"
         >
           </button>
-          <Link href="/dashboard" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}> 📊 Dashboard</Link>
-          <Link href="/information" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>🛠️ How it works</Link>
-          <Link href="/survey" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>📝 Form</Link>
+          <Link href="/dashboard" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}> dashboard</Link>
+          <Link href="/information" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>how it works</Link>
+          <Link href="/survey" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>form</Link>
           {isAdmin && (
             <button 
               onClick={() => {
@@ -105,7 +105,7 @@ const Navbar = () => {
               }}
               className="text-2xl text-[#5989fc] hover:text-blue-500 font-bold transition font-jakarta border-2 border-[#5989fc] px-3 py-1 rounded-lg"
             >
-              👑 Admin Panel
+              Admin Panel
             </button>
           )}
           <button onClick={handleSignOut} className="border border-2 rounded-xl p-2 text-[#374995] hover:bg-[#374995] hover:text-white transition font-jakarta">Log Out</button>

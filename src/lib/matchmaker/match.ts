@@ -1,80 +1,61 @@
-import { generateEmbeddings } from "./embeddings.js";
-import { cosineSimilarity } from "./similarity.js";
+// src/lib/matchmaker/match.ts
 
-interface MatchResult {
-  p1: Participant;
-  p2: Participant;
-  score: number;
-  emoji: string;
-  reach: string;
-}
+import 'dotenv/config';
+import { supabase } from '../supabase.js';
+import { 
+    clearCurrMatchesTable, 
+    updateFormResponsesTableWithVectorEmbeddings, 
+    handleOddParticipant,
+    matchParticipants,
+    updateCurrMatches,
+    updatePreviousMatches
+} from './embeddings.js';
 
-interface Participant {
-  // Basic info
-  email: string;
-  name: string;
-  pronouns: string;
-  program: string;
-  year: string;
-  social_media_links: string;
-  // Open-ended responses
-  // Career
-  career: string;
-  // Friendship
-  friend_traits: string;
-  self_desc: string;
-  goal: string;
-  // Interests
-  fun: string;
-  music: string;
-  // Multiple choice: [a, b, c, d, e]
-  class_seat: "a" | "b" | "c" | "d" | "e";
-  evil_hobby: "a" | "b" | "c" | "d" | "e";
-  most_likely_to: "a" | "b" | "c" | "d" | "e";
-  caught_watching: "a" | "b" | "c" | "d" | "e";
-  // Not a question, but used for embeddings. This is the output of the OpenAI embeddings API.
-  vector_embedding?: number[];
-}
+/**
+ * MATCHING ALGORITHM: 
+ * - UPDATES form_responses TABLE WITH A numeric[] VECTOR EMBEDDING FOR EACH ROW.
+ * - EITHER ADDS OR REMOVES odd_participant DEPENDING ON THE PARITY OF THE NUMBER OF PARTICIPANTS.
+ * - ITERATES OVER vector_embedding AND PERFORMS GREEDY MATCHING ALGORITHM. 
+ * - CLEARS ALL ROWS OF THE curr_matches TABLE.
+ * - UPDATES THE curr_matches TABLE.
+ * - APPENDS NEW MATCHES TO EACH ENTRY IN THE previous_matches TABLE.
+ */
+async function main() {
+    // Generate vector embeddings for each participant in form_responses if not already.
+    updateFormResponsesTableWithVectorEmbeddings();
 
-export async function runMatching(
-  participants: Participant[]
-): Promise<MatchResult[]> {
-  const embedded = await generateEmbeddings(participants);
-
-  const unmatched = new Set(embedded.map(p => p.email));
-  const matches: MatchResult[] = [];
-
-  while (unmatched.size >= 2) {
-    let bestPair: MatchResult | null = null;
-    const arr = Array.from(unmatched);
-
-    for (let i = 0; i < arr.length; i++) {
-      for (let j = i + 1; j < arr.length; j++) {
-        const p1 = embedded.find(p => p.email === arr[i])!;
-        const p2 = embedded.find(p => p.email === arr[j])!;
-        const score = cosineSimilarity(
-          p1.vector_embedding!,
-          p2.vector_embedding!
-        );
-
-        if (!bestPair || score > bestPair.score) {
-          bestPair = {
-            p1,
-            p2,
-            score,
-            emoji: "💞", // hardcoding for nwo
-            reach: `Matched based on similar traits in ${p1.friend_traits.split(" ")[0]} and ${p2.friend_traits.split(" ")[0]}`
-          };
-        }
-      }
+    // Fetch all form_responses IDs
+    const { data: participants, error: fetchErr } = await supabase
+        .from('form_responses')
+        .select('id')
+        .order('id', { ascending: true });
+    if (fetchErr) {
+        console.error('Could not fetch form_responses:', fetchErr);
+        process.exit(1);
+    }
+    if (!participants || participants.length < 2) {
+        console.error('Need at least two form_responses rows');
+        process.exit(1);
     }
 
-    if (bestPair) {
-      matches.push(bestPair);
-      unmatched.delete(bestPair.p1.email);
-      unmatched.delete(bestPair.p2.email);
-    }
-  }
+    // If there is an odd number of participants, insert the odd_participant if not already there.
+    // If the odd_participant is already there, removes it. 
+    handleOddParticipant(participants);
 
-  return matches;
+    // Clear the curr_matches table of all matches. 
+    clearCurrMatchesTable();
+
+    // Match participants based on the cosine similarities of their vector embeddings. 
+    const matches = await matchParticipants();
+
+    // Populates the curr_matches table. 
+    updateCurrMatches(matches);
+
+    // TBD: EMOJI GENERATION?
+
+    // Updates the previous_matches table. 
+    updatePreviousMatches(matches);
+
 }
+
+main(); // run using node --loader ts-node/esm src/lib/matchmaker/match.ts

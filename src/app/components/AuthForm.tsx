@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -43,50 +44,55 @@ export default function AuthForm() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 ">
-      <Image src={Logo} alt="Logo" className="w-3/4 h-auto"/>
+      <Image src={Logo} alt="Logo" className="z-50 w-3/4 h-auto"/>
       <div>
       <div className="text-3xl font-plus-jakarta-sans max-w-sm text-center">Log in</div>
-      <p className="text-md font-plus-jakarta-sans max-w-xs text-center italic">DSC Account + Event Password</p>
+      <p className="text-sm p-4 font-plus-jakarta-sans max-w-xs text-center italic">Please Log In with Your DSC Account Credentials</p>
       
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-xs">
         <input
           type="email"
           required
-          placeholder="email"
-          className="border p-2 rounded-full pl-6 font-plus-jakarta-sans"
+          placeholder="Email"
+          className="border border-2 border-[#374995] p-2 rounded-full pl-6 text-blue
+          hover:shadow-[0_0_10px_rgba(163,192,232,0.3)]"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           required
-          placeholder="password"
-          className="border p-2 rounded-full pl-6"
+          placeholder="Password"
+          className="border border-2 border-[#374995] p-2 rounded-full pl-6 text-blue
+          hover:shadow-[0_0_10px_rgba(163,192,232,0.3)]"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <input
           type="password"
           required
-          placeholder="event key"
-          className="border border-2 border-[#374995] p-2 rounded-full pl-6 bg-gradient-to-r from-[#374995] to-[#5989fc] text-white
-          focus:outline-none focus:ring-2 focus:ring-[#374995] focus:ring-opacity-50 
-          focus:border-[#374995] focus:shadow-[0_0_15px_rgba(55,73,149,0.3)]
-          transition-all duration-300 ease-in-out
+          placeholder="Event Key"
+          className="border border-2 border-[#374995] p-2 rounded-full pl-6 text-blue
           hover:shadow-[0_0_10px_rgba(163,192,232,0.3)]"
           value={secretKey}
           onChange={(e) => setSecretKey(e.target.value)}
         />
-        <div className="text-xs font-plus-jakarta-sans max-w-xs text-center italic">ask organizers for event key</div>
+        <div className="text-xs font-plus-jakarta-sans max-w-xs text-center italic">Please Ask Organizers for Event key</div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button
-          type="submit"
-          className="rounded z-50 p-1 text-[#374995] transition-all duration-300 ease-in-out flex items-center gap-2 justify-center underline flex hover:text-blue-500 cursor-pointer"
-        >
-          continue 
-          <FaArrowRightLong/>
-        </button>
+
+       <button
+        type="submit"
+        className="z-50 flex items-center justify-center gap-3 border-2 border-[#374995] px-6 py-2 rounded-full bg-gradient-to-r from-[#374995] to-[#5989fc] text-white
+        focus:outline-none focus:ring-2 focus:ring-[#374995] focus:ring-opacity-50 
+        focus:border-[#374995] focus:shadow-[0_0_15px_rgba(55,73,149,0.3)]
+        transition-all duration-300 ease-in-out
+        hover:shadow-[0_0_10px_rgba(163,192,232,0.3)]
+        hover:scale-105 active:scale-95"
+      >
+        <span>Continue</span>
+        <FaArrowRightLong className="text-sm" />
+      </button>
 
       </form>
     </main>

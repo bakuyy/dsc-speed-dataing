@@ -7,9 +7,10 @@ type CardButtonProps = {
   onClick: () => void
   type: 'start' | 'running' | 'locked' | 'match' 
   active?: boolean
+  disabled?: boolean
 }
 
-export default function CardButton({ onClick, type}: CardButtonProps) {
+export default function CardButton({ onClick, type, disabled = false}: CardButtonProps) {
   const baseClasses = `
     w-full max-w-[300px]
     sm:max-w-[360px]
@@ -23,33 +24,37 @@ export default function CardButton({ onClick, type}: CardButtonProps) {
   `
 
   const variants: Record<typeof type, string> = {
-    start: 'bg-[#A6C3EA] text-white',
+    start: disabled ? 'bg-gray-400 text-gray-600' : 'bg-[#A6C3EA] text-white',
     running: 'bg-[#A6C3EA] text-white',
     locked: 'bg-[#4B5563] text-white',
-    match: 'bg-[#496AC7] text-white justify-between pr-12',
+    match: disabled ? 'bg-gray-400 text-gray-600' : 'bg-[#496AC7] text-white justify-between pr-12',
   }
 
-  const icon = <FaRegSmile className="mr-3 text-7xl sm:text-8xl lg:text-[11rem] text-[#7CA3DE]"/>
+  const icon = <FaRegSmile className={`mr-3 text-7xl sm:text-8xl lg:text-[11rem] ${disabled ? 'text-gray-500' : 'text-[#7CA3DE]'}`}/>
 
   const labels: Record<typeof type, string> = {
-    start: 'Start\nSurvey',
+    start: disabled ? 'Form\nLocked' : 'Start\nSurvey',
     running: 'Fill out\n the survey',
     locked: 'Session\nis locked',
-    match: 'View My\n Match',
+    match: disabled ? 'Matches\nNot Ready' : 'View My\n Match',
   }
 
   const description: Record<typeof type, React.ReactNode> = {
-    start: 'Please wait until the start of the session is announced by execs',
+    start: disabled ? 'Please wait for the session to begin' : 'Please wait until the start of the session is announced by execs',
     running: "",
     locked: 'Please wait until the start of the session is announced by execs',
-    match: '', // ADD NUMBER OF SESSION LOGIC
+    match: disabled ? 'Matches will be available once released' : '', // ADD NUMBER OF SESSION LOGIC
   }
 
+  const hoverClasses = disabled 
+    ? 'cursor-not-allowed opacity-60' 
+    : 'hover:cursor-pointer hover:border-2 hover:border-[#374895]'
 
   return (
     <button
       onClick={onClick}
-      className={`${baseClasses} ${variants[type]} hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300`}
+      disabled={disabled}
+      className={`${baseClasses} ${variants[type]} ${hoverClasses} transition-all duration-300`}
     >
     
     <div className="flex flex-col justify-between items-start h-full z-10">

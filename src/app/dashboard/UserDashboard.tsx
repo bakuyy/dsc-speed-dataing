@@ -143,7 +143,7 @@ export default function UserDashboard() {
 
       <div className="mt-8 lg:mt-12 flex flex-col items-center">
         <h2 className="text-lg lg:text-3xl font-semibold text-[#374895] mb-4">
-          {sessionState === 'matches_released' ? 'your matches' : 'current session status'}
+          {sessionState === 'matches_released' ? 'your matches' : 'Current session status'}
         </h2>
 
       <MatchComponent isViewMatch={sessionState === 'matches_released' ? true : false} />
@@ -151,7 +151,7 @@ export default function UserDashboard() {
       
         <button 
           onClick={() => router.push('/history')}
-          className="w-full my-8 h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow-lg bg-[#387fff] text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center border-2 border-white"
+          className="w-full my-8 h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow-lg bg-[#496AC7] text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center border-2 border-white"
         >
           <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold flex items-center gap-3">
             View Previous Matches

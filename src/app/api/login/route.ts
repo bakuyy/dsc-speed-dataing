@@ -8,11 +8,14 @@ export async function POST(req: Request) {
   console.log('[Login API] Request method:', req.method);
   console.log('[Login API] Request URL:', req.url);
   
+  // Add a simple test to verify the API is working
+  console.log('[Login API] TEST: API is being called successfully');
+  
   const { email, password, secretKey } = await req.json();
   console.log('[Login API] Login attempt for email:', email);
   console.log('[Login API] Environment variables check:', {
     hasServerUrl: !!process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL,
-    hasSecretKey: !!process.env.NEXT_PUBLIC_SECRET_KEY,
+    hasSecretKey: !!process.env.SECRET_KEY,
     serverUrl: process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL
   });
 
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
       accessToken: data.accessToken ? 'present' : 'not found'
     });
 
-    if (secretKey !== process.env.NEXT_PUBLIC_SECRET_KEY) {
+    if (secretKey !== process.env.SECRET_KEY) {
       console.log('[Login API] Invalid secret key');
       return NextResponse.json({ error: "Invalid secret key" }, { status: 401 });
     }

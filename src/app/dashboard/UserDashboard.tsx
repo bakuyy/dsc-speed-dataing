@@ -100,7 +100,7 @@ export default function UserDashboard() {
 
   const handleMatchClick = () => {
     if (sessionState === 'matches_released') {
-      router.push('/display-card')
+      router.push('/match')
     } else {
       alert('Matches have not been released yet. Please wait for the matching process to complete.')
     }
@@ -139,34 +139,7 @@ export default function UserDashboard() {
         </div>
       </main>
 
-      <div className="mt-6 max-w-4xl mx-auto">
-        {/* Show match component only when matches are released */}
-        {sessionState === 'matches_released' && (
-          <MatchComponent isViewMatch={isViewMatch} />
-        )}
-        
-        {/* Show session status when not in matches_released state */}
-        {sessionState !== 'matches_released' && (
-          <div className="rounded-md bg-gradient-to-b from-[#DCEBFA] to-white shadow-[0_10px_0_0_#496AC7] px-6 py-4 md:py-8 relative">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold text-[#374995] mb-2">
-                {sessionState === 'idle' && 'Session Not Started'}
-                {sessionState === 'form_active' && 'Form is Active'}
-                {sessionState === 'matching_in_progress' && 'Matching in Progress'}
-              </h3>
-              <p className="text-[#374995] mb-3">
-                {sessionState === 'idle' && 'Please wait for the session to begin.'}
-                {sessionState === 'form_active' && 'You can now submit your survey responses.'}
-                {sessionState === 'matching_in_progress' && 'The matching algorithm is running. Please wait for matches to be released.'}
-              </p>
-              <div className="text-sm text-[#374995] opacity-75">
-                {sessionState === 'idle' && 'Administrators will start the session when ready.'}
-                {sessionState === 'form_active' && 'Click the "Fill out the survey" button to begin.'}
-                {sessionState === 'matching_in_progress' && 'This may take a few minutes. You can refresh to check for updates.'}
-              </div>
-            </div>
-          </div>
-        )}
+    
         
         <button 
           onClick={() => router.push('/history')}
@@ -178,6 +151,5 @@ export default function UserDashboard() {
         </button>
       </div>
       
-    </div>
   )
 } 

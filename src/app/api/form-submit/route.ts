@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     console.log('[Form Submit API] Form data received:', formData);
 
     // Validate required fields
-    const requiredFields = ['name', 'watiam_user_display', 'program', 'year'];
+    const requiredFields = ['name', 'email', 'program', 'year'];
     const missingFields = requiredFields.filter(field => !formData[field] || formData[field].trim() === '');
     
     if (missingFields.length > 0) {
@@ -42,15 +42,15 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // Check if user has already submitted (using watiam_user field)
+    // Check if user has already submitted (using email field)
     const { data: existingSubmission, error: checkError } = await supabase
       .from('form_responses')
       .select('id')
-      .eq('watiam_user', formData.watiam_user_display)
+      .eq('email', formData.email)
       .single();
 
     if (existingSubmission && !checkError) {
-      console.log('[Form Submit API] User has already submitted:', formData.watiam_user_display);
+      console.log('[Form Submit API] User has already submitted:', formData.email);
       return NextResponse.json({ 
         error: "You have already submitted a response",
         message: "Only one submission per user is allowed"
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     const submissionData = {
       name: formData.name.trim(),
       pronouns: formData.pronouns || null,
-      watiam_user: formData.watiam_user_display.trim(), // Map to watiam_user column
+      email: formData.email.trim(), // Map to email column
       program: formData.program.trim(),
       year: formData.year.trim(),
       social_media_links: formData.social_media_links?.trim() || null,
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       
       // Handle specific constraint violations
       if (error.code === '23505') {
-        if (error.message.includes('unique_watiam_user')) {
+        if (error.message.includes('unique_email')) {
           return NextResponse.json({ 
             error: "You have already submitted a response",
             message: "Only one submission per user is allowed"

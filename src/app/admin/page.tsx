@@ -16,7 +16,6 @@ import {
   FaChartLine, 
   FaCalendarAlt,
   FaSearch,
-  FaDownload,
   FaSync,
   FaEye,
   FaTrash,
@@ -52,11 +51,6 @@ interface Pagination {
   hasPrev: boolean;
 }
 
-interface Setting {
-  key: string;
-  value: string;
-}
-
 const AdminPage = () => {
   const router = useRouter();
   const { name, role } = useSelector((state: RootState) => state.auth);
@@ -72,7 +66,6 @@ const AdminPage = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState('overview');
-  const [debugInfo, setDebugInfo] = useState<any>(null);
   const [settings, setSettings] = useState<any[]>([]);
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [runningMatching, setRunningMatching] = useState(false);
@@ -204,29 +197,6 @@ const AdminPage = () => {
     }
   };
 
-  const runDatabaseMigration = async () => {
-    try {
-      console.log('[Admin Page] Starting database migration...');
-      
-      const response = await axios.post('/api/admin/migrate-database');
-      
-      if (response.data.success) {
-        console.log('[Admin Page] Migration completed successfully:', response.data);
-        alert('Database migration completed successfully!');
-      } else {
-        console.log('[Admin Page] Migration failed:', response.data);
-        alert(`Migration failed: ${response.data.message || 'Unknown error'}`);
-      }
-    } catch (error: any) {
-      console.error('[Admin Page] Error running database migration:', error);
-      if (error.response?.data?.error === 'Manual migration required') {
-        alert(`Database migration requires manual steps:\n\n${error.response.data.steps.join('\n')}\n\nPlease run the migrate-to-matching-tables.sql script in your Supabase SQL editor.`);
-      } else {
-        alert(`Error running database migration: ${error.response?.data?.error || error.message}`);
-      }
-    }
-  };
-
   const getSessionState = (): string => {
     const setting = settings.find(s => s.key === 'session_state');
     return setting ? setting.value : 'idle';
@@ -301,16 +271,6 @@ const AdminPage = () => {
     router.push('/admin/verify');
   };
 
-  const checkTableStructure = async () => {
-    try {
-      const response = await axios.get('/api/admin/debug-tables');
-      setDebugInfo(response.data);
-      console.log('[Admin Page] Debug info:', response.data);
-    } catch (error) {
-      console.error('[Admin Page] Error fetching debug info:', error);
-    }
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -363,7 +323,7 @@ const AdminPage = () => {
                   Welcome, <span className="font-semibold text-[#374995]">{name}</span>! 
                   Monitor your application data in real-time.
                 </p>
-    </div>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={fetchStats}
@@ -373,27 +333,7 @@ const AdminPage = () => {
                   <FaSync className={loadingStats ? 'animate-spin' : ''} />
                   Refresh
                 </button>
-                <button
-                  onClick={checkTableStructure}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors text-sm"
-                >
-                  Debug Tables
-                </button>
-                <button
-                  onClick={async () => {
-                    try {
-                      const response = await axios.get('/api/admin/debug-settings');
-                      console.log('[Admin Page] Debug settings:', response.data);
-                      alert(`Current Settings:\n${JSON.stringify(response.data, null, 2)}`);
-                    } catch (error) {
-                      console.error('[Admin Page] Debug error:', error);
-                      alert('Failed to fetch debug info');
-                    }
-                  }}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors text-sm"
-                >
-                  Debug Settings
-                </button>
+
                 <button
                   onClick={handleAdminLogout}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm"
@@ -571,17 +511,6 @@ const AdminPage = () => {
                     </button>
                   </div>
                 )}
-
-                {/* Database Migration Button - Always show */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={runDatabaseMigration}
-                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-purple-500 hover:bg-purple-600 text-white cursor-pointer flex items-center gap-2"
-                  >
-                    <FaDownload />
-                    Run Database Migration
-                  </button>
-                </div>
 
                 {/* State Flow Indicator */}
                 <div className="mt-6">

@@ -3,7 +3,6 @@ import AuthForm from "@/app/components/AuthForm";
 import Image from "next/image";
 import Footer from "../../public/images/login/footer.png"
 import Header from "../../public/images/login/header.png"
-import MatchPage from "./display-card/page";
 
 export default function Home() {
   return (

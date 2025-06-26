@@ -19,7 +19,6 @@ export default function UserDashboard() {
   const fullName = useSelector((state: RootState) => state.auth.name)
   const [userName, setUserName] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [isViewMatch, setIsViewMatch] = useState(false)
   const [sessionState, setSessionState] = useState<string>('idle')
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -142,8 +141,14 @@ export default function UserDashboard() {
         </div>
       </main>
 
+      <div className="mt-8 lg:mt-12 flex flex-col items-center">
+        <h2 className="text-lg lg:text-3xl font-semibold text-[#374895] mb-4">
+          {sessionState === 'matches_released' ? 'Your Matches' : 'Current Session Status'}
+        </h2>
+
       <MatchComponent isViewMatch={sessionState === 'matches_released' ? true : false} />
-        
+      </div>
+      
         <button 
           onClick={() => router.push('/history')}
           className="w-full my-8  h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow bg-[#A6C3EA] text-white hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300 flex items-center justify-center"

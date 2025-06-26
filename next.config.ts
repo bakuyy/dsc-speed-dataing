@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  matcher: ['/admin/:path*']
+  reactStrictMode: true,
 };
 
 export default nextConfig;

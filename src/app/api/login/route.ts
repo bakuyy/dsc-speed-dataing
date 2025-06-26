@@ -6,6 +6,8 @@ export async function POST(req: Request) {
   console.log('[Login API] Login attempt for email:', email);
 
   try {
+    console.log('[Login API] Making request to external server:', `${process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL}/api/users/login`);
+    
     const { data } = await axios.post(
       `${process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL}/api/users/login`,
       { email: email.toLowerCase(), password },
@@ -53,8 +55,23 @@ export async function POST(req: Request) {
     console.log('[Login API] Token and role set in cookies. Role:', data.userStatus);
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('[Login API] Login failed:', error);
+    
+    // Add more detailed error logging
+    if (error.response) {
+      console.error('[Login API] External server response:', {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    } else if (error.request) {
+      console.error('[Login API] No response received from external server:', error.request);
+    } else {
+      console.error('[Login API] Error setting up request:', error.message);
+    }
+    
     return NextResponse.json({ error: "Login failed" }, { status: 401 });
   }
 }

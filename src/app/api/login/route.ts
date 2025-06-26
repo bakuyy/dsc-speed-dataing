@@ -4,8 +4,17 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 
 export async function POST(req: Request) {
+  console.log('[Login API] === LOGIN API CALLED ===');
+  console.log('[Login API] Request method:', req.method);
+  console.log('[Login API] Request URL:', req.url);
+  
   const { email, password, secretKey } = await req.json();
   console.log('[Login API] Login attempt for email:', email);
+  console.log('[Login API] Environment variables check:', {
+    hasServerUrl: !!process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL,
+    hasSecretKey: !!process.env.NEXT_PUBLIC_SECRET_KEY,
+    serverUrl: process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL
+  });
 
   try {
     console.log('[Login API] Making request to external server:', `${process.env.NEXT_PUBLIC_UWDSC_WEBSITE_SERVER_URL}/api/users/login`);

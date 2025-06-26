@@ -60,8 +60,9 @@ export default function About() {
           />
           
           <p className="pr-33 sm:pr-55 md:pr-90 lg:pr-120 pl-7 md:pl-20 lg:pl-30 text-[0.6rem] sm:text-base md:text-xl text-[#1F2A44] leading-relaxed mb-6">
-            <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-            event or something psum that this is a good event or something
+           <span className="font-bold italic">Speed Friending</span> is a fun way to meet new people through quick, meaningful conversations.
+                    You’ll answer a few questions, get matched with someone who shares your interests, and
+                    connect through a fun activity designed to spark friendship!
           </p>
 
           <div className="absolute bottom-4 md:bottom-15 right-5 md:right-20">

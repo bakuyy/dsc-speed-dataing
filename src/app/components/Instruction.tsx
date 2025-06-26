@@ -53,8 +53,7 @@ export default function InstructionPage() {
                 step="Step 1:"
                 description={
                   <>
-                    <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-                    event or something psum that this is a good event or something psum that this is a good event or something
+                    <span className="font-bold italic">Answer</span> a mix of short and multiple-choice questions about your interests, hobbies, and preferences. This helps us learn more about you so we can find someone who shares similar vibes.
                   </>
                 }
                 opacity={0.8}
@@ -64,8 +63,7 @@ export default function InstructionPage() {
                 step="Step 2:"
                 description={
                   <>
-                    <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-                    event or something psum that this is a good event or something psum that this is a good event or something
+                    <span className="font-bold italic">Based on your responses,</span> we’ll pair you with someone who shares similar interests, vibes or goals. Think of it as a personality-powered match!
                   </>
                 }
                 opacity={0.4}
@@ -74,8 +72,7 @@ export default function InstructionPage() {
                 step="Step 3:"
                 description={
                   <>
-                    <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-                    event or something psum that this is a good event or something psum that this is a good event or something
+                    <span className="font-bold italic">You and your match</span> will join in on a fun shared activity—like a game, conversation starter, or creative challenge—to help you break the ice and enjoy your time together.
                   </>
                 }
                 opacity={0.4}
@@ -84,13 +81,13 @@ export default function InstructionPage() {
                 step="Step 4:"
                 description={
                   <>
-                    <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-                    event or something psum that this is a good event or something psum that this is a good event or something
+                    <span className="font-bold italic">By the end</span> of your activity, you’ll have had a chance to chat, laugh, and bond. Hopefully, you’ll leave the event with a great experience—and maybe even a new friend!
                   </>
                 }
                 opacity={0.8}
                 icon={whale1}
               />
+
             </div>
           </div>
         </div>
@@ -110,8 +107,7 @@ export default function InstructionPage() {
             step="Step 1:"
             description={
               <>
-              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-                event or something psum that this is a good event or something psum that this is a good event or something
+                <span className="font-bold italic">Answer</span> a mix of short and multiple-choice questions about your interests, hobbies, and preferences. This helps us learn more about you so we can find someone who shares similar vibes.
               </>
             }
             opacity={0.8}
@@ -121,18 +117,16 @@ export default function InstructionPage() {
             step="Step 2:"
             description={
               <>
-              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-              event or something psum that this is a good event or something psum that this is a good event or something
+                <span className="font-bold italic">Based on your responses,</span> we’ll pair you with someone who shares similar interests, vibes or goals. Think of it as a personality-powered match!
               </>
             }
             opacity={0.4}
-          />            
+          />
           <StepCard
             step="Step 3:"
             description={
               <>
-              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-              event or something psum that this is a good event or something psum that this is a good event or something
+                <span className="font-bold italic">You and your match</span> will join in on a fun shared activity—like a game, conversation starter, or creative challenge—to help you break the ice and enjoy your time together.
               </>
             }
             opacity={0.4}
@@ -141,13 +135,13 @@ export default function InstructionPage() {
             step="Step 4:"
             description={
               <>
-              <span className="font-bold italic">Lorem</span> ipsum that this is a good event or something psum that this is a good
-              event or something psum that this is a good event or something psum that this is a good event or something
+                <span className="font-bold italic">By the end</span> of your activity, you’ll have had a chance to chat, laugh, and bond. Hopefully, you’ll leave the event with a great experience—and maybe even a new friend!
               </>
             }
             opacity={0.8}
             icon={whale1}
           />
+
         </div>
       </div>
     </div>

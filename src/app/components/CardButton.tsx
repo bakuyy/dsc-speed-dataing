@@ -33,17 +33,17 @@ export default function CardButton({ onClick, type, disabled = false}: CardButto
   const icon = <FaRegSmile className={`mr-3 text-7xl sm:text-8xl lg:text-[11rem] ${disabled ? 'text-gray-500' : 'text-[#7CA3DE]'}`}/>
 
   const labels: Record<typeof type, string> = {
-    start: disabled ? 'Form\nLocked' : 'Start\nSurvey',
+    start: disabled ? 'Form\nLocked' : 'start\nsurvey',
     running: 'Fill out\n the survey',
-    locked: 'Session\nis locked',
-    match: disabled ? 'Matches\nNot Ready' : 'View My\n Match',
+    locked: 'Form is closed',
+    match: disabled ? 'Match\nnot ready' : 'View my\n match',
   }
 
   const description: Record<typeof type, React.ReactNode> = {
-    start: disabled ? 'Please wait for the session to begin' : 'Please wait until the start of the session is announced by execs',
+    start: disabled ? 'please wait for the session to begin' : 'please wait until the start of the session is announced by execs',
     running: "",
-    locked: 'Please wait until the start of the session is announced by execs',
-    match: disabled ? 'Matches will be available once released' : '', // ADD NUMBER OF SESSION LOGIC
+    locked: 'please wait for further instructions from execs',
+    match: disabled ? 'matches will be available once released' : '', // ADD NUMBER OF SESSION LOGIC
   }
 
   const hoverClasses = disabled 
@@ -64,7 +64,7 @@ export default function CardButton({ onClick, type, disabled = false}: CardButto
       {type !== 'match' && (
         <div> {icon} </div>
       )}
-      <span className="text-[0.5rem] sm:text-base md:text-md lg:text-xl">
+      <span className="text-[1rem] sm:text-base md:text-md lg:text-xl">
         {description[type]}
       </span>
     </div>

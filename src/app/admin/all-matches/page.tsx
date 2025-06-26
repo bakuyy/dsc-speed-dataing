@@ -158,7 +158,7 @@ const AllMatchesPage = () => {
                   className="bg-[#374995] text-white px-4 py-2 rounded-lg hover:bg-[#5989fc] transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   <FaSync className={loadingMatches ? 'animate-spin' : ''} />
-                  Refresh
+                  refresh
                 </button>
               </div>
             </div>

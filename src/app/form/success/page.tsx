@@ -49,7 +49,7 @@ export default function SuccessPage() {
             className="flex items-center justify-center gap-2 bg-[#A6C3EA] text-white px-6 py-3 rounded-full hover:bg-[#8bb3e8] transition-colors"
           >
             <FaHistory />
-            View History
+            View Previous Matches
           </button>
         </div>
 

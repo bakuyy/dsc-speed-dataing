@@ -20,11 +20,11 @@ export default function UserDashboard() {
   const [userName, setUserName] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [sessionState, setSessionState] = useState<string>('idle')
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isrefreshing, setIsrefreshing] = useState(false)
 
   const checkSessionState = async () => {
     try {
-      setIsRefreshing(true)
+      setIsrefreshing(true)
       const response = await axios.get('/api/form-status')
       setSessionState(response.data.sessionState || 'idle')
       console.log('[User Dashboard] Session state:', response.data.sessionState)
@@ -32,7 +32,7 @@ export default function UserDashboard() {
       console.error('[User Dashboard] Error checking session state:', error)
       setSessionState('idle')
     } finally {
-      setIsRefreshing(false)
+      setIsrefreshing(false)
     }
   }
 
@@ -111,16 +111,16 @@ export default function UserDashboard() {
   return (
     <div className="w-screen p-6 lg:p-16 bg-white rounded-t-4xl">
       <header>
-        <h1 className="text-xl text-center font-semibold py-5 lg:text-6xl mt-1 text-[#374995] lg:pb-3">
-          Welcome to the event, <span className="font-bold animate-pulse">{userName}</span>!
+        <h1 className="text-xl text-center font-semibold py-5 lg:text-6xl mt-1 text-[#374995] lg:pb-3 px-8">
+          Ready to meet the <span className='text-blue-500'>friend</span> of your life, <span className="font-bold animate-pulse">{userName}</span>?
         </h1>
         <button 
           onClick={checkSessionState}
-          disabled={isRefreshing}
+          disabled={isrefreshing}
           className="text-sm text-[#374995] hover:text-[#374895] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center mx-auto mt-2"
         >
-          <FaSync className={`inline-block mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-          {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          <FaSync className={`inline-block mr-2 ${isrefreshing ? 'animate-spin' : ''}`} />
+          {isrefreshing ? 'refreshing...' : 'refresh'}
         </button>
       </header>
 
@@ -143,7 +143,7 @@ export default function UserDashboard() {
 
       <div className="mt-8 lg:mt-12 flex flex-col items-center">
         <h2 className="text-lg lg:text-3xl font-semibold text-[#374895] mb-4">
-          {sessionState === 'matches_released' ? 'Your Matches' : 'Current Session Status'}
+          {sessionState === 'matches_released' ? 'your matches' : 'current session status'}
         </h2>
 
       <MatchComponent isViewMatch={sessionState === 'matches_released' ? true : false} />
@@ -151,10 +151,10 @@ export default function UserDashboard() {
       
         <button 
           onClick={() => router.push('/history')}
-          className="w-full my-8  h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow bg-[#A6C3EA] text-white hover:cursor-pointer hover:border-2 hover:border-[#374895] transition-all duration-300 flex items-center justify-center"
+          className="w-full my-8 h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow-lg bg-[#387fff] text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center border-2 border-white"
         >
-          <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold">
-            {sessionState === 'matches_released' ? 'View Previous Matches' : 'View History'}
+          <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold flex items-center gap-3">
+            view previous matches
           </span>
         </button>
       </div>

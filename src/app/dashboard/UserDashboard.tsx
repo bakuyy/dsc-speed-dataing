@@ -154,7 +154,7 @@ export default function UserDashboard() {
           className="w-full my-8 h-20 sm:h-24 md:h-28 lg:h-32 rounded-2xl shadow-lg bg-[#387fff] text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center border-2 border-white"
         >
           <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold flex items-center gap-3">
-            view previous matches
+            View Previous Matches
           </span>
         </button>
       </div>

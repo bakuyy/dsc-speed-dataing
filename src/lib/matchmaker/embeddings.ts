@@ -41,8 +41,9 @@ interface Participant {
 }
 
 interface Match {
-  person1_id: string;       // FK to form_responses.id
-  person2_id: string;       // FK to form_responses.id
+  id?: string;              // UUID primary key (auto-generated)
+  person1_id: string;       // UUID FK to form_responses.id
+  person2_id: string;       // UUID FK to form_responses.id
   similarity_score: number; // cosine similarity
   emoji: string;            // hex for generated emoji
 }
@@ -190,7 +191,7 @@ export async function matchParticipants(): Promise<Match[]> {
   // fetch everyone's id + embedding
   const { data: rows, error: fetchErr } = await supabase
     .from('form_responses')
-    .select('id, vector_embedding');
+    .select('id, email, vector_embedding');
   if (fetchErr) {
     console.error('Could not fetch embeddings:', fetchErr);
     throw fetchErr;
@@ -208,16 +209,23 @@ export async function matchParticipants(): Promise<Match[]> {
     }
   }
 
-  // determine already_matched array from previous_matches table 
-  const { data: already_matched, error: prevErr } = await supabase
-    .from('previous_matches')
-    .select('id, matched_with'); // get the id: uuid, matched_with: uuid[]
-  if (prevErr) throw prevErr;
+  // determine already_matched array from curr_matches table 
+  const { data: already_matched, error: currErr } = await supabase
+    .from('curr_matches')
+    .select('person1_id, person2_id'); // get the person1_id and person2_id
+  if (currErr) throw currErr;
 
   // map each participant → set of UUIDs they've already been matched with
   const prevMap = new Map<string, Set<string>>();
-  for (const { id, matched_with } of already_matched || []) {
-    prevMap.set(id, new Set(matched_with));
+  for (const { person1_id, person2_id } of already_matched || []) {
+    if (!prevMap.has(person1_id)) {
+      prevMap.set(person1_id, new Set());
+    }
+    if (!prevMap.has(person2_id)) {
+      prevMap.set(person2_id, new Set());
+    }
+    prevMap.get(person1_id)!.add(person2_id);
+    prevMap.get(person2_id)!.add(person1_id);
   }
 
   // greedy match: pick best pairs without reusing any participant
@@ -240,7 +248,7 @@ export async function matchParticipants(): Promise<Match[]> {
     // otherwise take this pair
     used.add(i);
     used.add(j);
-    matches.push({ person1_id: id1, person2_id: id2, similarity_score: sim, emoji: '' });
+    matches.push({ person1_id: rows[i].id, person2_id: rows[j].id, similarity_score: sim, emoji: '' });
 
     if (used.size === rows.length) break;
   }
@@ -282,37 +290,35 @@ async function updatePreviousMatchesForParty(
   similarity_score: number,
   emoji: string
 ): Promise<void> {
-  // fetch existing row if any
-  const { data: prevRow, error: fetchErr } = await supabase
+  // Check if this match already exists (either direction)
+  const { data: existingMatch1, error: checkErr1 } = await supabase
     .from('previous_matches')
-    .select('matched_with, similarity_scores, emojis')
-    .eq('id', ownerId)
+    .select('*')
+    .eq('person1_id', ownerId)
+    .eq('person2_id', partnerId)
     .maybeSingle();
-  if (fetchErr) {
-    console.error('Error fetching previous_matches for', ownerId, fetchErr);
+  
+  const { data: existingMatch2, error: checkErr2 } = await supabase
+    .from('previous_matches')
+    .select('*')
+    .eq('person1_id', partnerId)
+    .eq('person2_id', ownerId)
+    .maybeSingle();
+  
+  if (checkErr1 || checkErr2) {
+    console.error('Error checking existing match for', ownerId, checkErr1 || checkErr2);
     return;
   }
 
-  if (!prevRow) {
-    // no existing row: fetch email and insert new
-    const { data: formRow, error: formErr } = await supabase
-      .from('form_responses')
-      .select('email')
-      .eq('id', ownerId)
-      .single();
-    if (formErr || !formRow) {
-      console.error('Error fetching email for', ownerId, formErr);
-      return;
-    }
-    const { email } = formRow;
+  if (!existingMatch1 && !existingMatch2) {
+    // no existing match: insert new
     const { error: insertErr } = await supabase
       .from('previous_matches')
       .insert([{ 
-        id: ownerId,
-        email,
-        matched_with: [partnerId],
-        similarity_scores: [similarity_score],
-        emojis: [emoji]
+        person1_id: ownerId,
+        person2_id: partnerId,
+        similarity_score: similarity_score,
+        emoji: emoji
       }]);
     if (insertErr) {
       console.error('Error inserting previous_matches for', ownerId, insertErr);
@@ -320,25 +326,7 @@ async function updatePreviousMatchesForParty(
       console.log('Created previous_matches row for', ownerId);
     }
   } else {
-    // existing row: append non-duplicates
-    const newMatchedWith = prevRow.matched_with.includes(partnerId)
-      ? prevRow.matched_with
-      : [...prevRow.matched_with, partnerId];
-    const newSim = prevRow.similarity_scores.includes(similarity_score)
-      ? prevRow.similarity_scores
-      : [...prevRow.similarity_scores, similarity_score];
-    const newEmojis = prevRow.emojis.includes(emoji)
-      ? prevRow.emojis
-      : [...prevRow.emojis, emoji];
-    const { error: updateErr } = await supabase
-      .from('previous_matches')
-      .update({ matched_with: newMatchedWith, similarity_scores: newSim, emojis: newEmojis })
-      .eq('id', ownerId);
-    if (updateErr) {
-      console.error('Error updating previous_matches for', ownerId, updateErr);
-    } else {
-      console.log('Updated previous_matches row for', ownerId);
-    }
+    console.log('Match already exists in previous_matches for', ownerId, 'and', partnerId);
   }
 }
 
@@ -355,8 +343,8 @@ export async function updatePreviousMatches(matches: Match[]): Promise<void> {
 
   for (const m of matches) {
     const { person1_id, person2_id, similarity_score, emoji } = m;
-    // update for both sides
+    
+    // update for both sides (but only insert once to avoid duplicates)
     await updatePreviousMatchesForParty(person1_id, person2_id, similarity_score, emoji);
-    await updatePreviousMatchesForParty(person2_id, person1_id, similarity_score, emoji);
   }
 }

@@ -16,7 +16,6 @@ export default function DashboardPage() {
       <Navbar />
       <Image src={Logo} alt="Logo" className="w-3/5 lg:w-2/5 h-auto mx-auto py-8"/>
       <Dashboard />
-      if ()
       <Footer />
     </div>
   )

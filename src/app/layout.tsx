@@ -3,7 +3,7 @@
 import "./globals.css";
 import { store } from "@/store/store";
 import { AuthHydrator } from "@/app/components/AuthHydrator";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Provider } from "react-redux";
 import UserFetcher from "@/app/components/UserFetcher";
 
@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta-sans",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,7 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} antialiased`}
+      >
         <Provider store={store}>
           <AuthHydrator />
           <UserFetcher />

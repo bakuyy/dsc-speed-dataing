@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 export interface UserData {
   name: string;
   userStatus?: string;
@@ -21,8 +23,6 @@ export interface UserData {
   id?: string;
   role?: string;
 }
-
-import { createSlice } from '@reduxjs/toolkit';
 
 interface UserState {
   data: UserData | null;

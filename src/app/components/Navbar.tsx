@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import React, { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import Logo from '../../../public/images/dscLogo.png'
 import { FaRegSmile } from "react-icons/fa";
 import { FaRegSmileWink } from "react-icons/fa";
@@ -53,8 +55,8 @@ const Navbar = () => {
       </div>
 
       <div className="hidden md:flex items-center gap-6">
-        <a href="/dashboard" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</a>
-        <a href="/information" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</a>
+        <Link href="/dashboard" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">Dashboard</Link>
+        <Link href="/information" className="text-[#374995] cursor-pointer font-semibold hover:text-blue-500 font-medium transition font-jakarta">How it works</Link>
         {isAdmin && (
           <button 
             onClick={handleAdminClick}
@@ -92,9 +94,9 @@ const Navbar = () => {
           aria-label="Close menu"
         >
           </button>
-          <a href="/" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}> 📊 Dashboard</a>
-          <a href="/information" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>🛠️ How it works</a>
-          <a href="/form" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>📝 Form</a>
+          <Link href="/dashboard" className="text-2xl text-jakarta text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}> 📊 Dashboard</Link>
+          <Link href="/information" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>🛠️ How it works</Link>
+          <Link href="/survey" className="text-2xl text-[#374995] hover:text-blue-500 font-bold transition font-jakarta" onClick={() => setMenuOpen(false)}>📝 Form</Link>
           {isAdmin && (
             <button 
               onClick={() => {

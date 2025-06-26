@@ -32,10 +32,7 @@ export default function Dashboard() {
 
   const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
 
-  const processedUserName = user.name.split(' ')[0].toLowerCase().charAt(0).toUpperCase() + 
-                            user.name.split(' ')[0].toLowerCase().slice(1);
-
   return isAdmin 
     ? <AdminDashboard /> 
-    : <UserDashboard userName={processedUserName} />;
+    : <UserDashboard />;
 }

@@ -49,21 +49,21 @@ const AdminVerifyPage = () => {
     setIsLoading(true);
 
     try {
-      // Check against environment variable for admin password
-      const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123';
-      
-      if (password === adminPassword) {
-        console.log('[Admin Verify] Password correct, setting admin session');
-        // Set a session cookie to remember admin verification
-        Cookies.set('adminVerified', 'true', { 
-          expires: 1, // 1 day
-          path: '/',
-          sameSite: 'lax',
-          secure: process.env.NODE_ENV === 'production'
-        });
+      // Use server-side API for admin password verification
+      const response = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        console.log('[Admin Verify] Password correct, redirecting to admin panel');
         router.push('/admin');
       } else {
-        setError('Incorrect admin password');
+        const errorData = await response.json();
+        setError(errorData.error || 'Incorrect admin password');
         setPassword('');
       }
     } catch (error) {

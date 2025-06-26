@@ -74,7 +74,7 @@ const MatchComponent = ({ isViewMatch = false }) => {
               Matching in Session!
             </h2>
             <p className="text-blue-700 text-lg font-medium">
-              You can now <a href="" className='text-blue-900 underline'>view</a> your match!
+              You can now <a href="/match" className='text-blue-900 underline'>view</a> your match!
             </p>
           </div>
         ) : (

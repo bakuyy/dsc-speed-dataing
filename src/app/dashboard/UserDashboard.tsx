@@ -100,7 +100,7 @@ export default function UserDashboard() {
 
   const handleMatchClick = () => {
     if (sessionState === 'matches_released') {
-      router.push('/display-card')
+      router.push('/match')
     } else {
       alert('Matches have not been released yet. Please wait for the matching process to complete.')
     }

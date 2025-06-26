@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
       .from('form_responses')
       .select('id, name')
-      .eq('watiam_user', email)
+      .eq('email', email)
       .single();
 
     if (error) {

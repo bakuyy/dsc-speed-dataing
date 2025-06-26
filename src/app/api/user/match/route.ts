@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const { data: userFormData, error: userError } = await supabase
       .from('form_responses')
       .select('id')
-      .ilike('email', userEmail)
+      .eq('email', userEmail)
       .single();
 
     if (userError || !userFormData) {
@@ -51,92 +51,63 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (matchError) {
-      if (matchError.code === 'PGRST116') { // No rows found
+      if (matchError.code === 'PGRST116') {
+        // No match found
+        console.log('[User Match API] No match found for user');
         return NextResponse.json({ 
-          success: true,
-          message: "No match found yet",
-          match: null 
-        });
-      } else {
-        console.error('[User Match API] Error fetching match:', matchError);
-        return NextResponse.json({ error: "Failed to fetch match" }, { status: 500 });
+          error: "No match found. Please wait for the matching process to complete.",
+          userEmail: userEmail 
+        }, { status: 404 });
       }
+      console.error('[User Match API] Error fetching match:', matchError);
+      return NextResponse.json({ error: "Failed to fetch match" }, { status: 500 });
     }
 
-    if (!match) {
-      return NextResponse.json({ 
-        success: true,
-        message: "No match found yet",
-        match: null 
-      });
-    }
+    // Determine which person the user is (person1 or person2)
+    const isPerson1 = match.person1_id === userUUID;
+    const matchedPersonId = isPerson1 ? match.person2_id : match.person1_id;
 
-    // Determine the matched person's UUID
-    const matchedPersonUUID = match.person1_id === userUUID ? match.person2_id : match.person1_id;
-    console.log('[User Match API] Matched person UUID:', matchedPersonUUID);
-
-    // Fetch the matched person's comprehensive details using UUID
+    // Get the matched person's details
     const { data: matchedPerson, error: personError } = await supabase
       .from('form_responses')
-      .select(`
-        name,
-        email,
-        pronouns,
-        program,
-        year,
-        social_media_links,
-        career,
-        friend_traits,
-        self_desc,
-        goal,
-        fun,
-        music,
-        class_seat,
-        evil_hobby,
-        most_likely_to,
-        caught_watching
-      `)
-      .eq('id', matchedPersonUUID)
+      .select('id, name, email, pronouns, program, year, social_media_links')
+      .eq('id', matchedPersonId)
       .single();
 
-    if (personError) {
+    if (personError || !matchedPerson) {
       console.error('[User Match API] Error fetching matched person:', personError);
-      return NextResponse.json({ error: "Failed to fetch match details" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to fetch matched person details" }, { status: 500 });
     }
 
-    const matchData = {
+    console.log('[User Match API] Successfully fetched match:', {
+      matchId: match.id,
+      similarityScore: match.similarity_score,
       emoji: match.emoji,
-      similarity_score: match.similarity_score,
-      matched_person: {
-        name: matchedPerson.name,
-        email: matchedPerson.email,
-        pronouns: matchedPerson.pronouns,
-        program: matchedPerson.program,
-        year: matchedPerson.year,
-        social_media_links: matchedPerson.social_media_links,
-        career: matchedPerson.career,
-        friend_traits: matchedPerson.friend_traits,
-        self_desc: matchedPerson.self_desc,
-        goal: matchedPerson.goal,
-        fun: matchedPerson.fun,
-        music: matchedPerson.music,
-        class_seat: matchedPerson.class_seat,
-        evil_hobby: matchedPerson.evil_hobby,
-        most_likely_to: matchedPerson.most_likely_to,
-        caught_watching: matchedPerson.caught_watching
-      }
-    };
-
-    console.log('[User Match API] Successfully fetched user match with full details');
+      matchedPerson: matchedPerson.name
+    });
 
     return NextResponse.json({
       success: true,
-      message: "Match found",
-      match: matchData
+      match: {
+        id: match.id,
+        similarity_score: match.similarity_score,
+        emoji: match.emoji,
+        matched_person: {
+          name: matchedPerson.name,
+          email: matchedPerson.email,
+          pronouns: matchedPerson.pronouns,
+          program: matchedPerson.program,
+          year: matchedPerson.year,
+          social_media_links: matchedPerson.social_media_links
+        }
+      }
     });
 
-  } catch (error) {
-    console.error('[User Match API] Unexpected error:', error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error('[User Match API] Error:', error);
+    return NextResponse.json({ 
+      error: "Internal server error",
+      details: error.message 
+    }, { status: 500 });
   }
 } 

@@ -16,7 +16,6 @@ import {
   FaChartLine, 
   FaCalendarAlt,
   FaSearch,
-  FaDownload,
   FaSync,
   FaEye,
   FaTrash,
@@ -52,11 +51,6 @@ interface Pagination {
   hasPrev: boolean;
 }
 
-interface Setting {
-  key: string;
-  value: string;
-}
-
 const AdminPage = () => {
   const router = useRouter();
   const { name, role } = useSelector((state: RootState) => state.auth);
@@ -72,7 +66,6 @@ const AdminPage = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState('overview');
-  const [debugInfo, setDebugInfo] = useState<any>(null);
   const [settings, setSettings] = useState<any[]>([]);
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [runningMatching, setRunningMatching] = useState(false);
@@ -204,86 +197,6 @@ const AdminPage = () => {
     }
   };
 
-  const runDatabaseMigration = async () => {
-    try {
-      console.log('[Admin Page] Starting database migration...');
-      
-      const response = await axios.post('/api/admin/migrate-database');
-      
-      if (response.data.success) {
-        console.log('[Admin Page] Migration completed successfully:', response.data);
-        alert('Database migration completed successfully!');
-      } else {
-        console.log('[Admin Page] Migration failed:', response.data);
-        alert(`Migration failed: ${response.data.message || 'Unknown error'}`);
-      }
-    } catch (error: any) {
-      console.error('[Admin Page] Error running database migration:', error);
-      if (error.response?.data?.error === 'Manual migration required') {
-        alert(`Database migration requires manual steps:\n\n${error.response.data.steps.join('\n')}\n\nPlease run the migrate-to-matching-tables.sql script in your Supabase SQL editor.`);
-      } else {
-        alert(`Error running database migration: ${error.response?.data?.error || error.message}`);
-      }
-    }
-  };
-
-  const runEmailMigration = async () => {
-    try {
-      console.log('[Admin Page] Starting email migration...');
-      
-      const response = await axios.post('/api/admin/migrate-emails');
-      
-      if (response.data.success) {
-        console.log('[Admin Page] Email migration completed successfully:', response.data);
-        alert(`Email migration completed! ${response.data.message}`);
-      } else {
-        console.log('[Admin Page] Email migration failed:', response.data);
-        alert(`Email migration failed: ${response.data.message || 'Unknown error'}`);
-      }
-    } catch (error: any) {
-      console.error('[Admin Page] Error running email migration:', error);
-      alert(`Error running email migration: ${error.response?.data?.error || error.message}`);
-    }
-  };
-
-  const runCurrMatchesMigration = async () => {
-    try {
-      console.log('[Admin Page] Starting curr_matches migration...');
-      
-      const response = await axios.post('/api/admin/migrate-curr-matches');
-      
-      if (response.data.success) {
-        console.log('[Admin Page] Curr matches migration completed:', response.data);
-        alert(`Curr matches migration completed! ${response.data.message}`);
-      } else {
-        console.log('[Admin Page] Curr matches migration failed:', response.data);
-        alert(response.data.error || 'Curr matches migration failed');
-      }
-    } catch (error: any) {
-      console.error('[Admin Page] Error running curr matches migration:', error);
-      alert(`Error: ${error.response?.data?.error || error.message || 'Unknown error'}`);
-    }
-  };
-
-  const runPreviousMatchesUUIDMigration = async () => {
-    try {
-      console.log('[Admin Page] Starting previous_matches UUID migration...');
-      
-      const response = await axios.post('/api/admin/fix-previous-matches-uuid');
-      
-      if (response.data.success) {
-        console.log('[Admin Page] Previous matches UUID migration completed:', response.data);
-        alert(`Previous matches UUID migration completed! ${response.data.message}`);
-      } else {
-        console.log('[Admin Page] Previous matches UUID migration failed:', response.data);
-        alert(response.data.error || 'Previous matches UUID migration failed');
-      }
-    } catch (error: any) {
-      console.error('[Admin Page] Error running previous matches UUID migration:', error);
-      alert(`Error: ${error.response?.data?.error || error.message || 'Unknown error'}`);
-    }
-  };
-
   const getSessionState = (): string => {
     const setting = settings.find(s => s.key === 'session_state');
     return setting ? setting.value : 'idle';
@@ -358,16 +271,6 @@ const AdminPage = () => {
     router.push('/admin/verify');
   };
 
-  const checkTableStructure = async () => {
-    try {
-      const response = await axios.get('/api/admin/debug-tables');
-      setDebugInfo(response.data);
-      console.log('[Admin Page] Debug info:', response.data);
-    } catch (error) {
-      console.error('[Admin Page] Error fetching debug info:', error);
-    }
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -420,7 +323,7 @@ const AdminPage = () => {
                   Welcome, <span className="font-semibold text-[#374995]">{name}</span>! 
                   Monitor your application data in real-time.
                 </p>
-    </div>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={fetchStats}
@@ -430,27 +333,7 @@ const AdminPage = () => {
                   <FaSync className={loadingStats ? 'animate-spin' : ''} />
                   Refresh
                 </button>
-                <button
-                  onClick={checkTableStructure}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors text-sm"
-                >
-                  Debug Tables
-                </button>
-                <button
-                  onClick={async () => {
-                    try {
-                      const response = await axios.get('/api/admin/debug-settings');
-                      console.log('[Admin Page] Debug settings:', response.data);
-                      alert(`Current Settings:\n${JSON.stringify(response.data, null, 2)}`);
-                    } catch (error) {
-                      console.error('[Admin Page] Debug error:', error);
-                      alert('Failed to fetch debug info');
-                    }
-                  }}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors text-sm"
-                >
-                  Debug Settings
-                </button>
+
                 <button
                   onClick={handleAdminLogout}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm"
@@ -628,83 +511,6 @@ const AdminPage = () => {
                     </button>
                   </div>
                 )}
-
-                {/* View All Matches Button - Show when matches might exist */}
-                {(getSessionState() === 'matching_in_progress' || getSessionState() === 'matches_released') && (
-                  <div className="mt-4 flex justify-center">
-                    <button
-                      onClick={() => router.push('/admin/all-matches')}
-                      className="px-6 py-3 rounded-lg font-medium transition-colors bg-green-500 hover:bg-green-600 text-white cursor-pointer flex items-center gap-2"
-                    >
-                      <FaUsers />
-                      View All Matches
-                    </button>
-                  </div>
-                )}
-
-                {/* Database Migration Button - Always show */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={runDatabaseMigration}
-                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-purple-500 hover:bg-purple-600 text-white cursor-pointer flex items-center gap-2"
-                  >
-                    <FaDownload />
-                    Run Database Migration
-                  </button>
-                </div>
-
-                {/* Email Migration Button - Always show */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={runEmailMigration}
-                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-orange-500 hover:bg-orange-600 text-white cursor-pointer flex items-center gap-2"
-                  >
-                    <FaSync />
-                    Migrate Emails to Email Column
-                  </button>
-                </div>
-
-                {/* Curr Matches Migration Button - Always show */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={runCurrMatchesMigration}
-                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-teal-500 hover:bg-teal-600 text-white cursor-pointer flex items-center gap-2"
-                  >
-                    <FaSync />
-                    Migrate Curr Matches to Emails
-                  </button>
-                </div>
-
-                {/* Previous Matches UUID Migration Button - Always show */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={runPreviousMatchesUUIDMigration}
-                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer flex items-center gap-2"
-                  >
-                    <FaSync />
-                    Fix Previous Matches UUID Schema
-                  </button>
-                </div>
-
-                {/* Debug Emails Button - Always show */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={async () => {
-                      try {
-                        const response = await axios.get('/api/admin/debug-emails');
-                        console.log('[Admin Page] Debug emails:', response.data);
-                        alert(`Emails in form_responses:\n${JSON.stringify(response.data, null, 2)}`);
-                      } catch (error) {
-                        console.error('[Admin Page] Debug emails error:', error);
-                        alert('Failed to fetch debug emails info');
-                      }
-                    }}
-                    className="px-6 py-3 rounded-lg font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white cursor-pointer flex items-center gap-2"
-                  >
-                    <FaSearch />
-                    Debug Emails
-                  </button>
-                </div>
 
                 {/* State Flow Indicator */}
                 <div className="mt-6">

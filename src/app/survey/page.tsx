@@ -9,7 +9,7 @@ import { FaArrowUp, FaSync, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
 const Page = () => {
-  const watiam_user = useSelector((state: RootState) => state.user.data?.email || null);
+  const userEmail = useSelector((state: RootState) => state.user.data?.email || null);
   const [isFormActive, setIsFormActive] = useState<boolean | null>(null);
   const [sessionState, setSessionState] = useState<string>('idle');
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +39,7 @@ const Page = () => {
   };
 
   const checkExistingSubmission = async () => {
-    if (!watiam_user) {
+    if (!userEmail) {
       setIsCheckingSubmission(false);
       return;
     }
@@ -47,7 +47,7 @@ const Page = () => {
     try {
       setIsCheckingSubmission(true);
       console.log('[Survey Page] Checking for existing submission...');
-      const response = await axios.get(`/api/form-submit/check?email=${encodeURIComponent(watiam_user)}`);
+      const response = await axios.get(`/api/form-submit/check?email=${encodeURIComponent(userEmail)}`);
       
       if (response.data.hasSubmitted) {
         console.log('[Survey Page] User has already submitted');
@@ -67,11 +67,11 @@ const Page = () => {
 
   // Check submission status immediately when user email becomes available
   useEffect(() => {
-    if (watiam_user) {
+    if (userEmail) {
       console.log('[Survey Page] User email available, checking submission status...');
       checkExistingSubmission();
     }
-  }, [watiam_user]);
+  }, [userEmail]);
 
   useEffect(() => {
     checkFormStatus();
@@ -82,8 +82,8 @@ const Page = () => {
     console.log('[Survey Page] Current session state:', sessionState);
     console.log('[Survey Page] Form ref:', formRef.current);
     console.log('[Survey Page] Has submitted:', hasSubmitted);
-    console.log('[Survey Page] Watiam user:', watiam_user);
-  }, [sessionState, hasSubmitted, watiam_user]);
+    console.log('[Survey Page] User email:', userEmail);
+  }, [sessionState, hasSubmitted, userEmail]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,13 +147,13 @@ const Page = () => {
 
       console.log('[Survey Page] Final form data collected:', formDataObject);
 
-      // Add the watiam_user if not already present
-      if (watiam_user && !formDataObject.watiam_user_display) {
-        formDataObject.watiam_user_display = watiam_user;
+      // Add the user email if not already present
+      if (userEmail && !formDataObject.email) {
+        formDataObject.email = userEmail;
       }
 
       // Client-side validation
-      const requiredFields = ['name', 'watiam_user_display', 'program', 'year'];
+      const requiredFields = ['name', 'email', 'program', 'year'];
       const missingFields = requiredFields.filter(field => 
         !formDataObject[field] || formDataObject[field].toString().trim() === ''
       );
@@ -359,18 +359,18 @@ const Page = () => {
                 type="text"
                 name="name"
                 placeholder="First and Last Name"
-                    required
-                    disabled={hasSubmitted}
-                    className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none font-jakarta disabled:bg-gray-100 disabled:cursor-not-allowed"
+                required
+                disabled={hasSubmitted}
+                className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none font-jakarta disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
             <div className="flex flex-col w-full">
-                  <label className="mb-1 text-[#374995] font-jakarta">Pronouns <span className="text-red-500">*</span></label>
+              <label className="mb-1 text-[#374995] font-jakarta">Pronouns <span className="text-red-500">*</span></label>
               <select
                 name="pronouns"
-                    required
-                    disabled={hasSubmitted}
-                    className="p-3 rounded-full w-full bg-[#4b6cb7] text-white placeholder-white outline-none font-jakarta disabled:bg-gray-400 disabled:cursor-not-allowed"
+                required
+                disabled={hasSubmitted}
+                className="p-3 rounded-full w-full bg-[#4b6cb7] text-white placeholder-white outline-none font-jakarta disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <option>Select from the following</option>
                 <option>She/Her</option>
@@ -384,18 +384,18 @@ const Page = () => {
           <div className="flex flex-col gap-4 mt-4">
             <div className="flex flex-col w-full">
                   <label className="mb-1 text-[#374995] font-jakarta">DSC Email</label>
-                  {watiam_user ? (
+                  {userEmail ? (
                     <input
                       type="email"
-                      name="watiam_user_display"
-                      value={watiam_user}
+                      name="email"
+                      value={userEmail}
                       disabled
                       className="p-3 rounded-full w-full bg-gray-100 text-black placeholder-[#aabbd7] outline-none font-jakarta cursor-not-allowed"
                     />
                   ) : (
               <input
                 type="email"
-                      name="watiam_user_display"
+                      name="email"
                       placeholder="Loading your email..."
                       disabled
                       className="p-3 rounded-full w-full bg-gray-100 text-gray-400 placeholder-[#aabbd7] outline-none font-jakarta italic cursor-not-allowed"
@@ -409,9 +409,9 @@ const Page = () => {
                 type="text"
                 name="program"
                 placeholder="Enter your program (e.g., Computer Science)"
-                    required
-                    disabled={hasSubmitted}
-                    className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                required
+                disabled={hasSubmitted}
+                className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -421,10 +421,10 @@ const Page = () => {
                 type="text"
                 name="year"
                 placeholder="Enter your year (e.g., 2A)"
-                    required
-                    maxLength={2}
-                    disabled={hasSubmitted}
-                    className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                required
+                maxLength={2}
+                disabled={hasSubmitted}
+                className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -434,10 +434,10 @@ const Page = () => {
               </label>
               <input
                 type="text"
-                    name="social_media_links"
+                name="social_media_links"
                 placeholder="Add your Instagram, Discord, etc."
-                    disabled={hasSubmitted}
-                    className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                disabled={hasSubmitted}
+                className="p-3 rounded-full w-full bg-white text-[#374995] placeholder-[#aabbd7] outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
           </div>
@@ -511,13 +511,13 @@ const Page = () => {
             {/* Question 2 */}
             <div>
               <p className="text-[#374995] font-jakarta mb-2">Pick your favourite evil hobby:</p>
-                    {[
-                      { value: "a", label: "Gossiping the latest tea" },
-                      { value: "b", label: "Splurging money on (useless?) items" },
-                      { value: "c", label: "Mukbanging food" },
-                      { value: "d", label: "Entering a ranked match in Valorant" },
-                      { value: "e", label: "Going down Wikipedia rabbit holes" }
-                    ].map(({ value, label }, idx) => (
+                  {[
+                    { value: "a", label: "Gossiping the latest tea" },
+                    { value: "b", label: "Splurging money on (useless?) items" },
+                    { value: "c", label: "Mukbanging food" },
+                    { value: "d", label: "Entering a ranked match in Valorant" },
+                    { value: "e", label: "Going down Wikipedia rabbit holes" }
+                  ].map(({ value, label }, idx) => (
                 <label key={idx} className="flex items-center gap-3 mb-2 text-[#374995]">
                         <input 
                           type="radio" 
@@ -577,7 +577,8 @@ const Page = () => {
               ))}
             </div>
           </div>
-              {/* Submit Button */}
+
+          {/* Submit Button */}
           <button
             type="submit"
                 disabled={sessionState !== 'form_active' || isSubmitting || hasSubmitted}
@@ -651,6 +652,6 @@ const Page = () => {
       </main>
     </div>
   )
-}
+ }
 
-export default Page
+ export default Page

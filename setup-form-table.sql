@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS form_responses (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   pronouns VARCHAR(50),
-  watiam_user_display VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
   program VARCHAR(255),
   year VARCHAR(50),
   social_media_links TEXT,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS form_responses (
 );
 
 -- Create index for faster lookups
-CREATE INDEX IF NOT EXISTS idx_form_responses_watiam ON form_responses(watiam_user_display);
+CREATE INDEX IF NOT EXISTS idx_form_responses_email ON form_responses(email);
 CREATE INDEX IF NOT EXISTS idx_form_responses_created_at ON form_responses(created_at);
 
 -- Enable RLS (optional - for security)

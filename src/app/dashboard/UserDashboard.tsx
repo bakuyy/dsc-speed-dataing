@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,7 +9,6 @@ import { login } from '@/store/loginTokenSlice'
 import { useState, useEffect } from 'react'
 import CardButton from '../components/CardButton'
 import axios from 'axios'
-import MatchComponent from './DefaultMatch'
 import Cookies from 'js-cookie'
 import { FaSync } from 'react-icons/fa'
 

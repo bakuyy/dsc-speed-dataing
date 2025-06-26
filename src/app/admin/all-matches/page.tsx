@@ -39,7 +39,7 @@ interface Match {
 
 const AllMatchesPage = () => {
   const router = useRouter();
-  const { name, role } = useSelector((state: RootState) => state.auth);
+  const { role } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [matches, setMatches] = useState<Match[]>([]);
@@ -88,9 +88,14 @@ const AllMatchesPage = () => {
       } else {
         setError(response.data.message || 'Failed to fetch matches');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[All Matches Page] Error fetching matches:', error);
-      setError(error.response?.data?.error || 'Failed to fetch matches');
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string } } };
+        setError(axiosError.response?.data?.error || 'Failed to fetch matches');
+      } else {
+        setError('Failed to fetch matches');
+      }
     } finally {
       setLoadingMatches(false);
     }

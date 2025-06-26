@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import Navbar from '../components/Navbar'
@@ -38,7 +41,7 @@ const Page = () => {
     }
   };
 
-  const checkExistingSubmission = async () => {
+  const checkExistingSubmission = useCallback(async () => {
     if (!userEmail) {
       setIsCheckingSubmission(false);
       return;
@@ -63,7 +66,7 @@ const Page = () => {
     } finally {
       setIsCheckingSubmission(false);
     }
-  };
+  }, [userEmail]);
 
   // Check submission status immediately when user email becomes available
   useEffect(() => {
@@ -71,7 +74,7 @@ const Page = () => {
       console.log('[Survey Page] User email available, checking submission status...');
       checkExistingSubmission();
     }
-  }, [userEmail]);
+  }, [userEmail, checkExistingSubmission]);
 
   useEffect(() => {
     checkFormStatus();

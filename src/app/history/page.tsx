@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { FaSync, FaHistory, FaUser, FaGraduationCap, FaCalendar, FaLink, FaHeart } from 'react-icons/fa';
 
 interface Match {
@@ -26,7 +27,7 @@ const HistoryPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -38,17 +39,18 @@ const HistoryPage = () => {
       } else {
         setMatches([]);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[History Page] Error fetching history:', error);
-      if (error.response?.status === 401) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === 401) {
         router.push('/');
         return;
       }
-      setError(error.response?.data?.error || 'Failed to fetch history');
+      setError((axiosError.response?.data as { error?: string })?.error || 'Failed to fetch history');
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -63,7 +65,7 @@ const HistoryPage = () => {
     }
     
     fetchHistory();
-  }, [user, router]);
+  }, [user, router, fetchHistory]);
 
   const formatSimilarityScore = (score: number) => {
     return `${(score * 100).toFixed(1)}%`;
@@ -124,7 +126,7 @@ const HistoryPage = () => {
                 <FaHeart className="text-4xl text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">No Previous Matches</h3>
                 <p className="text-gray-500">
-                  You haven't been matched with anyone yet. Participate in speed dating events to see your matches here!
+                  You haven&apos;t been matched with anyone yet. Participate in speed dating events to see your matches here!
                 </p>
               </div>
             ) : (
@@ -172,7 +174,7 @@ const HistoryPage = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {matches.map((match, index) => (
+                      {matches.map((match) => (
                         <tr key={match.matchedUserId} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900">

@@ -11,6 +11,7 @@ import CardButton from '../components/CardButton'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { FaSync } from 'react-icons/fa'
+import MatchComponent from './DefaultMatch'
 
 export default function UserDashboard() {
   const router = useRouter()
@@ -141,7 +142,7 @@ export default function UserDashboard() {
         </div>
       </main>
 
-    
+      <MatchComponent isViewMatch={sessionState === 'matches_released' ? true : false} />
         
         <button 
           onClick={() => router.push('/history')}

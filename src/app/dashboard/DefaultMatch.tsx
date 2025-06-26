@@ -83,7 +83,7 @@ const MatchComponent = ({ isViewMatch = false }) => {
             
             
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 font-plus-jakarta-sans">
-              finding your <span className='text-blue-500'>perfect match</span>
+              Finding your <span className='text-blue-500'>perfect match</span>
             </h2>
             
             <p className="text-gray-600 text-base sm:text-lg font-medium italic font-plus-jakarta-sans mb-4">
@@ -106,7 +106,7 @@ const MatchComponent = ({ isViewMatch = false }) => {
                 onClick={getRandomPickupLine}
                 className="bg-gradient-to-r from-blue-200 to-blue-300 hover:from-blue-600 hover:to-blue-700 text-black px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 shadow-md"
               >
-              another one pls
+              another one pls :3
               </button>
             </div>
           </div>

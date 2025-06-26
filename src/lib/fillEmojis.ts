@@ -63,4 +63,4 @@ async function fillEmojis() {
   }
 }
 
-fillEmojis();
+export { fillEmojis };

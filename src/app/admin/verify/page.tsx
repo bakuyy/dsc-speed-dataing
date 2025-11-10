@@ -1,42 +1,49 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { useRouter } from 'next/navigation';
-import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import Logo from "../../../../public/images/logo.png";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useRouter } from "next/navigation";
+import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import Logo from "../../../../public/images/logo.svg";
 import Image from "next/image";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const AdminVerifyPage = () => {
   const router = useRouter();
   const { name, role } = useSelector((state: RootState) => state.auth);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const checkAdminAccess = () => {
-      const cookieRole = Cookies.get('role');
+      const cookieRole = Cookies.get("role");
       const reduxRole = role;
-      
-      console.log('[Admin Verify] Checking admin access:', { cookieRole, reduxRole });
-      
-      if (cookieRole === 'admin' || reduxRole === 'admin') {
-        console.log('[Admin Verify] Admin access confirmed');
+
+      console.log("[Admin Verify] Checking admin access:", {
+        cookieRole,
+        reduxRole,
+      });
+
+      if (cookieRole === "admin" || reduxRole === "admin") {
+        console.log("[Admin Verify] Admin access confirmed");
         setIsCheckingAuth(false);
-      } else if (cookieRole && cookieRole !== 'admin') {
-        console.log('[Admin Verify] User is not admin, redirecting to dashboard');
-        router.push('/dashboard');
+      } else if (cookieRole && cookieRole !== "admin") {
+        console.log(
+          "[Admin Verify] User is not admin, redirecting to dashboard"
+        );
+        router.push("/dashboard");
       } else if (!cookieRole && !reduxRole) {
-        console.log('[Admin Verify] Still loading authentication state');
+        console.log("[Admin Verify] Still loading authentication state");
         setTimeout(checkAdminAccess, 500);
       } else {
-        console.log('[Admin Verify] No authentication found, redirecting to login');
-        router.push('/');
+        console.log(
+          "[Admin Verify] No authentication found, redirecting to login"
+        );
+        router.push("/");
       }
     };
 
@@ -45,30 +52,32 @@ const AdminVerifyPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       // Use server-side API for admin password verification
-      const response = await fetch('/api/admin/verify', {
-        method: 'POST',
+      const response = await fetch("/api/admin/verify", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ password }),
       });
 
       if (response.ok) {
-        console.log('[Admin Verify] Password correct, redirecting to admin panel');
-        router.push('/admin');
+        console.log(
+          "[Admin Verify] Password correct, redirecting to admin panel"
+        );
+        router.push("/admin");
       } else {
         const errorData = await response.json();
-        setError(errorData.error || 'Incorrect admin password');
-        setPassword('');
+        setError(errorData.error || "Incorrect admin password");
+        setPassword("");
       }
     } catch (error) {
-      console.error('[Admin Verify] Error:', error);
-      setError('An error occurred. Please try again.');
+      console.error("[Admin Verify] Error:", error);
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -79,9 +88,18 @@ const AdminVerifyPage = () => {
       <div className="h-screen w-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center">
           <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-3 h-3 bg-[#374995] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div
+              className="w-3 h-3 bg-[#374995] rounded-full animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            ></div>
+            <div
+              className="w-3 h-3 bg-[#374995] rounded-full animate-bounce"
+              style={{ animationDelay: "150ms" }}
+            ></div>
+            <div
+              className="w-3 h-3 bg-[#374995] rounded-full animate-bounce"
+              style={{ animationDelay: "300ms" }}
+            ></div>
           </div>
           <p className="mt-4 text-[#374995] text-lg">Verifying admin access</p>
         </div>
@@ -93,10 +111,13 @@ const AdminVerifyPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#E6EFFD] p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Image src={Logo} alt="Logo" className="w-3/4 h-auto mx-auto mb-6"/>
-          <h1 className="text-3xl font-bold text-[#374995] mb-2">Admin Verification</h1>
+          <Image src={Logo} alt="Logo" className="w-3/4 h-auto mx-auto mb-6" />
+          <h1 className="text-3xl font-bold text-[#374995] mb-2">
+            Admin Verification
+          </h1>
           <p className="text-gray-600">
-            Welcome, <span className="font-semibold text-[#374995]">{name}</span>
+            Welcome,{" "}
+            <span className="font-semibold text-[#374995]">{name}</span>
           </p>
           <p className="text-sm text-gray-500 mt-2">
             Please enter the admin password to continue
@@ -112,12 +133,15 @@ const AdminVerifyPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Admin Password
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -159,14 +183,14 @@ const AdminVerifyPage = () => {
                   Verifying...
                 </div>
               ) : (
-                'Access Admin Panel'
+                "Access Admin Panel"
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <button
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push("/dashboard")}
               className="text-[#374995] hover:text-[#5989fc] font-medium transition-colors"
             >
               ← Back to Dashboard
@@ -184,4 +208,4 @@ const AdminVerifyPage = () => {
   );
 };
 
-export default AdminVerifyPage; 
+export default AdminVerifyPage;

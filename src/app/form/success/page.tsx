@@ -1,19 +1,18 @@
-'use client'
-import React from 'react'
-import { useRouter } from 'next/navigation'
-import Navbar from '../../components/Navbar'
-import Image from 'next/image'
-import Logo from '../../../../public/images/logo.png'
-import { FaCheckCircle, FaHome, FaHistory } from 'react-icons/fa'
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
+import Navbar from "../../components/Navbar";
+import Image from "next/image";
+import Logo from "../../../../public/images/logo.svg";
+import { FaCheckCircle, FaHome, FaHistory } from "react-icons/fa";
 
 export default function SuccessPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <div className="bg-[#e1eaf8] min-h-screen w-screen">
       <Navbar />
       <main className="pt-12 max-w-4xl mx-auto px-4 flex flex-col items-center justify-center min-h-[60vh]">
-        
         {/* Success Icon and Message */}
         <div className="text-center mb-8">
           <FaCheckCircle className="text-green-500 text-6xl mx-auto mb-4" />
@@ -21,7 +20,7 @@ export default function SuccessPage() {
             Survey Submitted Successfully!
           </h1>
           <p className="text-lg text-[#374995] mb-6">
-            Thank you for participating in Speed Friending!
+            Thank you for participating in Speed Data-ing!
           </p>
           <p className="text-[#374995] opacity-75">
             Your responses have been recorded and will be used for matching.
@@ -38,14 +37,14 @@ export default function SuccessPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
           <button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push("/dashboard")}
             className="flex items-center justify-center gap-2 bg-[#374995] text-white px-6 py-3 rounded-full hover:bg-[#5989fc] transition-colors"
           >
             <FaHome />
             Back to Dashboard
           </button>
           <button
-            onClick={() => router.push('/history')}
+            onClick={() => router.push("/history")}
             className="flex items-center justify-center gap-2 bg-[#A6C3EA] text-white px-6 py-3 rounded-full hover:bg-[#8bb3e8] transition-colors"
           >
             <FaHistory />
@@ -63,5 +62,5 @@ export default function SuccessPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
